@@ -1,0 +1,1271 @@
+```{r}
+# R 크롤링 하는법
+
+#install.packages("rvest")
+library(rvest)
+library(dplyr)
+
+###blade_master = 검사
+
+text_blade<- c()
+text_blade_in <- c()
+time_blade<- c()
+id_blade<- c()
+hit_blade<- c()
+
+for(i in c(1:500)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=blademaster"))
+  
+  text <- html_nodes(html,css = ".bbs_type1 strong.title")%>% 
+          html_nodes('a')%>%
+          html_text()
+  
+  text_blade <- c(text_blade,text)
+  
+  time<- html_nodes(html,css = ".bbs_type1 td.subject .wrap_thumb .articleInfo span.feedtime")%>%
+          html_nodes('time')%>%
+          html_text()
+  
+  time_blade<- c(time_blade,time)
+  
+  id<- html_nodes(html,css = ".bbs_type1 td.subject .wrap_thumb .articleInfo span.writer .nick")%>%
+       html_text()
+  
+  id_blade<- c(id_blade,id)
+
+  hit<- html_nodes(html,css = ".bbsS td.hit")%>%
+       html_text()
+  
+  hit_blade<- c(hit_blade,hit)
+  
+  url1 <- html_nodes(html1,".title")%>% 
+          html_nodes('a')%>%
+          html_attr('href')
+  
+  for(j in 1:20){
+    html2 <- read_html(paste0("http://bns.plaync.com",url1)[j])
+
+    text1<- html_node(html2, ".viewArticle")%>%
+      html_node('div')%>%
+      html_text() 
+    
+    text_blade_in <- c(text_blade_in,text1)
+  }
+  Sys.sleep(0.001)
+}
+
+
+# 실패작 본문내용이 안긁히는 경우가 있음.
+
+```
+1차 실패이후 2차 크롤링 다시 시도
+```{r}
+
+library(rvest)
+library(dplyr)
+library(stringr)
+
+title_blade<- c()
+time_blade<- c()
+hit_blade<- c()
+id_blade<- c()
+text_blade <- c()
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=blademaster"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+
+  
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_blade<- c(title_blade,str_replace_all(title, "\\s",""))
+    time_blade<- c(time_blade,str_replace_all(time, "\\s",""))
+    hit_blade<- c(hit_blade,str_replace_all(hit, "\\s",""))
+    id_blade<- c(id_blade,str_replace_all(id, "\\s",""))
+    text_blade <- c(text_blade,str_replace_all(text, "\\s",""))
+
+  }
+}
+
+
+write.csv(title_blade, file="c:/r/project/title_blade_1")
+write.csv(time_blade, file="c:/r/project/time_blade_1")
+write.csv(hit_blade, file="c:/r/project/hit_blade_1")
+write.csv(id_blade, file="c:/r/project/id_blade_1")
+write.csv(text_blade, file="c:/r/project/text_blade_1")
+
+
+###kungfufighter = 권사
+
+title_kungfu<- c()
+text_kungfu <- c()
+time_kungfu<- c()
+id_kungfu<- c()
+hit_kungfu<- c()
+
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=kungfufighter"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+  
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_kungfu<- c(title_kungfu,str_replace_all(title, "\\s",""))
+    time_kungfu<- c(time_kungfu,str_replace_all(time, "\\s",""))
+    hit_kungfu<- c(hit_kungfu,str_replace_all(hit, "\\s",""))
+    id_kungfu<- c(id_kungfu,str_replace_all(id, "\\s",""))
+    text_kungfu <- c(text_kungfu,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_kungfu, file="c:/r/project/title_kungfu_1")
+write.csv(time_kungfu, file="c:/r/project/time_kungfu_1")
+write.csv(hit_kungfu, file="c:/r/project/hit_kungfu_1")
+write.csv(id_kungfu, file="c:/r/project/id_kungfu_1")
+write.csv(text_kungfu, file="c:/r/project/text_kungfu_1")
+
+###destroyer = 역사
+
+title_destroyer<- c()
+text_destroyer <- c()
+time_destroyer<- c()
+id_destroyer<- c()
+hit_destroyer<- c()
+
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=destroyer"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+  
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_destroyer<- c(title_destroyer,str_replace_all(title, "\\s",""))
+    time_destroyer<- c(time_destroyer,str_replace_all(time, "\\s",""))
+    hit_destroyer<- c(hit_destroyer,str_replace_all(hit, "\\s",""))
+    id_destroyer<- c(id_destroyer,str_replace_all(id, "\\s",""))
+    text_destroyer <- c(text_destroyer,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_destroyer, file="c:/r/project/title_destroyer_1")
+write.csv(time_destroyer, file="c:/r/project/time_destroyer_1")
+write.csv(hit_destroyer, file="c:/r/project/hit_destroyer_1")
+write.csv(id_destroyer, file="c:/r/project/id_destroyer_1")
+write.csv(text_destroyer, file="c:/r/project/text_destroyer_1")
+
+
+
+###forcemaster = 기공사
+
+title_forcemaster<- c()
+text_forcemaster <- c()
+time_forcemaster<- c()
+id_forcemaster<- c()
+hit_forcemaster<- c()
+
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=forcemaster"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_forcemaster<- c(title_forcemaster,str_replace_all(title, "\\s",""))
+    time_forcemaster<- c(time_forcemaster,str_replace_all(time, "\\s",""))
+    hit_forcemaster<- c(hit_forcemaster,str_replace_all(hit, "\\s",""))
+    id_forcemaster<- c(id_forcemaster,str_replace_all(id, "\\s",""))
+    text_forcemaster <- c(text_forcemaster,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+write.csv(title_forcemaster, file="c:/r/project/title_forcemaster_1")
+write.csv(time_forcemaster, file="c:/r/project/time_forcemaster_1")
+write.csv(hit_forcemaster, file="c:/r/project/hit_forcemaster_1")
+write.csv(id_forcemaster, file="c:/r/project/id_forcemaster_1")
+write.csv(text_forcemaster, file="c:/r/project/text_forcemaster_1")
+
+
+
+###assassin = 암살자
+
+title_assassin<- c()
+text_assassin <- c()
+time_assassin<- c()
+id_assassin<- c()
+hit_assassin<- c()
+
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=assassin"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+  
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_assassin<- c(title_assassin,str_replace_all(title, "\\s",""))
+    time_assassin<- c(time_assassin,str_replace_all(time, "\\s",""))
+    hit_assassin<- c(hit_assassin,str_replace_all(hit, "\\s",""))
+    id_assassin<- c(id_assassin,str_replace_all(id, "\\s",""))
+    text_assassin <- c(text_assassin,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+write.csv(title_assassin, file="c:/r/project/title_assassin_1")
+write.csv(time_assassin, file="c:/r/project/time_assassin_1")
+write.csv(hit_assassin, file="c:/r/project/hit_assassin_1")
+write.csv(id_assassin, file="c:/r/project/id_assassin_1")
+write.csv(text_assassin, file="c:/r/project/text_assassin_1")
+
+
+
+
+
+###summoner = 소환사
+
+title_summoner<- c()
+text_summoner <- c()
+time_summoner<- c()
+id_summoner<- c()
+hit_summoner<- c()
+
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=summoner"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+  
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_summoner<- c(title_summoner,str_replace_all(title, "\\s",""))
+    time_summoner<- c(time_summoner,str_replace_all(time, "\\s",""))
+    hit_summoner<- c(hit_summoner,str_replace_all(hit, "\\s",""))
+    id_summoner<- c(id_summoner,str_replace_all(id, "\\s",""))
+    text_summoner <- c(text_summoner,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+write.csv(title_summoner, file="c:/r/project/title_summoner_1")
+write.csv(time_summoner, file="c:/r/project/time_summoner_1")
+write.csv(hit_summoner, file="c:/r/project/hit_summoner_1")
+write.csv(id_summoner, file="c:/r/project/id_summoner_1")
+write.csv(text_summoner, file="c:/r/project/text_summoner_1")
+
+
+###swordmaster = 린검사
+
+title_swordmaster<- c()
+text_swordmaster <- c()
+time_swordmaster<- c()
+id_swordmaster<- c()
+hit_swordmaster<- c()
+
+
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=swordmaster"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+ 
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_swordmaster<- c(title_swordmaster,str_replace_all(title, "\\s",""))
+    time_swordmaster<- c(time_swordmaster,str_replace_all(time, "\\s",""))
+    hit_swordmaster<- c(hit_swordmaster,str_replace_all(hit, "\\s",""))
+    id_swordmaster<- c(id_swordmaster,str_replace_all(id, "\\s",""))
+    text_swordmaster <- c(text_swordmaster,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_swordmaster, file="c:/r/project/title_swordmaster_1")
+write.csv(time_swordmaster, file="c:/r/project/time_swordmaster_1")
+write.csv(hit_swordmaster, file="c:/r/project/hit_swordmaster_1")
+write.csv(id_swordmaster, file="c:/r/project/id_swordmaster_1")
+write.csv(text_swordmaster, file="c:/r/project/text_swordmaster_1")
+
+
+###warlock = 주술사
+
+title_warlock<- c()
+text_warlock <- c()
+time_warlock<- c()
+id_warlock<- c()
+hit_warlock<- c()
+
+
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=warlock"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_warlock<- c(title_warlock,str_replace_all(title, "\\s",""))
+    time_warlock<- c(time_warlock,str_replace_all(time, "\\s",""))
+    hit_warlock<- c(hit_warlock,str_replace_all(hit, "\\s",""))
+    id_warlock<- c(id_warlock,str_replace_all(id, "\\s",""))
+    text_warlock <- c(text_warlock,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_warlock, file="c:/r/project/title_warlock_1")
+write.csv(time_warlock, file="c:/r/project/time_warlock_1")
+write.csv(hit_warlock, file="c:/r/project/hit_warlock_1")
+write.csv(id_warlock, file="c:/r/project/id_warlock_1")
+write.csv(text_warlock, file="c:/r/project/text_warlock_1")
+
+
+
+
+###soulfighter = 기권사
+
+title_soulfighter<- c()
+text_soulfighter <- c()
+time_soulfighter<- c()
+id_soulfighter<- c()
+hit_soulfighter<- c()
+
+
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=soulfighter"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_soulfighter<- c(title_soulfighter,str_replace_all(title, "\\s",""))
+    time_soulfighter<- c(time_soulfighter,str_replace_all(time, "\\s",""))
+    hit_soulfighter<- c(hit_soulfighter,str_replace_all(hit, "\\s",""))
+    id_soulfighter<- c(id_soulfighter,str_replace_all(id, "\\s",""))
+    text_soulfighter <- c(text_soulfighter,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_soulfighter, file="c:/r/project/title_soulfighter_1")
+write.csv(time_soulfighter, file="c:/r/project/time_soulfighter_1")
+write.csv(hit_soulfighter, file="c:/r/project/hit_soulfighter_1")
+write.csv(id_soulfighter, file="c:/r/project/id_soulfighter_1")
+write.csv(text_soulfighter, file="c:/r/project/text_soulfighter_1")
+
+
+
+###shooter = 격사
+
+title_shooter<- c()
+text_shooter <- c()
+time_shooter<- c()
+id_shooter<- c()
+hit_shooter<- c()
+
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=shooter"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+  
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_shooter<- c(title_shooter,str_replace_all(title, "\\s",""))
+    time_shooter<- c(time_shooter,str_replace_all(time, "\\s",""))
+    hit_shooter<- c(hit_shooter,str_replace_all(hit, "\\s",""))
+    id_shooter<- c(id_shooter,str_replace_all(id, "\\s",""))
+    text_shooter <- c(text_shooter,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_shooter, file="c:/r/project/title_shooter_1")
+write.csv(time_shooter, file="c:/r/project/time_shooter_1")
+write.csv(hit_shooter, file="c:/r/project/hit_shooter_1")
+write.csv(id_shooter, file="c:/r/project/id_shooter_1")
+write.csv(text_shooter, file="c:/r/project/text_shooter_1")
+
+
+
+
+###################################################################################
+#############################################2번째
+
+title_blade<- c()
+time_blade<- c()
+hit_blade<- c()
+id_blade<- c()
+text_blade <- c()
+
+for(i in c(101:200)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=blademaster"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+
+  
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_blade<- c(title_blade,str_replace_all(title, "\\s",""))
+    time_blade<- c(time_blade,str_replace_all(time, "\\s",""))
+    hit_blade<- c(hit_blade,str_replace_all(hit, "\\s",""))
+    id_blade<- c(id_blade,str_replace_all(id, "\\s",""))
+    text_blade <- c(text_blade,str_replace_all(text, "\\s",""))
+
+  }
+}
+
+
+write.csv(title_blade, file="c:/r/project/title_blade_2")
+write.csv(time_blade, file="c:/r/project/time_blade_2")
+write.csv(hit_blade, file="c:/r/project/hit_blade_2")
+write.csv(id_blade, file="c:/r/project/id_blade_2")
+write.csv(text_blade, file="c:/r/project/text_blade_2")
+
+
+###kungfufighter = 권사
+
+title_kungfu<- c()
+text_kungfu <- c()
+time_kungfu<- c()
+id_kungfu<- c()
+hit_kungfu<- c()
+
+
+for(i in c(101:200)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=kungfufighter"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+  
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_kungfu<- c(title_kungfu,str_replace_all(title, "\\s",""))
+    time_kungfu<- c(time_kungfu,str_replace_all(time, "\\s",""))
+    hit_kungfu<- c(hit_kungfu,str_replace_all(hit, "\\s",""))
+    id_kungfu<- c(id_kungfu,str_replace_all(id, "\\s",""))
+    text_kungfu <- c(text_kungfu,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_kungfu, file="c:/r/project/title_kungfu_2")
+write.csv(time_kungfu, file="c:/r/project/time_kungfu_2")
+write.csv(hit_kungfu, file="c:/r/project/hit_kungfu_2")
+write.csv(id_kungfu, file="c:/r/project/id_kungfu_2")
+write.csv(text_kungfu, file="c:/r/project/text_kungfu_2")
+
+###destroyer = 역사
+
+title_destroyer<- c()
+text_destroyer <- c()
+time_destroyer<- c()
+id_destroyer<- c()
+hit_destroyer<- c()
+
+
+for(i in c(101:200)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=destroyer"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+  
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_destroyer<- c(title_destroyer,str_replace_all(title, "\\s",""))
+    time_destroyer<- c(time_destroyer,str_replace_all(time, "\\s",""))
+    hit_destroyer<- c(hit_destroyer,str_replace_all(hit, "\\s",""))
+    id_destroyer<- c(id_destroyer,str_replace_all(id, "\\s",""))
+    text_destroyer <- c(text_destroyer,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_destroyer, file="c:/r/project/title_destroyer_2")
+write.csv(time_destroyer, file="c:/r/project/time_destroyer_2")
+write.csv(hit_destroyer, file="c:/r/project/hit_destroyer_2")
+write.csv(id_destroyer, file="c:/r/project/id_destroyer_2")
+write.csv(text_destroyer, file="c:/r/project/text_destroyer_2")
+
+
+
+###forcemaster = 기공사
+
+title_forcemaster<- c()
+text_forcemaster <- c()
+time_forcemaster<- c()
+id_forcemaster<- c()
+hit_forcemaster<- c()
+
+
+for(i in c(101:200)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=forcemaster"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_forcemaster<- c(title_forcemaster,str_replace_all(title, "\\s",""))
+    time_forcemaster<- c(time_forcemaster,str_replace_all(time, "\\s",""))
+    hit_forcemaster<- c(hit_forcemaster,str_replace_all(hit, "\\s",""))
+    id_forcemaster<- c(id_forcemaster,str_replace_all(id, "\\s",""))
+    text_forcemaster <- c(text_forcemaster,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+write.csv(title_forcemaster, file="c:/r/project/title_forcemaster_2")
+write.csv(time_forcemaster, file="c:/r/project/time_forcemaster_2")
+write.csv(hit_forcemaster, file="c:/r/project/hit_forcemaster_2")
+write.csv(id_forcemaster, file="c:/r/project/id_forcemaster_2")
+write.csv(text_forcemaster, file="c:/r/project/text_forcemaster_2")
+
+
+
+###assassin = 암살자
+
+title_assassin<- c()
+text_assassin <- c()
+time_assassin<- c()
+id_assassin<- c()
+hit_assassin<- c()
+
+
+for(i in c(101:200)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=assassin"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+  
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_assassin<- c(title_assassin,str_replace_all(title, "\\s",""))
+    time_assassin<- c(time_assassin,str_replace_all(time, "\\s",""))
+    hit_assassin<- c(hit_assassin,str_replace_all(hit, "\\s",""))
+    id_assassin<- c(id_assassin,str_replace_all(id, "\\s",""))
+    text_assassin <- c(text_assassin,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+write.csv(title_assassin, file="c:/r/project/title_assassin_2")
+write.csv(time_assassin, file="c:/r/project/time_assassin_2")
+write.csv(hit_assassin, file="c:/r/project/hit_assassin_2")
+write.csv(id_assassin, file="c:/r/project/id_assassin_2")
+write.csv(text_assassin, file="c:/r/project/text_assassin_2")
+
+
+
+
+
+###summoner = 소환사
+
+title_summoner<- c()
+text_summoner <- c()
+time_summoner<- c()
+id_summoner<- c()
+hit_summoner<- c()
+
+
+for(i in c(101:200)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=summoner"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+  
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_summoner<- c(title_summoner,str_replace_all(title, "\\s",""))
+    time_summoner<- c(time_summoner,str_replace_all(time, "\\s",""))
+    hit_summoner<- c(hit_summoner,str_replace_all(hit, "\\s",""))
+    id_summoner<- c(id_summoner,str_replace_all(id, "\\s",""))
+    text_summoner <- c(text_summoner,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+write.csv(title_summoner, file="c:/r/project/title_summoner_2")
+write.csv(time_summoner, file="c:/r/project/time_summoner_2")
+write.csv(hit_summoner, file="c:/r/project/hit_summoner_2")
+write.csv(id_summoner, file="c:/r/project/id_summoner_2")
+write.csv(text_summoner, file="c:/r/project/text_summoner_2")
+
+
+###swordmaster = 린검사
+
+title_swordmaster<- c()
+text_swordmaster <- c()
+time_swordmaster<- c()
+id_swordmaster<- c()
+hit_swordmaster<- c()
+
+
+
+for(i in c(101:200)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=swordmaster"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+ 
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_swordmaster<- c(title_swordmaster,str_replace_all(title, "\\s",""))
+    time_swordmaster<- c(time_swordmaster,str_replace_all(time, "\\s",""))
+    hit_swordmaster<- c(hit_swordmaster,str_replace_all(hit, "\\s",""))
+    id_swordmaster<- c(id_swordmaster,str_replace_all(id, "\\s",""))
+    text_swordmaster <- c(text_swordmaster,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_swordmaster, file="c:/r/project/title_swordmaster_2")
+write.csv(time_swordmaster, file="c:/r/project/time_swordmaster_2")
+write.csv(hit_swordmaster, file="c:/r/project/hit_swordmaster_2")
+write.csv(id_swordmaster, file="c:/r/project/id_swordmaster_2")
+write.csv(text_swordmaster, file="c:/r/project/text_swordmaster_2")
+
+
+###warlock = 주술사
+
+title_warlock<- c()
+text_warlock <- c()
+time_warlock<- c()
+id_warlock<- c()
+hit_warlock<- c()
+
+
+
+for(i in c(101:200)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=warlock"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_warlock<- c(title_warlock,str_replace_all(title, "\\s",""))
+    time_warlock<- c(time_warlock,str_replace_all(time, "\\s",""))
+    hit_warlock<- c(hit_warlock,str_replace_all(hit, "\\s",""))
+    id_warlock<- c(id_warlock,str_replace_all(id, "\\s",""))
+    text_warlock <- c(text_warlock,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_warlock, file="c:/r/project/title_warlock_2")
+write.csv(time_warlock, file="c:/r/project/time_warlock_2")
+write.csv(hit_warlock, file="c:/r/project/hit_warlock_2")
+write.csv(id_warlock, file="c:/r/project/id_warlock_2")
+write.csv(text_warlock, file="c:/r/project/text_warlock_2")
+
+
+
+
+###soulfighter = 기권사
+
+title_soulfighter<- c()
+text_soulfighter <- c()
+time_soulfighter<- c()
+id_soulfighter<- c()
+hit_soulfighter<- c()
+
+
+
+for(i in c(101:200)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=soulfighter"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_soulfighter<- c(title_soulfighter,str_replace_all(title, "\\s",""))
+    time_soulfighter<- c(time_soulfighter,str_replace_all(time, "\\s",""))
+    hit_soulfighter<- c(hit_soulfighter,str_replace_all(hit, "\\s",""))
+    id_soulfighter<- c(id_soulfighter,str_replace_all(id, "\\s",""))
+    text_soulfighter <- c(text_soulfighter,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_soulfighter, file="c:/r/project/title_soulfighter_2")
+write.csv(time_soulfighter, file="c:/r/project/time_soulfighter_2")
+write.csv(hit_soulfighter, file="c:/r/project/hit_soulfighter_2")
+write.csv(id_soulfighter, file="c:/r/project/id_soulfighter_2")
+write.csv(text_soulfighter, file="c:/r/project/text_soulfighter_2")
+
+
+
+###shooter = 격사
+
+title_shooter<- c()
+text_shooter <- c()
+time_shooter<- c()
+id_shooter<- c()
+hit_shooter<- c()
+
+
+for(i in c(101:200)){
+  html<- read_html(paste0("http://bns.plaync.com/board/job/article?p=",i,"&cn=shooter"))
+  
+  url1 <- html_nodes(html,".title")%>% 
+    html_nodes('a')%>%
+    html_attr('href')
+  
+
+  for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+    title<- html_node(html, css = "#article_view_subject")%>%
+      html_text() #6-1.게시글 제목 가져오기
+    
+    time<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.feedtime > time")%>%
+      html_text() #6-2.게시글 시간 가져오기
+    
+    hit<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.viewInfo > span.hit > span")%>%
+      html_text() #6-3.게시글 조회수 가져오기
+    
+    id<- html_node(html, css = "#bbsTy_job > div.viewArticleTitle > div.writer > a.nick")%>%
+      html_text() #6-4.게시글 아이디 가져오기
+    
+    text<- html_node(html, xpath = "//*[@id='article_contents']")%>%
+      html_text() #6-5.게시글 내용을 가져오기
+    
+    
+    title_shooter<- c(title_shooter,str_replace_all(title, "\\s",""))
+    time_shooter<- c(time_shooter,str_replace_all(time, "\\s",""))
+    hit_shooter<- c(hit_shooter,str_replace_all(hit, "\\s",""))
+    id_shooter<- c(id_shooter,str_replace_all(id, "\\s",""))
+    text_shooter <- c(text_shooter,str_replace_all(text, "\\s",""))
+    
+  }
+}
+
+
+write.csv(title_shooter, file="c:/r/project/title_shooter_2")
+write.csv(time_shooter, file="c:/r/project/time_shooter_2")
+write.csv(hit_shooter, file="c:/r/project/hit_shooter_2")
+write.csv(id_shooter, file="c:/r/project/id_shooter_2")
+write.csv(text_shooter, file="c:/r/project/text_shooter_2")
+
+
+```
+
+직게 말고 업데이트내용 크롤링
+
+```{r}
+
+
+
+text_update <- c()
+title_update <- c()
+
+for(i in c(1:2)){
+  html<- read_html(paste0("http://bns.plaync.com/news/updateall/article?p=",i,"&cn=updateall"))
+  
+  url1 <- html_nodes(html,"#contents > div > table > tbody > tr > td.subject > strong > a")%>% 
+          html_attr('href')
+  
+   for(j in 1:1){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+     html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+     
+     title<- html_node(html, css = "#bbsTy_update > div.viewArticleTitle > div.subject")%>%
+              html_text() 
+    
+     text<- html_node(html, css = "#bbsTy_update > div.viewArticle")%>%
+             html_text() 
+    
+     #text_update<- c(text_update,str_replace_all(text, "\\s",""))
+     #title_update<- c(title_update,str_replace_all(title, "\\s",""))
+     text_update<- c(text_update,str_replace_all(text, "\\s",""))
+     title_update<- c(title_update,str_replace_all(title, "\\s",""))
+   }
+}
+
+text_update
+title_update
+```
+
+```{r}
+
+text_update <- c()
+title_update <- c()
+time_update <- c()
+
+for(i in c(1:100)){
+  html<- read_html(paste0("http://bns.plaync.com/news/updateall/article?p=",i,"&cn=updateall"))
+  
+  url1 <- html_nodes(html,"#contents > div > table > tbody > tr > td.subject > strong > a")%>% 
+          html_attr('href')
+  
+   for(j in 1:20){ #4.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+    
+     html<- read_html(paste0("http://bns.plaync.com",url1[j])) #5.게시판 글번호를 아래 주소 옆에 붙인 후 글내용만 가져오기
+     
+     title<- html_node(html, css = "#bbsTy_update > div.viewArticleTitle > div.subject")%>%
+              html_text() #6-1.게시글 제목 가져오기
+    
+     text<- html_node(html, css = "#bbsTy_update > div.viewArticle")%>%
+             html_text() #6-2.게시글 시간 가져오기
+     
+     time<- html_node(html, css = "#bbsTy_update > div.viewArticleTitle > div.viewInfo > span.feedtime")%>%
+             html_text() #6-2.게시글 시간 가져오기
+     
+     text<- str_replace_all(text, "\\s", " ")
+     text<- str_replace_all(text, " * ", " ")
+     text_update<- c(text_update,text)
+     
+     title<- str_replace_all(title, "\\s", " ")
+     title<- str_replace_all(title, " * ", " ")
+     title_update<- c(title_update,title)
+     
+     time<- str_replace_all(time, "\\s", " ")
+     time<- str_replace_all(time, " * ", " ")
+     time_update<- c(time_update,time)
+   }
+}
+text_update 
+title_update
+time_update
+```
+
+```{r}
+
+html<- read_html("https://search.naver.com/search.naver?where=nexearch&query=%EB%84%A4%EC%9D%B4%EB%B2%84+%EB%A7%9E%EC%B6%A4%EB%B2%95")
+  
+text <- html_nodes(html,"#_content > div.sn_box > div.check_area > textarea")%>% 
+          html_text(.,title = "나는 넌너너너")
+text  
+
+text <- html_nodes(html,"#_content > div.sn_box > div.check_area > p")%>% 
+          html_text()
+text  
+
+#_content > div.sn_box > div.check_area > textarea
+
+?POST
+library(httr)
+
+library(XML)
+
+sample<- c()
+
+html
+
+#_content > div.sn_box > div.check_area > textarea
+
+
+for(i in 1:length(advice$CONTENTS)){
+post.result = POST("http://speller.cs.pusan.ac.kr/PnuWebSpeller/lib/check.asp",
+                   body = list(text1 = advice$CONTENTS[i]), encode = "form")
+html = htmlParse(post.result, encoding = "UTF-8")
+
+xpathSApply(html, "//td[@class='tdErrWord']", xmlValue)
+sample<- c(sample,xpathSApply(html, "//td[@class='tdReplace']", xmlValue))
+}
+
+sample
+
+
+
+
+```
+

@@ -1,0 +1,483 @@
+```{r}
+mysentence <- "well begun is half done"
+mysentence
+
+word<- strsplit(mysentence," ")
+str(word)
+word
+
+word[[1]][4]
+
+sum(sapply(word,length))  
+NROW(word[[1]])
+
+letters<- list(rep(NA,5))
+letters
+
+letters<- NULL
+
+for(i in 1:sapply(word,length)){letters[[i]] <- word[[1]][i]}
+letters
+
+myword<- list(rep(NA,5))
+for(i in 1:length(letters)){ myword[[1]][i]<- paste(letters[[i]][1],collapse = "") }
+myword
+paste(unlist(myword),collapse = " ")
+
+```
+
+[문제144]  mysentence 이름의 벡터 변수에 'Well begun is half done' 이 값을 입력한 후 공백문자를 기준으로 분리해서
+	word 변수에 입력하세요. word 변수에 타입을 체크한 후 word 변수에 입력된 값의 수를 출력하세요.
+
+mysentence <- "well begun is half done"
+mysentence
+
+word<- str_split(mysentence," ")
+str(word)
+word
+
+[문제145] 문제 144번에 만든 word변수에 있는 값을  letters변수에 공백값을 기준으로 하나씩 저장하세요.
+
+sum(sapply(word,length))   #sub의 갯수를 알고 싶을때
+NROW(word[[1]])
+
+letters<- list(rep(NA,5))   #list형식으로 rep(반복)해서 NA를 5개 집어넣어서 5개의 리스트형을 만들어 두는 것.
+letters
+
+letters<- NULL   #벡터형으로 만들고 싶을 때
+
+for(i in 1:sapply(word,length)){letters[[i]] <- word[[1]][i]}
+letters
+
+[문제146] 문제 145에서 생성한 letters 변수에 있는 값을 myword변수에 하나로 합쳐서 넣어 주세요.
+
+myword<- list(rep(NA,5))
+for(i in 1:length(letters)){ myword[[1]][i]<- paste(letters[[i]][1],collapse = "") }
+myword
+paste(unlist(myword),collapse = " ")
+
+```{r}
+
+a<- list(1:10)
+a
+
+
+sapply(a,length)
+
+for(i in 1:NROW(a[[1]])) {
+                          a[[1]][i] <- ifelse(as.numeric(a[[1]][i]) %% 2 == 0 , "짝수","홀수")
+}
+a
+
+for(i in 1:NROW(a[[1]])) {
+                          a[[1]][i] <- ifelse(as.numeric(grep('[[:digit:]]',a[[1]][i],value = T)) %% 2 == 0 , "짝수","홀수")
+}
+
+
+lapply(a,function(x){ifelse(x%%2 == 0,"짝수","홀수")})
+
+
+
+x<-list(1:10)
+
+odd_even_check <-function(x){
+                              return(ifelse(unlist(x) %%2 != 0 ,"홀수","짝수"))
+}
+
+odd_even_check(x)
+  
+```
+
+[문제147] 리스트 변수에 있는 값을 기준으로 홀수인지 짝수인지를 출력하세요.
+
+
+[[1]]
+ [1]  1  2  3  4  5  6  7  8  9 10
+
+
+[[1]]
+ [1] "홀수" "짝수" "홀수" "짝수" "홀수" "짝수" "홀수" "짝수" "홀수" "짝수"
+
+
+a<- list(1:10)
+a
+
+
+sapply(a,length) = NROW(a[[1]])   #어짜피 1번에 들어가있다는 것을 아니깐.
+#1
+for(i in 1:NROW(a[[1]])) {
+                          a[[1]][i] <- ifelse(as.numeric(a[[1]][i]) %% 2 == 0 , "짝수","홀수")
+}
+
+#2
+for(i in 1:NROW(a[[1]])) {
+                          a[[1]][i] <- ifelse(as.numeric(grep('[[:digit:]]',a[[1]][i],value = T)) %% 2 == 0 , "짝수","홀수")
+}
+
+#3
+lapply(a,function(x){ifelse(x%%2 == 0,"짝수","홀수")})
+
+#4 : 행렬모양으로 뽑고싶을 때
+sapply(x,function(x){ifelse(x%%2 == 0,"짝수","홀수")})
+
+
+
+[문제148] 리스트 변수에 있는 값을 기준으로 홀수인지 짝수인지를 출력하세요.
+       단 사용자 정의 함수를 생성해서 출력하세요.
+x
+
+[[1]]
+ [1]  1  2  3  4  5  6  7  8  9 10
+
+odd_even_check(x)
+
+[1] "홀수" "짝수" "홀수" "짝수" "홀수" "짝수" "홀수" "짝수" "홀수" "짝수"
+
+#1
+x<-list(1:10)
+
+odd_even_check <-function(x){
+                              return(ifelse(unlist(x) %%2 != 0 ,"홀수","짝수"))
+}
+
+odd_even_check(x)
+
+#2
+odd_even_check <- function(x){
+  e <- NULL
+  
+  for(i in 1:sapply(x,length)){
+    if(x[[1]][i] %%2== 0){e <- c(e,"짝수")} else{e <- c(e,"홀수")}
+  }
+  print(e)
+}
+
+odd_even_check(x)
+
+#3   list형식으로
+
+odd_even_check <- function(x){
+  e <- list(rep(NA,sapply(x,length)))
+  
+  for(i in 1:sapply(x,length)){
+    if(x[[1]][i] %%2== 0){e[[1]][i] <- "짝수"} else{e[[1]][i] <- "홀수"}
+  }
+  print(e)
+}
+
+odd_even_check(x)
+
+```{r}
+
+# pie차트
+
+s<- c(100,50,30,10)
+company<- c("A회사","B회사","C회사","D회사")
+
+library(graphics)
+
+pie(s,labels=company)
+
+pie(s,
+    labels=company,
+    main = "회사별 매출액",
+    col = c("red","blue","green","yellow"))
+
+pie(s,
+    labels=company,
+    main = "회사별 매출액",
+    col = rainbow(length(s)))
+
+pie(s,
+    labels=company,
+    main = "회사별 매출액",
+    clockwise = F,
+    col = cm.colors(length(s)))
+
+pie(s,
+    labels=company,
+    main = "회사별 매출액",
+    clockwise = T,
+    col = topo.colors(length(s)))
+
+
+pie(s,
+    labels=company,
+    main = "회사별 매출액",
+    clockwise = T,
+    init.angle = 30,
+    col = heat.colors(length(s)))
+
+
+p<- round(s/sum(s)*100)
+p
+label <- paste(company,p)
+label <- paste(label,'%',sep="")
+label
+
+
+pie(s,
+    labels=label,
+    main = "회사별 매출액",
+    clockwise = F,
+    init.angle = 90,
+    col = heat.colors(length(s)))
+
+
+```
+
+★pie chart
+  질적자료(그룹핑 가능) 양적자료(그룹핑 불가능) 
+
+A회사 : 100억
+B회사 : 50억
+C회사 : 30억
+D회사 : 10억
+
+
+company<- c("A회사","B회사","C회사","D회사")
+
+library(graphics)
+
+pie(s,labels=company)
+
+pie(s,
+    labels=company,
+    main = "회사별 매출액",
+    col = c("red","blue","green","yellow"))
+
+pie(s,
+    labels=company,
+    main = "회사별 매출액",
+    col = rainbow(length(s)))
+
+rainbow(length(s)) : 무지개색
+heat.colors(12) : 적색, 황색에 치우친 색
+terrain.colors(12) : 지구 지형색
+topo.colors(12) : 청색에 가까운 
+cm.colors(12) : 핑크, 블루
+
+pie(s,
+    labels=company,
+    main = "회사별 매출액",
+    clockwise = F,               #시계방향(T), 반시계방향(F)
+    col = cm.colors(length(s)))
+
+pie(s,
+    labels=company,
+    main = "회사별 매출액",
+    clockwise = T,               #시계방향(T), 반시계방향(F)
+    col = topo.colors(length(s)))
+    
+pie(s,
+    labels=company,
+    main = "회사별 매출액",
+    clockwise = T,
+    init.angle = 30,              #시작지점의 각도를 설정
+    col = heat.colors(length(s)))    
+    
+
+p<- round(s/sum(s)*100)
+p
+label <- paste(company,p)
+label <- paste(label,'%',sep="")
+label
+
+
+pie(s,
+    labels=label,
+    main = "회사별 매출액",
+    clockwise = F,
+    init.angle = 90,
+    col = heat.colors(length(s)))
+
+```{r}
+
+pie3D(s,labels=label, explode=0.1,labelcex = 0.8)
+
+
+```
+
+# 그래프 설치
+install.packages("plotrix")
+library(plotrix)
+
+
+# explode : 파이간의 간격,   labelcex : label의 문자크기 
+pie3D(s,labels=lebel, explode=0.1,labelcex = 0.8)
+
+```{r}
+
+s1<-sqldf("select department_id, sum(salary) from emp where department_id is not null group by department_id")
+s1
+s2<-sqldf("select department_id, sum(salary) from emp where department_id is null group by department_id")
+s2
+
+s<- rbind(s1,s2)
+s
+
+paste(round(s$`sum(salary)`/sum(s$`sum(salary)`) * 100,1),"%")
+s$`sum(salary)`
+
+
+pie(s$`sum(salary)`,
+    labels=paste(s$DEPARTMENT_ID,"부서 ",paste(round(s$`sum(salary)`/sum(s$`sum(salary)`) * 100,1),"%")),
+    main = "부서 매출액",
+    col = heat.colors(length(s)),
+    density = 80,
+    radius = 1)
+
+
+
+
+
+r<- aggregate(SALARY~DEPARTMENT_ID,emp,sum)
+r
+aggregate(SALARY~is.na(DEPARTMENT_ID),emp,sum)
+
+pie(r$SALARY,
+    labels=r$DEPARTMENT_ID,
+    main = "부서 매출액",
+    col = heat.colors(length(s)))
+
+pie3D(r$SALARY,labels=r$DEPARTMENT_ID, explode=0.1,labelcex = 1)
+
+
+
+df<- aggregate(SALARY~DEPARTMENT_ID,emp,sum)
+  
+p<- round(df$SALARY/sum(df$SALARY)*100)
+p
+label <- paste(df$DEPARTMENT_ID,"부서",sep="")
+label <- paste(label,p)
+label <- paste(label,"%",sep = "")
+label
+
+pie(df$SALARY,
+    labels=label,
+    main = "부서별 매출액",
+    clockwise = T,
+    init.angle = 180,              #시작지점의 각도를 설정
+    col = heat.colors(length(df$SALARY)),
+    density = 40)
+
+help(pie)
+
+```
+[문제 149] 부서별 급여의 총액을 pie chart로 그려보세요.
+
+r<- aggregate(SALARY~DEPARTMENT_ID,emp,sum)
+
+pie(r$SALARY,
+    labels=r$DEPARTMENT_ID,
+    main = "부서 매출액",
+    col = heat.colors(length(s)))
+
+pie3D(r$SALARY,labels=r$DEPARTMENT_ID, explode=0.1,labelcex = 1)
+
+
+
+#2
+s1<-sqldf("select department_id, sum(salary) from emp where department_id is not null group by department_id")
+s1
+s2<-sqldf("select department_id, sum(salary) from emp where department_id is null group by department_id")
+s2
+
+s<- rbind(s1,s2)
+s
+
+paste(round(s$`sum(salary)`/sum(s$`sum(salary)`) * 100,1),"%")
+s$`sum(salary)`
+
+
+pie(s$`sum(salary)`,
+    labels=paste(s$DEPARTMENT_ID,"부서 ",paste(round(s$`sum(salary)`/sum(s$`sum(salary)`) * 100,1),"%")),
+    main = "부서 매출액",
+    col = heat.colors(length(s)))
+
+
+#3
+df<- aggregate(SALARY~DEPARTMENT_ID,emp,sum)
+  
+p<- round(df$SALARY/sum(df$SALARY)*100)
+p
+label <- paste(df$DEPARTMENT_ID,"부서",sep="")
+label <- paste(label,p)
+label <- paste(label,"%",sep = "")
+label
+
+pie(df$SALARY,
+    labels=label,
+    main = "부서별 매출액",
+    clockwise = T,
+    init.angle = 180,              #시작지점의 각도를 설정
+    col = heat.colors(length(df$SALARY)))
+
+```{r}
+
+sales <- c(150,100,70,30)
+team <- c("영업1팀","영업2팀","영업3팀","영업4팀")
+
+
+barplot(height = sales,
+        width = 0.5,
+        names.arg = team,
+        horiz = F,
+        col = rainbow(length(sales)),
+        main = "영업팀별 영업 실적",
+        ylab = "영업실적(억원)",
+        xlab = "영업팀",
+        ylim = c(0,180))
+
+bp<- barplot(height = sales,
+             width = 0.5,
+             names.arg = team,
+             horiz = F,
+             col = rainbow(length(sales)),
+             main = "영업팀별 영업 실적",
+             ylab = "영업실적(억원)",
+             xlab = "영업팀",
+             ylim = c(0,180))
+
+text(x=bp,y=sales,labels= sales,pos=3)
+
+
+```
+★bar chart(막대그래프)
+
+
+barplot(#height : 막대크기 ,
+        #width : 막대 너비, 
+        #names.arg : 막대아래 출력될 이름에 대한 벡터, 
+        #col : 막대 색상, 
+        #main : 제목, 
+        #sub : 부제,
+        #horiz : T/F (T = 수평막대 , F = 수직막대)
+        #xlab : x축 라벨
+        #ylab : y축 라벨
+        #xlim : x축 크기
+        #ylim : y축 크기)
+
+sales <- c(150,100,70,30)
+team <- c("영업1팀","영업2팀","영업3팀","영업4팀")
+
+--------------------------------------------------
+bp<- barplot(height = sales,
+             width = 0.5,
+             names.arg = team,
+             horiz = F,
+             col = rainbow(length(sales)),
+             main = "영업팀별 영업 실적",
+             ylab = "영업실적(억원)",
+             xlab = "영업팀",
+             ylim = c(0,180))
+
+text(x=bp,y=sales,labels= sales,pos=3)
+--------------------------------------------------
+#그리고 horiz의 T/F에 따라서 lim도 지정해줘야한다.
+#R스튜디오에서는 전부 드래그해서 해야지 값이 보인다.
+pos=1  #막대 끝 선의 아래쪽
+    2  #막대 끝 선의 왼쪽
+    3  #막대 끝 선의 위쪽
+    4  #막대 끝 선의 오른쪽
+

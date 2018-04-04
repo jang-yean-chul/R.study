@@ -1,0 +1,641 @@
+```{r}
+
+ga<- read.csv("c:/r/gardens.csv")
+
+# 산술 평균
+colMeans(ga)
+
+# 중앙값
+length(ga$gardenA)  # 짝수
+sort(ga$gardenA)
+(sort(ga$gardenA)[length(ga$gardenA)/2]+sort(ga$gardenA)[length(ga$gardenA)/2+1])/2
+
+length(ga$gardenB)  # 짝수
+sort(ga$gardenB)
+(sort(ga$gardenB)[length(ga$gardenB)/2]+sort(ga$gardenB)[length(ga$gardenB)/2+1])/2
+
+length(ga$gardenC)  # 짝수
+sort(ga$gardenC)
+(sort(ga$gardenC)[length(ga$gardenC)/2]+sort(ga$gardenC)[length(ga$gardenC)/2+1])/2
+
+# 표준 편차
+sd(ga$gardenA)
+sd(ga$gardenB)
+sd(ga$gardenC)
+
+#표본 분산
+var(ga$gardenA)
+var(ga$gardenB)
+var(ga$gardenC)
+
+# 최대값,최소값
+min(ga$gardenA)
+max(ga$gardenA)
+
+min(ga$gardenB)
+max(ga$gardenB)
+
+min(ga$gardenC)
+max(ga$gardenC)
+
+# 히스토그램
+hist(ga$gardenA,
+     main = "GardenA O3",
+     breaks= c(0:15),
+     xlim = c(0,15))
+hist(ga$gardenB,
+     main = "GardenB O3",
+     breaks= c(0:15),
+     xlim = c(0,15))
+hist(ga$gardenC,
+     main = "GardenC O3",
+     breaks= c(0:15),
+     xlim = c(0,15))
+
+##선생님
+ga_t<- data.frame(GardenMean = colMeans(ga),
+                  GardenVar = c(var(ga$gardenA),var(ga$gardenB),var(ga$gardenC)),
+                  GardenStd = c(sd(ga$gardenA),sd(ga$gardenB),sd(ga$gardenC)))
+ga_t
+# A,B 중에 택1을 해야한다면 평균이 낮은 A를 택한다. 
+# B,C 중에 택1을 해야한다라고 말을 하면 평균은 같지만 분산이 다르므로 B를 구매한다.
+
+plot(ga[,1], 
+     pch = 16, 
+     col = "red",
+     ylim = c(0,15))+
+  
+  abline(h=mean(ga[,1]),
+         col = 'red')+
+  
+  text(3,mean(ga[,1]),
+       "gardenA 평균")
+
+plot(ga[,2], 
+     pch = 16, 
+     col = "blue",
+     ylim = c(0,15))+
+  
+  abline(h=mean(ga[,2]),
+         col = 'blue')+
+  
+  text(3,mean(ga[,1]),
+       "gardenC 평균")
+
+plot(ga[,3], 
+     pch = 16, 
+     col = "green",
+     ylim = c(0,15))+
+  
+  abline(h=mean(ga[,3]),
+         col = 'green')+
+  
+  text(5,mean(ga[,1]),
+       "gardenC 평균")
+
+
+
+hr
+
+
+
+```
+
+[문제202] 세곳의 채소농원으로부터 10일 동안 측정한 pphm 단위의 오존 농도를 보고 받았다. 오존 농도를 분석하세요.
+
+
+      
+양적자료
+      요약방법 - 수치,그래프
+      자료정리 -  산술평균, 중앙값, 표준편차, 분산, 최대값,최소값
+      그래프 -  히스토그램(넓이가 중요한 것), 상자도표, 시계열 도표, 산점도
+      
+ga<- read.csv("c:/r/gardens.csv")
+
+# 산술 평균
+colMeans(ga)
+
+# 중앙값
+length(ga$gardenA)  # 짝수
+sort(ga$gardenA)
+(sort(ga$gardenA)[length(ga$gardenA)/2]+sort(ga$gardenA)[length(ga$gardenA)/2+1])/2
+
+length(ga$gardenB)  # 짝수
+sort(ga$gardenB)
+(sort(ga$gardenB)[length(ga$gardenB)/2]+sort(ga$gardenB)[length(ga$gardenB)/2+1])/2
+
+length(ga$gardenC)  # 짝수
+sort(ga$gardenC)
+(sort(ga$gardenC)[length(ga$gardenC)/2]+sort(ga$gardenC)[length(ga$gardenC)/2+1])/2
+
+# 표준 편차
+sd(ga$gardenA)
+sd(ga$gardenB)
+sd(ga$gardenC)
+
+#표본 분산
+var(ga$gardenA)
+var(ga$gardenB)
+var(ga$gardenC)
+
+# 최대값,최소값
+min(ga$gardenA)
+max(ga$gardenA)
+
+min(ga$gardenB)
+max(ga$gardenB)
+
+min(ga$gardenC)
+max(ga$gardenC)
+
+# 히스토그램
+hist(ga$gardenA,
+     main = "GardenA O3",
+     breaks= c(0:15),
+     xlim = c(0,15))
+hist(ga$gardenB,
+     main = "GardenB O3",
+     breaks= c(0:15),
+     xlim = c(0,15))
+hist(ga$gardenC,
+     main = "GardenC O3",
+     breaks= c(0:15),
+     xlim = c(0,15))
+
+
+
+```{r}
+
+df <- data.frame(
+  sex=factor(rep(c("F", "M"), each=200)),
+  weight=round(c(rnorm(200, mean=55, sd=5), rnorm(200, mean=65, sd=5)))
+  )
+
+mu <- ddply(df, "sex", summarise, grp.mean=mean(weight))
+mu
+df
+
+ggplot(df, aes(x=weight)) + geom_histogram()
+# Change the width of bins
+ggplot(df, aes(x=weight)) + 
+  geom_histogram(binwidth=1)
+# Change colors
+p<- ggplot(df, aes(x=weight)) + 
+  geom_histogram(color="black", fill="white")
+p
+
+# Add mean line
+p+ geom_vline(aes(xintercept=mean(weight)),
+            color="blue", linetype="dashed", size=1)
+# Histogram with density plot
+ggplot(df, aes(x=weight)) + 
+ geom_histogram(aes(y=..density..), colour="black", fill="white")+
+ geom_density(alpha=.2, fill="red") 
+
+# Change line color and fill color
+ggplot(df, aes(x=weight))+
+  geom_histogram(color="darkblue", fill="lightblue")
+# Change line type
+ggplot(df, aes(x=weight))+
+  geom_histogram(color="black", fill="lightblue", linetype="dashed")
+
+# Change histogram plot line colors by groups
+ggplot(df, aes(x=weight, color=sex)) +
+  geom_histogram(fill="white")
+# Overlaid histograms
+ggplot(df, aes(x=weight, color=sex)) +
+  geom_histogram(fill="white", alpha=0.5, position="identity")
+
+
+# Interleaved histograms
+ggplot(df, aes(x=weight, color=sex)) +
+  geom_histogram(fill="white", position="dodge")+
+  theme(legend.position="top")
+# Add mean lines
+p<-ggplot(df, aes(x=weight, color=sex)) +
+  geom_histogram(fill="white", position="dodge")+
+  geom_vline(data=mu, aes(xintercept=grp.mean, color=sex),
+             linetype="dashed")+
+  theme(legend.position="top")
+p
+
+
+# Use custom color palettes
+p+scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))
+# Use brewer color palettes
+p+scale_color_brewer(palette="Dark2")
+# Use grey scale
+p + scale_color_grey() + theme_classic() +
+  theme(legend.position="top")
+
+# Change histogram plot fill colors by groups
+ggplot(df, aes(x=weight, fill=sex, color=sex)) +
+  geom_histogram(position="identity")
+# Use semi-transparent fill
+p<-ggplot(df, aes(x=weight, fill=sex, color=sex)) +
+  geom_histogram(position="identity", alpha=0.5)
+p
+# Add mean lines
+p+geom_vline(mu, aes(xintercept=grp.mean, color=sex),
+             linetype="dashed")
+
+
+# Use custom color palettes
+p+scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))
+# use brewer color palettes
+p+scale_color_brewer(palette="Dark2")+
+  scale_fill_brewer(palette="Dark2")
+# Use grey scale
+p + scale_color_grey()+scale_fill_grey() +
+  theme_classic()
+
+
+p + theme(legend.position="top")
+p + theme(legend.position="bottom")
+# Remove legend
+p + theme(legend.position="none")
+
+
+p<-ggplot(df, aes(x=weight))+
+  geom_histogram(color="black", fill="white")+
+  facet_grid(sex ~ .)
+p
+# Add mean lines
+p+geom_vline(data=mu, aes(xintercept=grp.mean, color="red"),
+             linetype="dashed")
+
+# Basic histogram
+ggplot(df, aes(x=weight, fill=sex)) +
+  geom_histogram(fill="white", color="black")+
+  geom_vline(aes(xintercept=mean(weight)), color="blue",
+             linetype="dashed")+
+  labs(title="Weight histogram plot",x="Weight(kg)", y = "Count")+
+  theme_classic()
+# Change line colors by groups
+ggplot(df, aes(x=weight, color=sex, fill=sex)) +
+  geom_histogram(position="identity", alpha=0.5)+
+  geom_vline(data=mu, aes(xintercept=grp.mean, color=sex),
+             linetype="dashed")+
+  scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+  labs(title="Weight histogram plot",x="Weight(kg)", y = "Count")+
+  theme_classic()
+
+# Change line colors by groups
+ggplot(df, aes(x=weight, color=sex, fill=sex)) +
+geom_histogram(aes(y=..density..), position="identity", alpha=0.5)+
+geom_density(alpha=0.6)+
+geom_vline(data=mu, aes(xintercept=grp.mean, color=sex),
+           linetype="dashed")+
+scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+labs(title="Weight histogram plot",x="Weight(kg)", y = "Density")+
+theme_classic()
+
+
+p<-ggplot(df, aes(x=weight, color=sex)) +
+  geom_histogram(fill="white", position="dodge")+
+  geom_vline(data=mu, aes(xintercept=grp.mean, color=sex),
+             linetype="dashed")
+# Continuous colors
+p + scale_color_brewer(palette="Paired") + 
+  theme_classic()+theme(legend.position="top")
+# Discrete colors
+p + scale_color_brewer(palette="Dark2") +
+  theme_minimal()+theme_classic()+theme(legend.position="top")
+# Gradient colors
+p + scale_color_brewer(palette="Accent") + 
+  theme_minimal()+theme(legend.position="top")
+
+
+```
+
+```{r}
+class<- data.frame(A = c(35,55,60,70,100), B = c(55,60,65,65,75))
+
+class
+
+colMeans(class)
+
+hist(class$A,
+     breaks=c(seq(0,100,5)),
+     ylim = c(0,5),
+     col = "blue")+
+
+hist(class$B,
+     breaks=c(seq(0,100,5)),
+     ylim = c(0,5),
+     col = "red")
+
+A<- c(35,55,60,70,100)
+B<- c(55,60,65,65,75)
+
+df<- data.frame(class = c(rep('A',length(A)),rep('B',length(B))), score = c(A,B))
+
+mu <- ddply(df, "class", summarise, grp.mean=mean(score))
+
+
+ggplot(df, aes(x=score, color=class)) +
+  geom_histogram(fill="white",binwidth=5)
+
+ggplot(df, aes(x=score, color=class)) +
+  geom_histogram(fill="white", alpha = 0.5, position="identity")
+
+
+
+
+ggplot(df, aes(x=score, color=class, fill=class)) +
+geom_histogram(aes(y=..density..), position="identity", alpha=0.5)+
+geom_density(alpha=0.6)+
+geom_vline(data=mu, aes(xintercept=grp.mean, color=class),
+           linetype="dashed")+
+scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+labs(title="Score histogram plot",x="Score", y = "Density")+
+theme_classic()
+
+
+help("geom_histogram")
+```
+
+[문제203]A반 B 반의 수학점수를 비교하세요.
+
+A반 35,55,60,70,100
+B반 55,60,65,65,75
+
+
+class<- data.frame(A = c(35,55,60,70,100), B = c(55,60,65,65,75))
+
+class
+
+colMeans(class)
+
+hist(class$A,
+     breaks=c(seq(0,100,5)),
+     ylim = c(0,5),
+     col = "blue")+
+
+hist(class$B,
+     breaks=c(seq(0,100,5)),
+     ylim = c(0,5),
+     col = "red")
+
+A<- c(35,55,60,70,100)
+B<- c(55,60,65,65,75)
+
+df<- data.frame(class = c(rep('A',length(A)),rep('B',length(B))), score = c(A,B))
+
+mu <- ddply(df, "class", summarise, grp.mean=mean(score))
+
+
+ggplot(df, aes(x=score, color=class)) +
+  geom_histogram(fill="white",binwidth=5)
+
+ggplot(df, aes(x=score, color=class)) +
+  geom_histogram(fill="white", alpha = 0.5, position="identity")
+
+
+
+
+ggplot(df, aes(x=score, color=class, fill=class)) +
+geom_histogram(aes(y=..density..), position="identity", alpha=0.5)+
+geom_density(alpha=0.6)+
+geom_vline(data=mu, aes(xintercept=grp.mean, color=class),
+           linetype="dashed")+
+scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+labs(title="Score histogram plot",x="Score", y = "Density")+
+theme_classic()
+
+
+
+```{r}
+score<-read.csv("c:/r/성적.csv",stringsAsFactors = F)
+score
+
+sc_mean<- c("Mean",mean(score$sql),mean(score$r))
+sc_var<- c("Var",var(score$sql), var(score$r))
+sc_sd<- c("Sd", round(sd(score$sql),2), round(sd(score$r),2))
+
+score<-rbind(score, sc_mean, sc_var,sc_sd)
+
+score
+
+```
+
+[문제204] 성적.csv 파일에 과목별 평균값, 분산값, 행을 추가하시오.
+
+score<-read.csv("c:/r/성적.csv",stringsAsFactors = F)
+score
+
+sc_mean<- c("Mean",mean(score$sql),mean(score$r))
+sc_var<- c("Var",var(score$sql), var(score$r))
+sc_sd<- c("Sd", round(sd(score$sql),2), round(sd(score$r),2))
+
+score<-rbind(score, sc_mean, sc_var,sc_sd)
+
+score
+
+
+
+```{r}
+#표준화 작업, 정규화 작업
+carrick_z<- (90 - 72) / 20     
+pogba_z<- (90 - 72) / 12
+carrick_z
+pogba_z
+
+carrick_t<- ((90 - 72) / 20) * 10 + 50     
+pogba_t<- ((90 - 72) / 12) * 10 + 50
+carrick_t
+pogba_t
+
+
+```
+
+[문제 205] carrick의 sql = 90점과 pogba의 r = 90 둘중 어느 사람이 더 잘한 것인가?
+
+
+# 표준화 작업!
+## 서로 값은 같지만 값의 의미는 다른 것
+
+## 표준값, 편차값 : 이유? 비교해야 할 데이터의 기준이 서로 다르므로 같은 기준을 만들어서 비교
+
+### 표준값 : (각 데이터 - 평균) / 표준 편차
+    carrick_z<- (90 - 72) / 20     
+    pogba_z<- (90 - 72) / 12
+
+### 편차값 : 표준값 * 10 + 50 (평균 50, 표준편차 10)   [편차값을 만들어야 할떄 평균 50, 표준편차 10은 고정으로 작업 진행한다.]
+    carrick_t<- ((90 - 72) / 20) * 10 + 50     
+    pogba_t<- ((90 - 72) / 12) * 10 + 50
+
+
+```{r}
+
+a<- (1200-1000) / 200
+b<- (120-100) / 10
+
+a<- a* 10 + 50
+b<- b* 10 + 50
+
+a
+b
+
+```
+[문제206] 지난달을 기준으로 a 사원은 영업 매출이 월 평균 1000만원, 표준편차가 200만원인  대리점을 담당하고있고,
+b 사원은 영업 매출이 월 평균 100만원, 표준편차가 10만원인 대리점을 담당하고 있다.
+이번달 a 사원이 담당하는 대리점의 매출이 1200만원으로 늘었고, b 사원이 담당하는 대리점은 120만원 늘었다.
+평균 매출 대비 20% 상승했다. 누가 잘한거죠?
+
+a<- (1200-1000) / 200
+b<- (120-100) / 10
+
+a<- a* 10 + 50
+b<- b* 10 + 50
+
+a
+b
+```{r}
+blood<- read.csv("c:/r/blood.csv", stringsAsFactors=F,header=T)
+blood
+
+colnames(blood)<- c("num","type","char")
+blood
+
+x<- xtabs(~type+char,blood)
+x
+
+prop.table(x,1)
+
+barplot(x, names.arg=colnames(x), beside = T,
+        main="혈액형별 성격",
+        xlab = "성격",
+        ylab= "인원수",
+        sub = "(성격)",
+        col = rainbow(4),
+        col.sub= "red",
+        legend.text = c('A','AB','B','O'))
+
+
+
+
+ggplot(blood, aes(x=type,y=char),colour = type)+
+  geom_point()
+
+ban<- read.csv("c:/r/ban_blood.csv")
+colnames(ban)<- c("type", "music","char","hob")
+A<- ban[ban$type=="A",]
+B<- ban[ban$type=="B",]
+O<- ban[ban$type=="O",]
+AB<- ban[ban$type=="AB",]
+A
+B
+O
+AB
+
+
+
+```
+
+[문제207] 혈액형_성격_설문 파일입니다. 분석하세요.
+
+
+```{r}
+
+df<- data.frame(mean = c(45000,5000), var = c(3000,2000))
+
+rownames(df)<- c('A','B')
+
+CV<- round((df$var / df$mean) * 100,2)
+
+df<- cbind(df,CV)
+df
+```
+
+# 변동계수(Coefficient of variation)
+  #CV = (표준편차 / 표본평균) * 100
+
+#평균주가가 동일한 수준이라면 주가의 표준편차가 클수록 주가변동이 심하다고 할 수 있다. 그러나 위와 같이 A회사 주가 표준편차는 3000원으로 B회사의 표준 편차 2000원 보다 크지마 A회사 주가의 표준편차는 평균자가 45000원을 기준으로한 3000원인데 비해 B회사 주가의 표준편차는 평균주가 5000원을 기준으로 한 2000원이므로 표준편차만을 가지고 두 회사 주가 변동성을 파악 할 수는 없다.
+  
+[문제 208] A, B 두 회사의 주가를 한달동안 조사하여 평균주가, 표준편차를 조사한 결과입니다. 분석하세요
+
+A 회사   평균 = 45000원  표준편차 = 3000원
+B 회사   평균 = 5000원   표준편차 = 2000원 
+
+df<- data.frame(mean = c(45000,5000), var = c(3000,2000))
+
+rownames(df)<- c('A','B')
+
+CV<- round((df$var / df$mean) * 100,2)
+
+df<- cbind(df,CV)
+df
+
+```{r}
+score<- scan()
+#> score<- scan()
+#1: 18 15 12 6 8 2 3 5 20 10
+#11: 
+
+((length(score[score< 12]) + 0.5) / length(score)) * 100
+
+  
+```
+
+
+#백분위수(percentile)
+  - 자료를 크기 순서대로 나열해 놓고 100등분한 후에 위치에 있는 값을 말한다.
+  - 백분위수 = ((x보다 작은 값의 수 + 0.5) / 전체 자료수) * 100
+  
+[문제 209] 10명 학생의 시험점수 입니다. 20점만점이 기준입니다. 12점에 대한 백분위수를 구하세요.
+
+18 15 12 6 8 2 3 5 20 10
+
+score<- scan()
+#> score<- scan()
+#1: 18 15 12 6 8 2 3 5 20 10
+#11: 
+
+((length(score[score< 12]) + 0.5) / length(score)) * 100
+[1] 65
+
+
+```{r}
+h<- c(165,168,171,174,177,200)
+quantile(h)
+summary(h)
+
+boxplot(h)
+
+bp<- boxplot(h,horizontal=T)
+
+text(bp$out,rep(1,NROW(bp$out)),
+     labels = bp$out, pos=c(1,1,3,1))
+
+IQR(h) * 1.5
+
+h - IQR(h)
+
+
+
+```
+
+
+관측치의 25% 다음 25% 다음 25% 마지막 25%
+0%-------------25%-------------50%-------------75%-------------100%
+최소값         Q1           Q2(중앙값)          Q3            최대값
+           일사분위수       이사분위수      삼사분위수
+
+
+# 사분위수 범위 = IQR(h)   = Q3-Q1
+
+사분위수 범위 * 1.5
+
+Q1 - (IQR(h) * 1.5) 이 값보다 낮으면 이상치
+Q3 + (IQR(h) * 1.5) 이 값보다 높으면 이상치
+
+
+
+
+

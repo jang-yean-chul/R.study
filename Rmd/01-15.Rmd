@@ -1,0 +1,278 @@
+```{r}
+       
+x<- c('월요일','화요일','수요일','목요일','금요일','토요일','일요일')
+
+y<- c(70,151,210,180,250,300,40)
+
+colors<- c()
+colors
+for(i in 1:length(y)){if(y[i] >= 200){colors<- c(colors,"red")}
+                      else if(y[i] <= 199 & y[i] >= 150){colors<- c(colors,"yellow")}
+                      else if(y[i] <= 149 & y[i] >= 100){colors<- c(colors,"blue")}
+                      else if(y[i] <= 99 & y[i] >= 50){colors<- c(colors,"pink")}
+                      else if(y[i] <= 49 & y[i] >= 0){colors<- c(colors,"black")}
+}
+
+
+barplot(y,
+        main = "요일별 판매량",
+        names.arg = x,
+        col=colors,
+        ylim = c(0,350),
+        cex.names = 1,
+        ylab = "판매량(억)",
+        legend.text = c("200↑","199~150","149~100","99~50","49~0"),
+        args.legend = list(cex=0.8,x="topright",fill= c("red","yellow","blue","pink","black")))
+
+abline(h=seq(0,350,10),lty=1,lwd=0.1)
+
+
+
+
+
+survey
+str(survey)
+
+t(survey)
+
+x <- ordered(t(survey),c("매우좋음","좋음","보통","나쁨","매우나쁨"))
+x
+dfx<- data.frame(feel= sort(unique(x)), cn = rep(0,length(levels(x))))
+dfx
+
+for(i in x) {dfx[dfx$feel== i , 'cn'] <- dfx[dfx$feel==i,'cn']+1}
+dfx
+
+
+
+barplot(dfx$cn,
+        main = "itwill hotel 고객만족도",
+        ylim = c(0,sum(dfx$cn)),
+        names.arg= dfx$feel,
+        legend.text = dfx$feel,
+        col = rainbow(length(dfx$feel)),
+        xlab = "만족도",
+        ylab = "만족도(명)")
+abline(h=seq(0,sum(dfx$cn),5),lty=1,lwd=0.1)
+
+pie(dfx$cn,
+    labels = paste(dfx$feel,"\n",x2,"명"),
+    main = "itwill hotel 고객만족도",
+    col = rainbow(length(dfx$feel)),
+    init.angle = 40)
+
+pie3D(dfx$cn,
+     labels = paste(dfx$feel,"\n",dfx$cn,"명"),
+     main = "itwill hotel 고객만족도",
+     col = rainbow(length(dfx$feel)),
+     labelcex = 0.8,
+     explode = 0.1,
+     start= 1)
+
+```
+[문제165] 한 주간 영업 판매량을 막대그래프를 생성하데 막대그래프의 색상은 판매량에 따라 다르게 해야 합니다.
+          판매량이 200 이상이면 red, 199 ~ 150 이면 yellow, 149 ~ 100 이면 blue, 99 ~ 50 pink, 49 ~ black색으로 출력하세요.
+
+       월요일 : 70
+       화요일 : 151
+       수요일 : 210
+       목요일 : 180
+       금요일 : 250
+       토요일 : 300
+       일요일 : 40
+       
+x<- c('월요일','화요일','수요일','목요일','금요일','토요일','일요일')
+y<- c(70,151,210,180,250,300,40)
+
+colors<- c()
+
+for(i in 1:length(y)){if(y[i] >= 200){colors<- c(colors,"red")}
+                      if(y[i] <= 199 & y[i] >= 150){colors<- c(colors,"yellow")}
+                      if(y[i] <= 149 & y[i] >= 100){colors<- c(colors,"blue")}
+                      if(y[i] <= 99 & y[i] >= 50){colors<- c(colors,"pink")}
+                      if(y[i] <= 49 & y[i] >= 0){colors<- c(colors,"black")}
+}
+
+
+barplot(y,
+        main = "요일별 판매량",
+        names.arg = x,
+        col=colors,
+        ylim = c(0,350),
+        cex.names = 0.7,
+        legend.text = c("200↑","199~150","149~100","99~50","49~0"),
+        args.legend = list(cex=0.8,x="topright",fill= c("red","yellow","blue","pink","black")))
+abline(h=seq(0,350,10),lty=3,lwd=0.2) 
+#seq(0에서 350까지 10씩 선긋기) lty(1= 실선 숫자 증가 할수록 점선의 밀도 상승) lwd(라인 와이드 = 선두께)
+
+[문제166] itwill hotel 투수객 조사를 통해 고객들의 평가에 대한 정보는  survey.csv에 저장 되어 있습니다.
+          파일 내용을 통해서 호텔에 대한 고객들의 반응을 그래프로 생성하세요.
+
+survey
+str(survey)
+
+t(survey)
+
+x <- ordered(t(survey),c("매우좋음","좋음","보통","나쁨","매우나쁨"))
+x
+dfx<- data.frame(feel= sort(unique(x)), cn = rep(0,length(levels(x))))
+dfx
+
+for(i in x) {dfx[dfx$feel== i , 'cn'] <- dfx[dfx$feel==i,'cn']+1}
+dfx
+
+
+
+barplot(dfx$cn,
+        main = "itwill hotel 고객만족도",
+        ylim = c(0,sum(dfx$cn)),
+        names.arg= dfx$feel,
+        legend.text = dfx$feel,
+        col = rainbow(length(dfx$feel)),
+        xlab = "만족도",
+        ylab = "만족도(명)")
+abline(h=seq(0,sum(dfx$cn),5),lty=1,lwd=0.1)
+
+pie(dfx$cn,
+    labels = paste(dfx$feel,"\n",x2,"명"),
+    main = "itwill hotel 고객만족도",
+    col = rainbow(length(dfx$feel)),
+    init.angle = 30)
+
+pie3D(dfx$cn,
+     labels = paste(dfx$feel,"\n",dfx$cn,"명"),
+     main = "itwill hotel 고객만족도",
+     col = rainbow(length(dfx$feel)),
+     labelcex = 0.8,
+     explode = 0.1,
+     start= 1)
+     
+     
+     
+#선생님 답안
+survey <- read.csv("c:/r/survey.csv", header=F, stringsAsFactors = F)
+
+s <- as.vector(t(survey))
+
+u <- unique(s)
+u
+u <- factor(u, levels=c('매우좋음','좋음','보통','나쁨','매우나쁨'))
+u
+result <- data.frame(eval = sort(u), cn = rep(0,each=NROW(u)))
+result
+
+for(i in s){
+      result[result$eval==i,'cn'] <- result[result$eval==i,'cn'] +1 
+    }
+
+result
+
+
+
+proportion <- round((result$cn/sum(result$cn))*100)
+proportion
+
+label <- paste(result$eval,"\n",result$cn,"명",sep="")
+label
+
+pie(result$cn, 
+    init.angle=90,
+    labels=label, 
+    main="itwill hote 품질 조사",
+    col = rainbow(length(result$eval)))
+
+
+
+barplot(height = result$cn,
+        width = 0.5, # 폭
+        names.arg= result$eval,
+        horiz = FALSE,
+        col = rainbow(length(result$eval)),
+        main = "itwill hotel 품질 조사",
+        xlab = "등급",
+        ylab = "도수",
+        ylim = c(0,10))
+
+```{r}
+hos
+hosdata<- hos[,!colnames(hos) %in% '표시과목']
+hosdata<- as.matrix(hosdata)
+
+barplot(hosdata,
+        names.arg = colnames(hosdata),
+        xlab = '지역',
+        ylab = '병원수',
+        ylim = c(0,max(hosdata)+50),
+        col = rainbow(length(hos$표시과목)),
+        beside = T,
+        main = "서울시 주요 구별 과목별 병원현황 2016년\n출처[국민건강보험공단]",
+        cex.names = 0.7,
+        cex.axis = 0.7,
+        cex.main = 0.8)
+abline(h=seq(0,max(hosdata)+50,10),lty=1,lwd=0.05)
+legend('topright', legend = hos$표시과목,fill= rainbow(length(hos$표시과목)),text.col ="white", cex = 0.7,bg= "black")
+
+
+```
+[문제167] 2016년_서울_주요구별_병원현황.csv file을 읽어 들인후 구별로 진료과목별 병원현황을 그룹막대형 그래프로 만드세요.
+     
+hos
+hosdata<- hos[,!colnames(hos) %in% '표시과목']
+hosdata<- as.matrix(hosdata)
+
+barplot(hosdata,
+        names.arg = colnames(hosdata),
+        xlab = '지역',
+        ylab = '병원수',
+        ylim = c(0,max(hosdata)+50),
+        col = rainbow(length(hos$표시과목)),
+        beside = T,
+        main = "서울시 주요 구별 과목별 병원현황 2016년\n출처[국민건강보험공단]",
+        cex.names = 0.7,
+        cex.axis = 0.7,
+        cex.main = 0.8)
+abline(h=seq(0,max(hosdata)+50,10),lty=1,lwd=0.05)
+legend('topright', legend = hos$표시과목,fill= rainbow(length(hos$표시과목)), cex = 0.7)
+
+#legend
+legend.text = hos$표시과목,
+args.legend=list(cex= 0.7)
+```{r}
+hos_g<- hos[,c('강남구')]
+hosdata<- hos[,!colnames(hos) %in% '표시과목']
+hosdata<- as.matrix(hosdata)
+
+
+barplot(hos_g/10,
+        names.arg = hos$표시과목,
+        ylab = '병원 수(10개)',
+        col = rainbow(length(hos$표시과목)),
+        ylim = c(0,(max(hosdata)+50)/10),
+        cex.names = 0.7,
+        main = "강남구 병원현황",
+        cex.axis = 0.7,
+        las= 2,
+        border = "white")
+abline(h=seq(0,(max(hosdata)+50)/10,5),lty=2,lwd= 0.05)
+
+
+
+```
+[문제168] 강남구 과목별 병원수만 막대형 그래프를 생성하세요.(단 10개 1개로 표현하세요.)
+
+hos_g<- hos[,c('강남구')]
+
+barplot(hos_g/10,
+        names.arg = hos$표시과목,
+        ylab = '병원 수(10개)',
+        col = rainbow(length(hos$표시과목)),
+        ylim = c(0,(max(hosdata)+50)/10),
+        cex.names = 0.7,
+        main = "강남구 병원현황",
+        cex.axis = 0.7,
+        las= 2,    #X축의 글자 눕히기
+        border = "white")    #데이터값의 축 테두리를 없앤다
+abline(h=seq(0,(max(hosdata)+50)/10,5),lty=2,lwd= 0.05)
+
+```{r}
+

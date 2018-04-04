@@ -1,0 +1,69 @@
+```{r}
+
+academy <- read.csv("c:/r/academy.csv", header=T, stringsAsFactors=F )
+academy
+academy2 <- academy[ , c(3,4)] 
+academy2
+plot(academy2)
+
+#install.packages("factoextra")
+library(factoextra)
+
+km <- kmeans(academy2, 4)
+
+fviz_cluster(km, data = academy2,
+             stand=F, 
+             ellipse.type = "t")
+
+
+#install.packages("tripack")
+
+library(tripack)
+library(RColorBrewer)
+
+color <- brewer.pal(4, "Pastel1")
+academy_V <- voronoi.mosaic(km$centers[,1], km$centers[,2])
+academy_P <- voronoi.polygons(academy_V)
+plot(academy2, pch = 19, col = color[km$cluster])
+points(km$centers[,1], km$centers[,2], pch =3, cex = 1.5, lwd=2)
+plot(academy_V, add = T)
+
+
+
+```
+
+[문제229] 영어와 수학점수로 크게 4개의 그룹의 학생집합으로 분류하세요
+
+
+academy <- read.csv("c:/r/academy.csv", header=T, stringsAsFactors=F )
+academy2 <- academy[ , c(3,4)] 
+academy2
+plot(academy2)
+
+install.packages("factoextra")
+library(factoextra)
+
+km <- kmeans(academy2, 4)
+
+fviz_cluster(km, data = academy2,
+             stand=F, 
+             ellipse.type = "t")
+
+
+install.packages("tripack")
+
+library(tripack)
+library(RColorBrewer)
+
+color <- brewer.pal(4, "Pastel1")
+academy_V <- voronoi.mosaic(km$centers[,1], km$centers[,2])
+academy_P <- voronoi.polygons(academy_V)
+plot(academy2, pch = 19, col = color[km$cluster])
+points(km$centers[,1], km$centers[,2], pch =3, cex = 1.5, lwd=2)
+plot(academy_V, add = T)
+
+```{r}
+
+```
+
+

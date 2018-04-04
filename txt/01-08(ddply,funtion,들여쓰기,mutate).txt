@@ -1,0 +1,530 @@
+```{r}
+a<- sqldf("select department_id , sum(salary) from emp where department_id is not null group by department_id")
+a
+
+b<- sqldf("select department_id, sum(salary) SALARY from emp where department_id is NULL")
+b[1,1] <- '소속부서X'
+b
+
+as.vector(sqldf("select sum(salary) from emp"))
+
+c[1:2] <- sqldf("select sum(salary) from emp")
+names(c)<- c("DEPARTMENT_ID", "SALARY")
+c
+
+a2<- rbind(a,b,c)
+a2
+
+a3<- rbind(a2,c)
+a3
+delete(a3)
+
+a3<- 0
+
+d<- aggregate(SALARY~DEPARTMENT_ID,emp, sum)
+d
+e<- c("소속부서X" , sum(emp[is.na(emp$DEPARTMENT_ID),"SALARY"]))
+e
+f<- c("총액", sum(emp$SALARY))
+f
+
+rbind(d,e,f)
+
+
+
+
+fruits_sales
+
+tapply(list(fruits_sales$price,fruits_sales$qty), fruits_sales$name, sum)
+
+t1<- tapply(fruits_sales$price, fruits_sales$name, sum)
+t2<- tapply(fruits_sales$qty, fruits_sales$name, sum)
+t3<-cbind(price = t1,qty = t2)
+t3
+
+
+a1<- aggregate(fruits_sales$price ~ fruits_sales$name, fruits_sales,sum)
+a2<- aggregate(fruits_sales$qty ~ fruits_sales$name, fruits_sales,sum)
+merge(a1,a2)
+
+
+sqldf("select name, sum(qty) qty, sum(price) price from fruits_sales group by name")
+
+```
+[문제127] 아래와 같이 결과를 출력하세요.
+
+ 
+   DEPARTMENT_ID SALARY
+1             10   4400
+2             20  19000
+3             30  24900
+4             40   6500
+5             50 156400
+6             60  28800
+7             70  10000
+8             80 304500
+9             90  58000
+10           100  51608
+11           110  20308
+12     소속부서X   7000
+13          총액 691416
+
+
+d<- aggregate(SALARY~DEPARTMENT_ID,emp, sum)
+d
+e<- c("소속부서X" , sum(emp[is.na(emp$DEPARTMENT_ID),"SALARY"]))
+e
+f<- c("총액", sum(emp$SALARY))
+f
+
+rbind(d,e,f)
+
+
+[문제128] fruits_sales.csv file 읽어 들인 후 과일 이름별 판매량, 판매합계를 구하세요.
+
+- tapply 방법
+t1<- tapply(fruits_sales$price, fruits_sales$name, sum)
+t2<- tapply(fruits_sales$qty, fruits_sales$name, sum)
+t3<-cbind(price = t1,qty = t2)
+t3
+
+- aggregate 방법
+a1<- aggregate(fruits_sales$price ~ fruits_sales$name, fruits_sales,sum)
+a2<- aggregate(fruits_sales$qty ~ fruits_sales$name, fruits_sales,sum)
+merge(a1,a2)
+
+- sqldf 방법
+
+sqldf("select name, sum(qty) qty, sum(price) price from fruits_sales group by name")
+```{r}
+
+install.packages("plyr")
+library("plyr")
+
+ddply(emp, "DEPARTMENT_ID", summarise, avg_sal = mean(SALARY))
+ddply(emp, "DEPARTMENT_ID", summarise, sum_sal = sum(SALARY),avg_sal = mean(SALARY))
+ddply(emp, "DEPARTMENT_ID", summarise, max_sal = max(SALARY),min_sal = min(SALARY))
+
+ddply(emp, c("DEPARTMENT_ID", "JOB_ID"), summarise, sum_sal = sum(SALARY), avg_sal = mean(SALARY))
+
+ddply(fruits_sales, "name", summarise, sum_price = sum(price), sum_qty = sum(qty))
+
+ddply(fruits_sales, 'year', summarise, s_qty=sum(qty),s_price=sum(price))
+ddply(fruits_sales, c('year','name'), summarise, s_qty=sum(qty),s_price=sum(price))
+
+ddply(fruits_sales, 'name', transform, s_qty=sum(qty),pct_qty = (100*qty)/sum(qty))
+ddply(fruits_sales, 'year', transform, s_qty=sum(qty),pct_qty = (100*qty)/sum(qty))
+
+```
+★ddply
+    데이터 프레임을 분할하고 함수를 적용한 뒤 결과를 데이터 프레임으로 반환하는 함수
+    
+install.packages("plyr")
+library("plyr")
+
+ddply(data,기준컬럼, 함수)
+
+ddply(emp, "DEPARTMENT_ID", summarise, avg_sal = mean(SALARY))
+ddply(emp, "DEPARTMENT_ID", summarise, sum_sal = sum(SALARY),avg_sal = mean(SALARY))
+ddply(emp, "DEPARTMENT_ID", summarise, max_sal = max(SALARY),min_sal = min(SALARY))
+
+summarise : 기준 컬럼의 데이터끼리 모은 후 함수를 적용해서 값을 출력
+
+ddply(fruits_sales, "name", summarise, sum_price = sum(price), sum_qty = sum(qty))
+
+ddply(fruits_sales, 'year', summarise, s_qty=sum(qty),s_price=sum(price))
+ddply(fruits_sales, c('year','name'), summarise, s_qty=sum(qty),s_price=sum(price))
+
+
+transform : 각 행별로 연산을 수행해서 해당 값을 출력하는 기능(비율값)
+
+# 100프로를 기준으로 pct구하는 법을 알아두자 
+ddply(fruits_sales, 'name', transform, s_qty=sum(qty),pct_qty = (100*qty)/sum(qty))
+
+
+
+```{r}
+ddply(fruits_sales, "name", summarise, sum_price = sum(price), sum_qty = sum(qty))
+```
+
+
+[문제129] fruits_sales.csv file 읽어 들인 후 과일 이름별 판매량, 판매합계를 구하세요.
+	  ddply함수를 이용하세요.
+
+ddply(fruits_sales, "name", summarise, sum_price = sum(price), sum_qty = sum(qty))
+
+```{r}
+
+Sys.Date()
+
+date1 <- function(){
+        return(Sys.Date())
+          }
+date1()
+
+date2 <- function(){
+            Sys.Date()
+            }
+date2()
+
+time <- function(){
+        Sys.time()
+        }
+time()
+
+Sys.Date
+function () 
+as.Date(as.POSIXlt(Sys.time()))
+
+hap <- function(x,y){
+        res <- x+y
+        return(res)
+        }
+hap(1,2)
+```
+★함수(function)
+ - 사용자가 정의하는 함수를 생성할 수 있다.
+ - 자주 반복되어 사용하는 기능을 정의하는 프로그램
+ - 코드가 간단해진다.
+ 
+함수이름 <- function(){
+            함수 수행해야할 코드
+            return(반환값) #선택
+            }
+Sys.Date()
+
+date1 <- function(){
+        return(Sys.Date())
+          }
+date1()
+
+date2 <- function(){
+            Sys.Date()
+            }
+date2()
+
+time <- function(){
+        Sys.time()
+        }
+time()
+
+Sys.Date
+function () 
+as.Date(as.POSIXlt(Sys.time()))
+
+hap <- function(x,y){
+        res <- x+y
+        return(res)
+        }
+hap(1,2)
+```{r}
+
+hap <- function(x){s<- 0
+                   for (i in 1:x) {s <- s+i}
+                   return(s)}
+
+
+hap(10)
+
+myfactorial <- function(x){s<-1
+                           for (i in 1:x){ifelse(x==0, s==1, s<- s*i)}
+                           return(s)}
+
+myfactorial(1)
+
+
+
+myfac<- function(x){
+                    if(x==0|x==1){return(1)}
+                    else{return(x *myfac(x-1))}
+                    }
+myfac(4)
+
+
+find<- function(x){
+                   return(emp[emp$EMPLOYEE_ID == x,c("LAST_NAME","SALARY")])
+                    }
+find(105)
+
+```
+
+
+[문제 130] hap 함수에 인자값을 입력하게되면 1부터해서 입력숫자까지의 합을 구하시오.
+
+hap <- function(x){s<- 0
+                   for (i in 1:x) {s <- s+i}
+                   print(s)}
+
+
+hap(10)
+
+[문제131] factorial 함수를 생성하세요.
+
+#1
+myfactorial <- function(x){s<-1
+                           for (i in 1:x){ifelse(x==0, s==1, s<- s*i)}
+                           return(s)}
+
+myfactorial(6)
+
+#2
+myfac<- function(x){
+                    if(x==0|x==1){return(1)}
+                    else{return(x *myfac(x-1))}
+                    }
+myfac(4)
+
+[문제132] 사원 번호를 입력 값으로 받아서 사원의 LAST_NAME, SALARY를 출력하는 함수를 생성하세요.
+
+
+> find(100)
+   LAST_NAME SALARY
+10      King  24000
+
+
+find<- function(x){
+                   return(emp[emp$EMPLOYEE_ID == x,c("LAST_NAME","SALARY")])
+                    }
+find(100)
+
+```{r}
+ls()
+rm(t1)
+
+f<- function(x,y){
+                  print(x)
+                  print(y)
+                  }
+f(10,20)  
+f(y=20,x=10)
+
+sum(1,2,3)
+sum(1,2)
+
+f<- function(...){
+                  myargs <- list(...)
+                  for (i in myargs){
+                                    print(i)
+                                    }
+                  }
+
+f(1,2,3,4)
+f('a','b','c','d')
+
+f1<- function(...){
+                    myargs <- c(...)
+                    var <- NULL
+                    for(i in myargs){
+                                    var <- c(var, i)
+                                    }
+                    return(var)}
+
+a <- f1(1,2,3,4)
+a
+b<- f1('a','b','c')
+b
+
+f<- function(x,y){print(x)
+                  f2<- function(y){print(y)
+                                  }
+                  f2(y)
+                  }
+
+f(10,20)
+
+df<- data.frame(name = c("king", "smith", "jane"),
+                sql = c(97,88,78),
+                python = c(60,70,100))
+
+apply(df[,2:3], 1, sum)
+apply(df[,2:3], 2, sum)
+
+df[df$sql >= 70 & df$python >= 90, ]
+df$sql >= 70 & df$python >= 90
+
+adply(df,1,function(x){x$sql >= 70 & x$python >= 90})
+
+
+```
+
+ls() : 현재 떠있는 함수들
+rm(함수) : 함수 제거
+
+f<- function(x,y){
+                  print(x)
+                  print(y)
+                  }
+f(10,20)  #위치 지정 방식
+f(y=20,x=10)   #이름 지정 방식
+
+#가변 인수 (...)로 표현
+
+f<- function(...){
+                  myargs <- list(...)
+                  for (i in myargs){
+                                    print(i)
+                                    }
+                  }
+
+f(1,2,3,4)
+f('a','b','c','d')
+
+f1<- function(...){
+                    myargs <- c(...)
+                    var <- NULL
+                    for(i in myargs){
+                                    var <- c(var, i)
+                                    }
+                    return(var)}
+
+a <- f1(1,2,3,4)
+a
+b<- f1('a','b','c')
+b
+
+#중첩 함수
+df<- data.frame(name = c("king", "smith", "jane"),
+                sql = c(97,88,78),
+                python = c(60,70,100))
+
+apply(df[,2:3], 1, sum)
+apply(df[,2:3], 2, sum)
+
+df[df$sql >= 70 & df$python >= 90, ]
+df$sql >= 70 & df$python >= 90  #결과가 T/F로 나온다
+
+#T/F로 구분 짓고 그 컬럼을 추가하고 싶을 때 사용
+adply(df,1,function(x){x$sql >= 70 & x$python >= 90})
+
+```{r}
+filter(emp,DEPARTMENT_ID == 10)
+emp[emp$DEPARTMENT_ID == 10,]
+
+filter(emp,DEPARTMENT_ID == 10)[,"LAST_NAME"]
+filter(emp,DEPARTMENT_ID == 10)[,c("LAST_NAME", "JOB_ID")]
+filter(emp,DEPARTMENT_ID == 10)[,2:5]
+filter(emp,DEPARTMENT_ID == 30 & SALARY >= 3000 )[,1:5]
+
+
+select(emp,LAST_NAME,SALARY)
+select(emp, 1:4)
+select(emp, 3,5,6)
+select(emp,c(3,5,6))
+select(emp, -SALARY,-COMMISSION_PCT, -DEPARTMENT_ID)
+
+
+emp%>%
+   select(LAST_NAME,JOB_ID,SALARY)%>%
+   filter(SALARY >= 20000)
+
+emp%>%
+  select(LAST_NAME,JOB_ID,SALARY)%>%
+  filter(SALARY >= 10000)%>%
+  arrange(SALARY)
+
+emp%>%
+  select(LAST_NAME,JOB_ID,SALARY)%>%
+  filter(SALARY >= 10000)%>%
+  arrange(desc(SALARY))
+
+
+mutate(emp, sal= SALARY * 12)
+
+emp%>%
+  select(LAST_NAME,JOB_ID,SALARY,COMMISSION_PCT)%>%
+  mutate(ANNUAL_SAL = SALARY * 12 + ifelse(is.na(COMMISSION_PCT),0,SALARY*12*COMMISSION_PCT))%>%
+  arrange(desc(ANNUAL_SAL))
+
+
+emp%>%
+  summarise(sum_sal = sum(SALARY), mean_sal = mean(SALARY))
+
+emp%>%
+  summarise(max_sal = max(SALARY), min_sal = min(SALARY))
+
+emp%>%
+  group_by(DEPARTMENT_ID)%>%
+  summarise(sum_sal = sum(SALARY))
+
+emp%>%
+  summarise_at(vars(SALARY),sum)
+
+emp%>%
+  summarise_at(c("SALARY", "COMMISSION_PCT"),sum,na.rm=T)
+
+emp%>%
+  summarise_if(is.numeric,sum,na.rm = T)
+
+
+
+```
+★dplyr
+
+install.packages("dplyr")
+library("dplyr")
+
+#filter : 조건을 주어서 필터링하는 함수
+filter(emp,DEPARTMENT_ID == 10)
+emp[emp$DEPARTMENT_ID == 10,]     #아래, 위가 같다.
+
+filter(emp,DEPARTMENT_ID == 10)[,"LAST_NAME"]
+filter(emp,DEPARTMENT_ID == 10)[,c("LAST_NAME", "JOB_ID")]
+filter(emp,DEPARTMENT_ID == 10)[,2:5]
+filter(emp,DEPARTMENT_ID == 30 & SALARY >= 3000 )[,1:5]
+
+#select : 여러 컬럼이 있는 데이터셋에서 특정 컬럼만 선택사용
+select(emp,LAST_NAME,SALARY)
+select(emp, 1:4)
+select(emp, 3,5,6)
+select(emp,c(3,5,6))
+select(emp, -SALARY,-COMMISSION_PCT, -DEPARTMENT_ID)
+
+#여러 문장을 조합해서 사용하는 방법 : %>%
+emp%>%
+  select(LAST_NAME,JOB_ID,SALARY)%>%
+  filter(SALARY >= 20000)    #filter절에 들어가있는 컬럼은 select 절에 언급되어야한다.
+  
+emp%>%
+  select(LAST_NAME,JOB_ID,SALARY)%>%
+  filter(SALARY >= 10000)%>%
+  arrange(SALARY)    #필터링한 절에 대하여 오름차순 정렬을 하겠다.
+  
+emp%>%
+  select(LAST_NAME,JOB_ID,SALARY)%>%
+  filter(SALARY >= 10000)%>%
+  arrange(desc(SALARY))   #내림차순 정렬
+
+  
+#mutate : 새로운 컬럼을 추가
+
+mutate(emp, sal= SALARY * 12)
+
+emp%>%
+  select(LAST_NAME,JOB_ID,SALARY,COMMISSION_PCT)%>%
+  mutate(ANNUAL_SAL = SALARY * 12 + ifelse(is.na(COMMISSION_PCT),0,SALARY*12*COMMISSION_PCT))%>%
+  arrange(desc(ANNUAL_SAL))
+  
+#summarise : 주어진 데이터 집계값을 구하는 함수
+
+
+emp%>%
+  summarise(sum_sal = sum(SALARY), mean_sal = mean(SALARY))
+
+emp%>%
+  summarise(max_sal = max(SALARY), min_sal = min(SALARY))
+
+emp%>%
+  group_by(DEPARTMENT_ID)%>%
+  summarise(sum_sal = sum(SALARY))
+
+emp%>%
+  summarise_at(vars(SALARY),sum)
+
+emp%>%
+  summarise_at(c("SALARY", "COMMISSION_PCT"),sum,na.rm=T)
+
+emp%>%
+  summarise_if(is.numeric,sum,na.rm = T)   #numeric스타일의 모든 컬럼을 나열하지않고 is.numeric으로 해결이 가능하다.
+
+
+

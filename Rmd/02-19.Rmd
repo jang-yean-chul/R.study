@@ -1,0 +1,391 @@
+```{r}
+x<- c(184,170,180)
+y<- c(85,70,82)
+
+cov(x,y)
+cor(x,y)
+
+
+```
+## 상관분석
+  - 두 변수 사이의 관련성을 파악하는 방법
+
+## 공분산(covariance) : 분산에다가 루트를 씌워서 평균과 비슷한 값으로 보고 싶어서 공분산을 생각
+  - 두 변수가 얼마나 함께 변하는지를 측정
+  - 한 변수가 커질 때 다른 변수가 함께 커지거나 한 변수가 작아질 때 다른 변수가 함께 작아지는 경우는 변화의 방향이 같다. 공분산은 양의 값
+    키 - 체중
+  - 한 변수가 커질 때 다른 변수는 작아지거나 한 변수가 작아질 때 다른 변수는 커지는 경우는 변화의 뱡향이 다르다는 의미. 공분산은 음의 값
+    흡연 - 기대수명
+  - 두 변수의 값이 서로 상관없이 움직일 경우 공분산은 0
+
+                ∑( x - x평균 ) * ( y - y평균 )
+  -cov(x,y) = ---------------------------------- 
+                    N(조합을 이루는 개수)
+                  
+x<- c(184,170,180)
+y<- c(85,70,82)
+
+cov(x,y)
+
+# 공분산을 표준화하는 방법.
+
+## 상관계수
+  - 공분산의 수치만 보아서는 상관의 정도를 알 수 없다.
+    키와 체중에서 cm, kg 단위를 변경하면 수치가 달라진다. 이래서 공분산을 표준화한 값
+  - 계산방법 : 피어슨의 상관계수, 스피어만의 상관계수, 겐달의 순위상관계수
+  - 상관계수값이 크면 데이터간의 관계가 존재한다는 의미
+  - 한쪽 값이 커질때 다른쪽 값이 커지는 정도가 크다
+  - 상관계수는 -1 <= r <= 1
+ 
+                          cov(x,y)
+  - cor(x,y) = ----------------------------- 
+                    x표준편차 * y표준편차     ∂
+                    
+## 회귀분석 (회귀분석이란 결국 예측을 하는 것 : x값을 입력해서 y값을 예측하는 것)
+  - 회귀분석은 하나의 변수가 나머지 다른 변수들과의 선형적(1차원 방정식) 관계를 갖는가의 여부를 분석하는 방법으로 
+    하나의 종속변수(반응변수, 기대값, 예상값)와 독립변수(설명변수, 입력값) 사이의 관계를 명시하는 것.
+    ex) 신경망 <- 파이썬 할 때 사용. 
+    
+  - 독립변수 : 종속변수에 영향을 주는 변수
+  - 종속변수 : 서로 관계를 가지고 있는 변수등 중에서 다른 변수에 영향을 받는 변수를 종속변수라 한다.
+  
+  ex> 키가 클수록 몸무게 변화를 분석하는 목적
+      |             |
+    독립변수      종속변수
+ - 독립변수와 종속변수간의 관계를 직선식으로 나타내면 
+   y = a + bx (회귀식)
+   a가 절편(x=0일 때 y의 값)
+   b가 기울기 (y의 변화를 x의 변화로 나눈 값)
+   
+## 최소제곱 추정법
+  - 최적의 a(절편)과 b(기울기)를 결정하기 위해 정규최소제곱으로 알려진 추정기법을 사용한다.
+    예측한 y값 실제 y값 사이의 수직거리인 오차를 제곱해 구한 총합
+    즉, 직선과 데이터와의 차이가 최소화되는 직선 방정식을 구하는 것이 목표
+    
+     ∑( 실제값y - 예측값y )^2
+     
+     y = a + bx
+     
+        ∑( x - x평균 ) * ( y - y평균 )
+     b= ---------------------------------- 
+            ∑( x - x평균 ) ^2
+            
+            cov(x,y)
+     b = -------------- = 기울기
+             var(x)
+             
+     a(절편) = y의 평균 - 기울기 * x의 평균      
+```{r}
+
+h <- c(184,170,180,175,165,179,172,171,178,182)
+w <- c(85,70,82,73,67,75,70,68,71,80)
+
+w = a + bh
+
+cov(h,w)/var(h)
+
+mean(w) - (cov(h,w)/var(h)) * mean(h)
+
+(mean(w) - (cov(h,w)/var(h)) * mean(h)) + (cov(h,w)/var(h)) * 185
+#답 : 82.78
+
+#몸무게 예측
+m<- lm(w~h)
+m
+predict(m, data.frame(h= 185))
+
+predict(m, data.frame(h= 175))
+
+```
+[문제230] 키 185 일 때 몸무게는?
+
+height <- c(184,170,180,175,165,179,172,171,178,182)
+weight <- c(85,70,82,73,67,75,70,68,71,80)            
+                  
+                  
+h <- c(184,170,180,175,165,179,172,171,178,182)
+w <- c(85,70,82,73,67,75,70,68,71,80)
+
+w = a + bh
+
+cov(h,w)/var(h)
+
+mean(w) - (cov(h,w)/var(h)) * mean(h)
+
+(mean(w) - (cov(h,w)/var(h)) * mean(h)) + (cov(h,w)/var(h)) * 185
+
+b<- cov(h,w)/var(h)
+a<- mean(w) - (b * mean(h))
+
+y = a + (b * 185)
+
+#답 : 82.78
+
+m<- lm(w~h)
+m
+
+    절편            기울기
+(Intercept)            h  
+   -88.0502       0.9234  
+
+```{r}
+##내꺼
+tan<- read.csv("c:/r/tannin.csv")
+str(tan)
+tan$tannin<- as.factor(tan$tannin)
+
+
+ggplot(tan, aes(x = tannin, y= growth))+
+  geom_point(stat="identity")
+
+m<- lm(tan$tannin~tan$growth)
+m
+
+predict(m, data.frame(tannin = 4))
+
+# 상관계수
+x<- tan$tannin
+y<- tan$growth
+
+cov(x,y)/ (sd(x)*sd(y))
+# [1] -0.9031408
+
+
+##쌤꺼
+tan<- read.csv("c:/r/tannin.csv")
+attach(tan)
+cor(growth, tannin)
+
+model <- lm(growth~tannin)
+model
+
+plot(tannin, growth, pch = 21, col = "blue", bg = "blue")
+abline(model, col = "red")
+yhat<- predict(model)
+for(i in 1:9){
+  lines( c(tannin[i],tannin[i]), c(growth[i],yhat[i]),col = "black")
+}
+
+coef(model) #회귀계수
+fitted(model) #적합된 값
+predict(model, data.frame(tannin = 1))
+```
+[문제231] 사료의 탄닌 함유량과 애벌래의 성장추이가 상관관계가 있는지 확인하세요.
+
+##내꺼
+tan<- read.csv("c:/r/tannin.csv")
+str(tan)
+tan$tannin<- as.factor(tan$tannin)
+
+
+ggplot(tan, aes(x = tannin, y= growth))+
+  geom_point(stat="identity")
+
+m<- lm(tan$tannin~tan$growth)
+m
+
+predict(m, data.frame(tannin = 4))
+
+# 상관계수
+x<- tan$tannin
+y<- tan$growth
+
+cov(x,y)/ (sd(x)*sd(y))
+# [1] -0.9031408
+
+
+##쌤꺼
+tan<- read.csv("c:/r/tannin.csv")
+attach(tan)
+cor(growth, tannin)
+
+model <- lm(growth~tannin)
+model
+
+plot(tannin, growth, pch = 21, col = "blue", bg = "blue")
+abline(model, col = "red")
+yhat<- predict(model)
+for(i in 1:9){
+  lines( c(tannin[i],tannin[i]), c(growth[i],yhat[i]),col = "black")
+}
+
+coef(model) #회귀계수
+fitted(model) #적합된 값
+predict(model, data.frame(tannin = 1))
+
+```{r}
+t<- c(10,20,30,40)
+nu<- c(300,250,200,150)
+data_model<- lm(nu ~ t)
+data_model
+
+coef(data_model)
+fitted(data_model)
+predict(data_model, data.frame(t = 35))
+```
+[문제232] 어느 실험실에서 10시간, 20시간, 30시간, 40시간 마다 물질의 방사능 수치를 측정한 자료가 있을 때, 35시간에 물질의 방사능 수치는?
+------------------------------
+시간      |  10   20   30  40
+------------------------------
+방사능수치| 300  250  200 150
+------------------------------
+
+t<- c(10,20,30,40)
+nu<- c(300,250,200,150)
+data_model<- lm(nu ~ t)
+data_model
+
+coef(data_model)
+fitted(data_model)
+predict(data_model, data.frame(time = 35))
+
+```{r}
+ko<- read.csv("c:/r/K_index.csv",stringsAsFactors=F)
+hy<- read.csv("c:/r/H_stock.csv",stringsAsFactors=F)
+sa<- read.csv("c:/r/S_stock.csv",stringsAsFactors=F)
+ko  #date, kospi, k_rate
+hy  #date, h_price, h_rate
+sa  #date, s_price, s_rate
+
+all_data<- merge(merge(ko,sa),hy)
+all_data
+
+model_s<- lm(all_data$s_rate ~ all_data$k_rate, data = all_data)
+
+plot(all_data$k_rate, all_data$s_rate, col = "blue")
+abline(model_s , col = "red")
+
+
+model_h<- lm(all_data$h_rate ~ all_data$k_rate, data = all_data)
+
+plot(all_data$k_rate, all_data$h_rate, col = "blue")
+abline(model_s , col = "red")
+
+all_data_20<- all_data[1:20,]
+all_data_20
+
+ggplot(all_data_20,aes(x = all_data_20$date, y = all_data_20$k_rate,col = all_data_20$date))+
+  geom_bar(stat="identity")+
+  geom_point(aes(x = all_data_20$date, y = all_data_20$s_rate),size = 2,col = "blue")+
+  geom_point(aes(x = all_data_20$date, y = all_data_20$h_rate),size = 2,col = "red")+
+  theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 1,colour = "blue",size= 5))
+
+
+
+df<-data.frame(date =c(1:60) , rate =c(1:60), rate_point =c(1:60) )
+df$rate[1:20]<- 'hy'
+df$rate[21:40]<- 'sam'
+df$rate[41:60]<- 'ko'
+df$date[1:20]<- all_data_20$date
+df$date[21:40]<- all_data_20$date
+df$date[41:60]<- all_data_20$date
+df$rate_point[1:20]<- all_data_20$h_rate
+df$rate_point[21:40]<- all_data_20$s_rate
+df$rate_point[41:60]<- all_data_20$k_rate
+
+df[is.na(df)]<- 0
+df
+
+ggplot(df,aes(x=date,y=rate_point, group = rate))+
+  geom_col(aes(fill=rate), position = "dodge")+
+  geom_text(aes(label = rate_point), position = position_dodge(0.9),vjust=0,size = 1)+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1,colour = "blue",size= 7))
+
+
+```
+[문제233] 코스피 지수 수익율의 변동에 따라 삼성전자 주식의 수익율의 변동이 있는지 시각화해서 확인해보세요.
+
+ko<- read.csv("c:/r/K_index.csv",stringsAsFactors=F)
+hy<- read.csv("c:/r/H_stock.csv",stringsAsFactors=F)
+sa<- read.csv("c:/r/S_stock.csv",stringsAsFactors=F)
+ko  #date, kospi, k_rate
+hy  #date, h_price, h_rate
+sa  #date, s_price, s_rate
+
+all_data<- merge(merge(ko,sa),hy)
+all_data
+
+model_s<- lm(all_data$s_rate ~ all_data$k_rate, data = all_data)
+
+plot(all_data$k_rate, all_data$s_rate, col = "blue")
+abline(model_s , col = "red")
+```{r}
+model_h <- lm(h_rate ~ k_rate , data = all_data)
+model_s <- lm(s_rate ~ k_rate , data = all_data)
+
+plot(all_data$k_rate, all_data$h_rate, col = "blue")
+abline(model_h,col = "black")
+abline(model_s,col = "red")
+
+graphics.off()
+par(mfrow = c(1,2))
+
+plot(all_data$k_rate, all_data$h_rate, col = "blue", main = "현대")
+abline(model_h,col = "black")
+plot(all_data$k_rate, all_data$s_rate, col = "blue", main = "삼성")
+abline(model_s,col = "red")
+#회귀 모수중 기울기가 1보다 크면 공격적 주식이고 1보다 작으면 방어적 주식이다.
+model_s
+
+
+```
+
+
+[문제234] 코스피 지수 수익율의 변동에 따라 현대 자동차의 주식 수익율의 변동이 있는지 plot 그래프와 회귀직선 그래프를 사용하여 시각화해서 확인해보세요. 그리고 삼성과 비교하세요
+
+model_h <- lm(h_rate ~ k_rate , data = all_data)
+model_s <- lm(s_rate ~ k_rate , data = all_data)
+
+plot(all_data$k_rate, all_data$h_rate, col = "blue")
+abline(model_h,col = "black")
+abline(model_s,col = "red")
+
+graphics.off()
+par(mfrow = c(1,2))
+
+plot(all_data$k_rate, all_data$h_rate, col = "blue", main = "현대")
+abline(model_h,col = "black")
+plot(all_data$k_rate, all_data$s_rate, col = "blue", main = "삼성")
+abline(model_s,col = "red")
+#회귀 모수중 기울기가 1보다 크면 공격적 주식이고 1보다 작으면 방어적 주식이다.
+model_s
+
+
+```{r}
+cha<- read.csv("c:/r/challenger.csv",stringsAsFactors=F)
+cha
+
+ggplot(cha, aes(x=temperature, distress_ct))+
+  geom_point()
+
+
+model<- lm(distress_ct ~ temperature+pressure, data = cha)  # 다중 회귀 분석, 독립변수 부분에 2가지를 넣어면 된다.
+model
+predict(model , data.frame(temperature = 31,pressure = 60))
+
+#상관계수를 보고 0이면 상관이 없다고 판단하므로 독립변수로 넣을 필요가 없다 -1로 기울었거나 1로 기울어있는 숫자를 보고 판단하자.
+
+```
+[문제235] 1986년 우주왕복선 챌린저호가 발사된지 73초만에 폭발하여 대서양에 추락하고 7명 승무원이 전원 사망한 사고는 미국우주사의 최대 비극중 하나다.
+ 폭발의 원인은 오른쪽 고체연료 부스터의 부품인 O링이 망가졌기 때문이다. 
+ O링이 셔틀 출발시처럼 낮은 온도에서 작동하도록 설계되지 않았던것이다.
+ 발사 온도에 대한 O링의 파손이 원인을 이용해서 만약 온도가 31도라고 추정하면 O링의 파손수는 몇개가 될거라 예상되는가?
+
+
+http://www.anyseal.co.kr/oring/oring_16_5.asp
+
+cha<- read.csv("c:/r/challenger.csv",stringsAsFactors=F)
+cha
+
+ggplot(cha, aes(x=temperature, distress_ct))+
+  geom_point()
+
+
+model<- lm(distress_ct ~ temperature+pressure, data = cha)  # 다중 회귀 분석, 독립변수 부분에 2가지를 넣어면 된다.
+m
+
+predict(model , data.frame(temperature = 31,pressure = 60))
+
+#상관계수를 보고 0이면 상관이 없다고 판단하므로 독립변수로 넣을 필요가 없다 -1로 기울었거나 1로 기울어있는 숫자를 보고 판단하자.
+
+

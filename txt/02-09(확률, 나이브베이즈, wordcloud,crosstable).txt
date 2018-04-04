@@ -1,0 +1,432 @@
+```{r}
+
+```
+
+[문제225] 2월1일 흐릴 확률은 0.6이고 다음날인 2일 비가 올 확률은 0.4였다. 
+또한 1일 날 흐릴때 다음 날 2일에 비가 올 확률은 0.5이다. 
+이지역에서 2일에 비가 왔을때 전날인 1일날 흐릴 확률은?
+
+
+2/1 흐 0.6
+2/2 비 0.4
+
+(2비|1흐)0.5
+
+(1흐|2비)?
+
+            P(2r|1c) * p(1c)              0.5 * 0.6
+P(1c|2r) = -------------------  =    ------------------ = 75%
+                P(2r)                       0.4               
+     
+                
+가정 Hypothesis = 1일 흐림
+결과 Data = 2일 비
+                
+사후 확률 : 2일 날 비가 왔는데 1일 날 흐렸던게 원인이다.
+우도 : 1일 날 흐려서 2일 날 비가 옴.
+사전 확률 : 1일 날 흐림.
+
+```{r}
+
+```
+
+A : 원인, 가정(Hypothesis)
+B : 결과, 데이터(Data)
+
+
+            P(D|H) * p(H)        
+P(H|D) = -------------------  
+                P(H)               
+                
+                                        H아래서 D가 발생할 확률 * H가 일어날 확률
+D가 얻어졌을 때 그 원인 H 일 확률 = --------------------------------------------------
+                                                    D가 얻어질 확률
+
+원인의 확률
+확률 P(H|D)는 데이터 D가 얻어졌을 때 원인이 H라는 조건부 확률이다.
+즉, 데이터(D)가 주어졌을 때 원인을 구하는 확률
+
+P(H|D)를 데이터(D) 원인의 확률
+P(D|H)를 결과의 확률
+
+P(H|D) 사후확률 : 데이터 D가 얻어졌을 때 그 원인이 H일 확률
+P(D|H) 우도 : 원인 H 아래 데이터 D가 얻어질 확률
+P(H) 사전확률 : 데이터 D를 얻기 전의 원인 H가 성립될 확
+```{r}
+
+mushroom <- read.csv("c:/r/mushroom.csv", header=F, stringsAsFactors=F)
+
+mushroom[mushroom$V12 == '?',12]<- NA
+
+for(i in c(15:23)){
+  mushroom[mushroom[,i] == '',i]<- NA
+}
+
+
+for(i in c(1:length(mushroom))){
+mushroom[,i]<- as.factor(mushroom[,i])
+}
+
+NROW(mushroom)/100 *75   #4007개 train
+NROW(mushroom) - 4007   #1336개 test
+
+
+library(e1071)
+
+train<- mushroom[1:4007,2:23]
+test<- mushroom[4008:5343,2:23]
+
+train_l<- mushroom[1:4007,1]
+test_l<- mushroom[4008:5343,1]
+
+# naiveBayes(데이터셋(문서번호와 메일종류는 label을 결정하는데 필요없다), label값,laplace = 라플라스 추정기)
+m<- naiveBayes(train,train_l, laplace=0.1) # 학습을 계획해서 m이라는 모델을 만들었고 
+
+m2<- predict(m,test) # 내가 만든 m이라는 모델을 가지고 다시 mail을 예측해본다.
+
+
+CrossTable(m2,test_l,
+           prop.chisq=F, prop.t=F,prop.r=F,
+           dnn = c('predicted', 'actual'))
+
+
+
+
+train<- mushroom[1:4007,c(2:23)]
+test<- mushroom[4008:5343,c(2:23)]
+
+m<- naiveBayes(train,train_l, laplace=0.1)
+
+m2<- predict(m,test) 
+
+
+CrossTable(m2,test_l,
+           prop.chisq=F, prop.t=F,prop.r=F,
+           dnn = c('predicted', 'actual'))
+
+
+## e-e 100% match
+train<- mushroom[1:4007,c(2:3,5:23)]
+test<- mushroom[4008:5343,c(2:3,5:23)]
+
+m<- naiveBayes(train,train_l, laplace=0.1)
+
+m2<- predict(m,test) 
+
+
+CrossTable(m2,test_l,
+           prop.chisq=F, prop.t=F,prop.r=F,
+           dnn = c('predicted', 'actual'))
+
+
+train<- mushroom[1:4007,c(2:3,5:10,12:19,21,22,23)]
+test<- mushroom[4008:5343,c(2:3,5:10,12:19,21,22,23)]
+
+m<- naiveBayes(train,train_l, laplace=1)
+
+m2<- predict(m,test) 
+
+
+CrossTable(m2,test_l,
+           prop.chisq=F, prop.t=F,prop.r=F,
+           dnn = c('predicted', 'actual'))
+
+
+m
+##4번과 11번 빼면 e-e100%
+#6번 필수,20번 영향력 큼,21번도
+```
+[문제226] 일반버섯(식용버섯(edible)) 과 독버섯 분류(먹을수없는버섯(poisonous)) 분류 
+
+0. 이 주소에 가셔서 mushroom 데이터 셋의 정보를 분석한 후 변수들에 어떤 의미가 들어 있는지를 확인 하세요.
+
+https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.names
+
+1. 버섯 데이터를 로드 한다.
+
+mushroom <- read.csv(c:/r/"mushroom.csv", header=F, stringsAsFactors=F)
+
+
+2. 12번째 열에 ? 표시의 데이터있는지를 확인한 후 있으면  NA 로 변경하세요.
+
+mushroom[mushroom$V12 == '?',]<- NA
+
+3. 15번째열 부터 23번째 열을 '' 비어있는 데이터를 NA 로 변경하세요.
+
+
+for(i in c(15:23)){
+  mushroom[mushroom[,i] == '',i]<- NA
+}
+
+4. mushroom 전체 데이터를 factor 로 변환하시오 ! 
+
+for(i in c(1:length(mushroom))){
+mushroom[,i]<- as.factor(mushroom[,i])
+}
+
+5. mushroom 데이터를 훈련 데이터와 테스트 데이터로 나눈다 ( 75% 는 훈련 데이터, 25% 는 테스트 데이터)
+
+NROW(mushroom)/100 *75   #4007개 train
+NROW(mushroom) - 4007   #1336개 test
+
+library(e1071)
+
+train<- mushroom[1:4007,2:23]
+test<- mushroom[4008:5343,2:23]
+
+train_l<- mushroom[1:4007,1]
+test_l<- mushroom[4008:5343,1]
+
+6. 지도학습 머신러닝 나이브 베이즈를 이용하여 독버섯과 일반 버섯을 분류하는 모델을 생성한다.
+
+m<- naiveBayes(train,train_l, laplace=0.1) # 학습을 계획해서 m이라는 모델을 만들었고 
+
+7. 위에서 만든 모델로 테스트 데이터를 가지고 독버섯인지 일반버섯인지를 예측해본다.
+
+m2<- predict(m,test) # 내가 만든 m이라는 모델을 가지고 다시 mail을 예측해본다.
+
+8. 이원교차표로 모델과 실제 데이터의 차이를 비교한다.
+
+CrossTable(m2,test_l,
+           prop.chisq=F, prop.t=F,prop.r=F,
+           dnn = c('predicted', 'actual'))
+           
+```{r}
+
+           
+## 1 단계 : 데이터 수집
+
+## 2 단계 : 데이터 준비
+
+# sms 데이터 프레임으로 sms 데이터 읽기
+
+sms_raw <- read.csv("c:/r/sms_spam.csv", stringsAsFactors = FALSE)
+
+# sms 데이터 구조
+
+str(sms_raw)
+
+# sms_raw$type(spam/ham) 팩터로 변환
+
+sms_raw$type <- factor(sms_raw$type)
+
+# sms_raw$type변수형 확인, 빈도수 체크
+
+str(sms_raw$type)
+table(sms_raw$type)
+
+# 텍스트 마이닝(tm) 패키지를 사용하여 말뭉치 생성
+# install.packages("tm")
+# library(tm)
+sms_corpus <- Corpus(VectorSource(sms_raw$text))
+
+# sms 말뭉치 확인
+print(sms_corpus)
+inspect(sms_corpus[1:3])
+
+
+# tm_map() 사용하여 말뭉치 정리, 소문자로 변환, 숫자제거, 불용어제거, 마침표 제거, 공백제거
+corpus_clean <- tm_map(sms_corpus, tolower)
+corpus_clean <- tm_map(corpus_clean, removeNumbers)
+corpus_clean <- tm_map(corpus_clean, removeWords, stopwords())
+corpus_clean <- tm_map(corpus_clean, removePunctuation)
+corpus_clean <- tm_map(corpus_clean, stripWhitespace)
+
+# 말뭉치 정리 확인
+inspect(sms_corpus[1:3])
+inspect(corpus_clean[1:3])
+
+# 문서-용어 희소 매트릭스 생성
+sms_dtm <- DocumentTermMatrix(corpus_clean)
+sms_dtm
+
+# 훈련과 테스트 데이터셋 생성
+sms_raw_train <- sms_raw[1:4169, ]
+sms_raw_test  <- sms_raw[4170:5559, ]
+
+sms_dtm_train <- sms_dtm[1:4169, ]
+sms_dtm_test  <- sms_dtm[4170:5559, ]
+
+sms_corpus_train <- corpus_clean[1:4169]
+sms_corpus_test  <- corpus_clean[4170:5559]
+
+# 스팸 비율 확인
+prop.table(table(sms_raw_train$type))
+prop.table(table(sms_raw_test$type))
+
+# 단어 클라우드 시각화
+
+library(wordcloud)
+
+wordcloud(sms_corpus_train, min.freq = 30, random.order = FALSE)
+
+# 훈련 데이터를 스팸과 햄으로 구분
+spam <- subset(sms_raw_train, type == "spam")
+ham  <- subset(sms_raw_train, type == "ham")
+
+wordcloud(spam$text, max.words = 40, scale = c(3, 0.5))
+wordcloud(ham$text, max.words = 40, scale = c(3, 0.5))
+
+
+# 빈번한 단어에 대한 속성 지시자
+findFreqTerms(sms_dtm_train, 5)
+sms_dict <- findFreqTerms(sms_dtm_train, 5)
+sms_train <- DocumentTermMatrix(sms_corpus_train, list(dictionary = sms_dict))
+sms_test  <- DocumentTermMatrix(sms_corpus_test, list(dictionary = sms_dict))
+
+# 개수를 팩터로 변환
+convert_counts <- function(x) {
+  x <- ifelse(x > 0, 1, 0)
+  x <- factor(x, levels = c(0, 1), labels = c("No", "Yes"))
+}
+
+sms_train <- apply(sms_train, MARGIN = 2, convert_counts)
+sms_test  <- apply(sms_test, MARGIN = 2, convert_counts)
+
+sms_train[2,]
+sms_test[2,]
+## 3 단계 : 데이터로 모델 훈련
+
+#install.packages("e1071")
+#library(e1071)
+sms_classifier <- naiveBayes(sms_train, sms_raw_train$type)
+sms_classifier
+
+## 4 단계 : 모델 성능 평가 
+
+sms_test_pred <- predict(sms_classifier, sms_test)
+sms_test
+# install.packages("gmodels")
+# library(gmodels)
+CrossTable(sms_test_pred, sms_raw_test$type,
+           prop.chisq = FALSE, prop.t = FALSE, prop.r = FALSE,
+           dnn = c('predicted', 'actual'))
+
+## 5 단계 : 모델 성능 향상
+
+sms_classifier2 <- naiveBayes(sms_train, sms_raw_train$type, laplace = 1)
+sms_test_pred2 <- predict(sms_classifier2, sms_test)
+CrossTable(sms_test_pred2, sms_raw_test$type,
+           prop.chisq = FALSE, prop.t = FALSE, prop.r = FALSE,
+           dnn = c('predicted', 'actual'))
+        
+```
+           
+## 1 단계 : 데이터 수집
+
+스팸메시지, 햄메시지 데이터 수집
+
+## 2 단계 : 데이터 준비
+
+# sms 데이터 프레임으로 sms 데이터 읽기
+
+sms_raw <- read.csv("c:/r/sms_spam.csv", stringsAsFactors = FALSE)
+
+# sms 데이터 구조
+
+str(sms_raw)
+
+# sms_raw$type(spam/ham) 팩터로 변환
+
+sms_raw$type <- factor(sms_raw$type)
+
+# sms_raw$type변수형 확인, 빈도수 체크
+str(sms_raw$type)
+table(sms_raw$type)
+
+# 텍스트 마이닝(tm) 패키지를 사용하여 말뭉치 생성
+install.packages("tm")
+library(tm)
+sms_corpus <- Corpus(VectorSource(sms_raw$text))
+
+# sms 말뭉치 확인
+print(sms_corpus)
+inspect(sms_corpus[1:3])
+
+
+# tm_map() 사용하여 말뭉치 정리, 소문자로 변환, 숫자제거, 불용어제거, 마침표 제거, 공백제거
+corpus_clean <- tm_map(sms_corpus, tolower)
+corpus_clean <- tm_map(corpus_clean, removeNumbers)
+corpus_clean <- tm_map(corpus_clean, removeWords, stopwords())
+corpus_clean <- tm_map(corpus_clean, removePunctuation)
+corpus_clean <- tm_map(corpus_clean, stripWhitespace)
+
+# 말뭉치 정리 확인
+inspect(sms_corpus[1:3])
+inspect(corpus_clean[1:3])
+
+# 문서-용어 희소 매트릭스 생성
+sms_dtm <- DocumentTermMatrix(corpus_clean)
+sms_dtm
+
+# 훈련과 테스트 데이터셋 생성
+sms_raw_train <- sms_raw[1:4169, ]
+sms_raw_test  <- sms_raw[4170:5559, ]
+
+sms_dtm_train <- sms_dtm[1:4169, ]
+sms_dtm_test  <- sms_dtm[4170:5559, ]
+
+sms_corpus_train <- corpus_clean[1:4169]
+sms_corpus_test  <- corpus_clean[4170:5559]
+
+# 스팸 비율 확인
+prop.table(table(sms_raw_train$type))
+prop.table(table(sms_raw_test$type))
+
+# 단어 클라우드 시각화
+
+library(wordcloud)
+
+wordcloud(sms_corpus_train, min.freq = 30, random.order = FALSE)
+
+# 훈련 데이터를 스팸과 햄으로 구분
+spam <- subset(sms_raw_train, type == "spam")
+ham  <- subset(sms_raw_train, type == "ham")
+
+wordcloud(spam$text, max.words = 40, scale = c(3, 0.5))
+wordcloud(ham$text, max.words = 40, scale = c(3, 0.5))
+
+
+# 빈번한 단어에 대한 속성 지시자
+findFreqTerms(sms_dtm_train, 5)
+sms_dict <- findFreqTerms(sms_dtm_train, 5)
+sms_train <- DocumentTermMatrix(sms_corpus_train, list(dictionary = sms_dict))
+sms_test  <- DocumentTermMatrix(sms_corpus_test, list(dictionary = sms_dict))
+
+# 개수를 팩터로 변환
+convert_counts <- function(x) {
+  x <- ifelse(x > 0, 1, 0)
+  x <- factor(x, levels = c(0, 1), labels = c("No", "Yes"))
+}
+
+sms_train <- apply(sms_train, MARGIN = 2, convert_counts)
+sms_test  <- apply(sms_test, MARGIN = 2, convert_counts)
+
+sms_train[2,]
+
+## 3 단계 : 데이터로 모델 훈련
+
+install.packages("e1071")
+library(e1071)
+sms_classifier <- naiveBayes(sms_train, sms_raw_train$type)
+sms_classifier
+
+## 4 단계 : 모델 성능 평가 
+
+sms_test_pred <- predict(sms_classifier, sms_test)
+
+install.packages("gmodels")
+library(gmodels)
+CrossTable(sms_test_pred, sms_raw_test$type,
+           prop.chisq = FALSE, prop.t = FALSE, prop.r = FALSE,
+           dnn = c('predicted', 'actual'))
+
+## 5 단계 : 모델 성능 향상
+
+sms_classifier2 <- naiveBayes(sms_train, sms_raw_train$type, laplace = 1)
+sms_test_pred2 <- predict(sms_classifier2, sms_test)
+CrossTable(sms_test_pred2, sms_raw_test$type,
+           prop.chisq = FALSE, prop.t = FALSE, prop.r = FALSE,
+           dnn = c('predicted', 'actual'))
+        
+

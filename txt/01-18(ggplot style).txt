@@ -1,0 +1,307 @@
+```{r}
+emp<- dbGetQuery(conn, 'select * from employees')
+emp
+
+ggplot(emp, aes(x=factor(DEPARTMENT_ID)))+
+  geom_bar()
+
+ggplot(emp, aes(x=factor(DEPARTMENT_ID), fill = factor(DEPARTMENT_ID)))+
+  geom_bar()
+
+ggplot(emp, aes(x=factor(DEPARTMENT_ID), fill = factor(DEPARTMENT_ID)))+
+  geom_bar(width = 0.5)+
+  labs(x = NULL, y= "인원수",title = "부서별 인원 현황")
+
+ggplot(emp, aes(x=factor(DEPARTMENT_ID), fill = factor(DEPARTMENT_ID)))+
+  geom_bar(width = 0.5,show.legend = F)+
+  labs(x = NULL, y= "인원수",title = "부서별 인원 현황")
+
+ggplot(emp, aes(x=factor(DEPARTMENT_ID), fill = factor(DEPARTMENT_ID)))+
+  geom_bar(width = 0.5,show.legend = T)+
+  labs(x = NULL, y= "인원수",fill = "부서코드")+
+  theme(legend.position = "right")
+
+```
+emp<- dbGetQuery(conn, 'select * from employees')
+emp
+
+#이렇게하면 DEPARTMENT_ID에 대한 건수를 바로 볼 수 있다.
+ggplot(emp, aes(x=factor(DEPARTMENT_ID)))+
+  geom_bar()
+  
+#색을 넣고싶다. (범례도 동시에 생성된다.)
+ggplot(emp, aes(x=factor(DEPARTMENT_ID), fill = factor(DEPARTMENT_ID)))+
+  geom_bar()
+
+#막대의 두께 (width), x,y축 이름(labs()), title = 제목
+ggplot(emp, aes(x=factor(DEPARTMENT_ID), fill = factor(DEPARTMENT_ID)))+
+  geom_bar(width = 0.5)+
+  labs(x = NULL, y= "인원수",title = "부서별 인원 현황")
+
+#범례를 넣고 싶지 않으면 show.legend = F
+ggplot(emp, aes(x=factor(DEPARTMENT_ID), fill = factor(DEPARTMENT_ID)))+
+  geom_bar(width = 0.5,show.legend = F)+
+  labs(x = NULL, y= "인원수",title = "부서별 인원 현황")
+
+#범례 없어져라~legend.position = (none,right,left,top,bottom) 범례제목달기 fill="부서코드"
+ggplot(emp, aes(x=factor(DEPARTMENT_ID), fill = factor(DEPARTMENT_ID)))+
+  geom_bar(width = 0.5,show.legend = T)+
+  labs(x = NULL, y= "인원수",fill = "부서코드")+
+  theme(legend.position = "none")
+```{r}
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+df
+
+library(plys)
+df1<- arrange(df,name,subject)
+df1
+
+ggplot(df1,aes(x=name,y=grade, fill=subject))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(y=grade, label = paste(grade, "점")), col = "black",size = 4, position = position_stack(vjust= 0.5))
+
+
+ggplot(df1,aes(x=name,y=grade))+
+  geom_col(aes(fill=subject), position = "stack")+
+  geom_text(aes(label = grade),position = position_stack(vjust= 0.5))+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1,colour = "blue",size= 10))
+
+ggplot(df1,aes(x=subject, y=grade, group = name))+
+  geom_col(aes(fill=name), position = "stack")+
+  geom_text(aes(label = grade),position = position_stack(vjust= 0.5))
+
+ggplot(df1,aes(x=name,y=grade, group = subject))+
+  geom_col(aes(fill=subject), position = "dodge")+
+  geom_text(aes(label = grade),position = position_dodge(0.9),vjust=0)+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1,colour = "blue",size= 10))
+
+x<- df[df$subject=="SQL",]
+x
+
+ggplot(x,aes(x=name, y=grade))+
+  geom_bar(stat="identity", fill = rainbow(length(x$name)),width = 0.5)+
+  coord_flip()+
+  geom_text(aes(label = grade),position = position_dodge(0.9),vjust=0)
+
+```
+
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+df
+
+library(plys)
+df1<- arrange(df,name,subject)
+df1
+
+#stact형 점수각자 넣어주고 3개 한꺼번에 쌓아서
+ggplot(df1,aes(x=name,y=grade, fill=subject))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(y=grade, label = paste(grade, "점")), col = "black",size = 4, position = position_stack(vjust= 0.5))
+
+
+ggplot(df1,aes(x=name,y=grade))+
+  geom_col(aes(fill=subject), position = "stack")+
+  geom_text(aes(label = grade),position = position_stack(vjust= 0.5))+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1,colour = "blue",size= 10))
+
+#과목이름으로 한꺼번에 애들데이타 쌓아서 범례는 사람이름으로
+ggplot(df1,aes(x=subject, y=grade, group = name))+
+  geom_col(aes(fill=name), position = "stack")+
+  geom_text(aes(label = grade),position = position_stack(vjust= 0.5))
+
+#그룹형으로 
+ggplot(df1,aes(x=name,y=grade, group = subject))+
+  geom_col(aes(fill=subject), position = "dodge")+
+  geom_text(aes(label = grade),position = position_dodge(0.9),vjust=0)+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1,colour = "blue",size= 10))
+
+x<- df[df$subject=="SQL",]
+x
+
+#막대르래프 방향을 바꿔서 coord_flip()
+ggplot(x,aes(x=name, y=grade))+
+  geom_bar(stat="identity", fill = rainbow(length(x$name)),width = 0.5)+
+  coord_flip()+
+  geom_text(aes(label = grade),position = position_dodge(0.9),vjust=0)
+```{r}
+x<- aggregate(EMPLOYEE_ID~year(emp$HIRE_DATE),emp,length)
+colnames(x)<- c('year','cnt')
+x
+
+ggplot(x, aes(x=factor(year),y=cnt, fill = factor(year)))+
+  geom_bar(width = 0.5,show.legend = T,stat = "identity")+
+  labs(x = NULL, y= "인원수",fill = "입사년도")
+
+ggplot(x, aes(x=factor(year),y=cnt, fill = factor(year)))+
+  geom_bar(width = 0.5,show.legend = T,stat = "identity")+
+  labs(x = NULL, y= "인원수",fill = "입사년도")+
+  coord_flip()
+
+
+
+library(lubridate)
+library(plyr)
+
+ggplot(emp,aes(x=factor(year(HIRE_DATE)), fill = factor(year(HIRE_DATE))))+
+  geom_bar()+
+  labs(title = "년도별 입사현황",x = "년도", y= "인원수", fill = "년도")+
+  theme(plot.title = element_text(face='bold', color = "darkblue", hjust=0.5))+
+  theme(axis.title.x = element_text(face='bold', color = "darkblue"))+
+  theme(axis.title.y = element_text(face='bold', color = "darkblue"))+
+  theme(legend.title.align = 0.5, legend.box.background = element_rect(),legend.box.margin = margin(t=0.1,r=0.1,b=0.1,l=0.1,unit = "cm"))
+
+
+
+```
+[문제177] 년도별 입사한 수를 ggplot를 이용해서 막대그래프를 출력하세요.
+
+#내 답안
+x<- aggregate(EMPLOYEE_ID~year(emp$HIRE_DATE),emp,length)
+colnames(x)<- c('year','cnt')
+x
+
+##세로
+ggplot(x, aes(x=factor(year),y=cnt, fill = factor(year)))+
+  geom_bar(width = 0.5,show.legend = T,stat = "identity")+
+  labs(x = NULL, y= "인원수",fill = "입사년도")
+  
+##가로
+ggplot(x, aes(x=factor(year),y=cnt, fill = factor(year)))+
+  geom_bar(width = 0.5,show.legend = T,stat = "identity")+
+  labs(x = NULL, y= "인원수",fill = "입사년도")+
+  coord_flip()
+
+
+#선생님
+library(lubridate)
+library(plyr)
+
+ggplot(emp,aes(x=factor(year(HIRE_DATE)), fill = factor(year(HIRE_DATE))))+
+  geom_bar()+
+  labs(title = "년도별 입사현황",x = "년도", y= "인원수", fill = "년도")+
+  theme(plot.title = element_text(face='bold', color = "darkblue", hjust=0.5))+
+  theme(axis.title.x = element_text(face='bold', color = "darkblue"))+
+  theme(axis.title.y = element_text(face='bold', color = "darkblue"))+
+  theme(legend.title.align = 0.5, legend.box.background = element_rect(),legend.box.margin = margin(t=0.1,r=0.1,b=0.1,l=0.1,unit = "cm"))
+#margin = 범례의 여백을 지정하는것  
+
+```{r}
+
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+df
+
+s<- df[df$subject =="SQL",]
+s
+
+ggplot(s, aes(x=name, y=grade))+
+  geom_point()
+
+ggplot(s, aes(x=name, y=grade,size = grade))+
+  geom_point(shape = 21, colour = "black", fill = "cyan")
+
+ggplot(s, aes(x=name, y=grade))+
+  geom_point()+
+  geom_line()+
+  geom_abline(intercept = 50,slope = 0,color="red")
+
+ggplot(s,aes(x=name, y=grade))+
+  geom_bar(stat="identity", fill="red")+
+  facet_wrap(~name)+
+  theme(axis.text.x = element_blank())
+
+```
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+df
+
+s<- df[df$subject =="SQL",]
+s
+
+ggplot(s, aes(x=name, y=grade))+
+  geom_point()
+
+ggplot(s, aes(x=name, y=grade,size = grade))+
+# 테두리는 black 색은 cyan으로 채우겠다
+  geom_point(shape = 21, colour = "black", fill = "cyan")
+
+ggplot(s, aes(x=name, y=grade))+
+  geom_point()+
+  geom_line()+
+  geom_abline(intercept = 50,slope = 0,color="red")
+
+ggplot(s,aes(x=name, y=grade))+
+  geom_bar(stat="identity", fill="red")+
+# facet_wrap(~name) = name으로 나누어서 그래프 출력
+  facet_wrap(~name)+
+# element_blank = 빈칸으로 두겠다
+  theme(axis.text.x = element_blank())
+
+
+```{r}
+df
+
+ggplot(df,aes(x=name, y=grade))+
+  geom_bar(stat="identity", fill="red")+
+  facet_wrap(~name+subject)+
+  theme(axis.text.x = element_blank())
+
+```
+[문제178] 학생들의 과목 점수를 각각으로 막대그래프를 그리세요.
+
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+
+ggplot(df,aes(x=name, y=grade))+
+  geom_bar(stat="identity", fill="red")+
+  facet_wrap(~name+subject)+
+  theme(axis.text.x = element_blank())
+```{r}
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+df<- arrange(df,name,subject)
+df
+
+ggplot(df,aes(x=subject,y=grade,group=name,color = name))+
+  geom_point()+
+  geom_line()+
+  geom_text(aes(label = grade),vjust=1.5,size= 3)
+
+```
+[문제179] 화면과 같은 결과를 그래프로 생성하세요.
+
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+df<- arrange(df,name,subject)
+df
+
+ggplot(df,aes(x=subject,y=grade,group=name,colour = name))+
+  geom_point()+
+  geom_line()
+```{r}
+
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+df
+
+s<- df[df$subject =="SQL",]
+s
+
+ggplot(s, aes(x=grade, y=reorder(name,grade)))+
+  geom_point(size= 5)+
+  theme_bw()+
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.major.y = element_line(color = "red",linetype = "dashed"))
+```
+
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+df
+
+s<- df[df$subject =="SQL",]
+s
+
+ggplot(s, aes(x=grade, y=reorder(name,grade)))+
+  geom_point(size= 5)+
+  theme_bw()+
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.major.y = element_line(color = "red",linetype = "dashed"))
+# theme_bw() :흑과 백만 가지고 있는 테마
+# panel.grid.major.x : 배경화면 중에 간격을 나타내는 큰 선분
+# element_blank() : 선분 안보이게하기
+# panel.grid.minor.x : 큰선분 사이에 있는 작은 선분
+# panel.grid.major.y = element_line(color = "red",linetype = "dashed")) : red선을 dashed스타일로 나타내기

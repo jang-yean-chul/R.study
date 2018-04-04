@@ -1,0 +1,94 @@
+```{r}
+install.packages("Rfacebook")
+library(Rfacebook)
+
+#https://developers.facebook.com/tools/explorer?method=GET&path=me%3Ffields%3Did%2Cname&version=v2.11
+
+page<- "moonbyun1"
+
+token<- "EAACEdEose0cBAMPrKqiVE7H1acboPxZBZA2y9evqBjdJYnes5LyGoEVkgjAirIAOCtmq1WV6Rt98IhVm3Ac5xlgZAWdvuRCTskLeGZAp6TLbfhdSQIbDy1U57dlcmSQkj1ZAjZAMwFS2ZC09mFdhXhxPcjAfb2z4SF6lOu5T5vTlENxB8c602jqN05NbXSFqOTgeBchy4AF9wZDZD"
+
+
+facebook.data<- getPage(page,token,n=100)
+
+moon<- facebook.data$message
+
+moon<- gsub("\n"," ",moon)
+
+moon<- unlist(moon)
+
+
+moon<- moon[!is.na(moon)]
+
+moon1<- SimplePos09(moon)
+moon1<-unlist(str_match_all(moon1, '([A-Z°¡-ÆR]+)/N'))
+moon1<-moon1[!str_detect(moon1, '/')]
+
+moon2<- sort(table(moon1),decreasing = T)
+
+
+moon2<- moon2[nchar(names(moon2))>=2]
+
+moon2<- moon2[names(moon2)!="±¹¹Î"]
+moon2<- moon2[names(moon2)!="¿ì¸®"]
+moon2<- moon2[names(moon2)!="³ª¶ó"]
+moon2<- moon2[names(moon2)!="Á¸°æ"]
+moon2<- moon2[names(moon2)!="´ëÇÑ¹Î±¹"]
+moon2<- moon2[names(moon2)!="´ëÅë·É"]
+moon2<- moon2[names(moon2)!="Á¤ºÎ"]
+moon2<- moon2[names(moon2)!="±¹°¡"]
+moon2<- moon2[names(moon2)!="¿À´Ã"]
+moon2<- moon2[names(moon2)!="¿©·¯ºÐ"]
+moon2<- moon2[names(moon2)!="¹®Àç"]
+moon2<- moon2[names(moon2)!="±¹¹Îµé"]
+
+wordcloud2(moon2,size= 0.5)
+
+moon[str_detect(moon,"¸¶À½")]
+
+```
+
+```{r}
+page<- "gohongbanjang"
+
+token<- "EAACEdEose0cBAMPrKqiVE7H1acboPxZBZA2y9evqBjdJYnes5LyGoEVkgjAirIAOCtmq1WV6Rt98IhVm3Ac5xlgZAWdvuRCTskLeGZAp6TLbfhdSQIbDy1U57dlcmSQkj1ZAjZAMwFS2ZC09mFdhXhxPcjAfb2z4SF6lOu5T5vTlENxB8c602jqN05NbXSFqOTgeBchy4AF9wZDZD"
+
+
+facebook.data<- getPage(page,token,n=100)
+
+hong<- facebook.data$message
+
+hong<- gsub("\n"," ",hong)
+
+hong<- unlist(hong)
+
+
+hong<- hong[!is.na(hong)]
+
+hong1<- SimplePos09(hong)
+hong1<-unlist(str_match_all(hong1, '([A-Z°¡-ÆR]+)/N'))
+hong1<-hong1[!str_detect(hong1, '/')]
+
+hong2<- sort(table(hong1),decreasing = T)
+
+
+hong2<- hong2[nchar(names(hong2))>=2]
+
+hong2<- hong2[names(hong2)!="È«ÁØÇ¥"]
+hong2<- hong2[names(hong2)!="¿ì¸®"]
+hong2<- hong2[names(hong2)!="±¹¹Î"]
+hong2<- hong2[names(hong2)!="ÀÚÀ¯ÇÑ±¹´ç"]
+hong2<- hong2[names(hong2)!="¿©·¯ºÐ"]
+hong2<- hong2[names(hong2)!="ÃâÃ³"]
+hong2<- hong2[names(hong2)!="´ëÇÑ¹Î±¹"]
+hong2<- hong2[names(hong2)!="´ëÇ¥"]
+hong2<- hong2[names(hong2)!="È«ÁØÇ¥°¡"]
+hong2<- hong2[names(hong2)!="³×ÀÌ¹ö"]
+hong2<- hong2[names(hong2)!="´º½º"]
+
+wordcloud2(hong2,size= 0.3)
+
+hong[str_detect(hong,"³×ÀÌ¹ö")]
+
+```
+

@@ -1,0 +1,193 @@
+```{r}
+#install.packages("rvest")
+library(rvest)
+library(dplyr)
+
+search<-  c("¹®ÀçÀÎ")
+html<- NULL
+zzz<- NULL
+for(i in 1:5){
+  html<- read_html(paste("http://search.joins.com/TotalNews?Keyword=",search,"&SortType=New&SearchCategoryType=TotalNews&PeriodType=All&ScopeType=All&ImageType=All&JplusType=All&BlogType=All&ImageSearchType=Image&TotalCount=0&StartCount=0&IsChosung=False&IssueCategoryType=All&IsDuplicate=True&Page=",i,"&PageSize=10&IsNeedTotalCount=True",sep = ""))
+  
+  url<- html_nodes(html,".section_news")%>%
+          html_nodes("a")%>%
+          html_attr("href")
+        
+  url<- unique(url[str_detect(url,"http://")])
+
+  url
+  for(j in 1:length(url)){
+    html2<- read_html(url[j])
+  
+    html2
+    
+    text<- html_nodes(html2,"#content")%>%
+            html_text()
+    
+    text
+    
+    text<- gsub("\r"," ",text)
+    text<- gsub("\n"," ",text)
+    text<- gsub("\t"," ",text)
+    text<- gsub("                              SNS °øÀ¯ ¹× ´ñ±Û          SNS Å¬¸¯ ¼ö 0          ÆäÀÌ½ººÏ          Æ®À§ÅÍ          Ä«Ä«¿À½ºÅä¸®                        SNS °øÀ¯ ´õº¸±â                        ±¸±ÛÇÃ·¯½º                                ÇÉÅÍ·¹½ºÆ®                  URL º¹»ç                  SNS °øÀ¯ ´õº¸±â ´Ý±â                                             "," ",text)
+    text<- gsub("                                                                                                                                   ÁÁ¾Æ¿ä              0                                  ½È¾î¿ä              0                                SNS °øÀ¯                                                                                          Áß¾ÓÀÏº¸ ÇÖ Å¬¸¯                                                                                                          PHOTO & VIDEO                                            PHOTO & VIDEO ´õº¸±â                                                                                                                                                                                                                  "," ",text)
+    
+    
+    text
+    
+    aaa<-SimplePos09(text) 
+    aaa<-unlist(str_match_all(aaa, '([A-Z°¡-ÆR]+)/N'))
+    aaa<-aaa[!str_detect(aaa, '/')]
+    zzz<-append(zzz,aaa)
+  }
+}
+
+yyy<-zzz[str_length(zzz)>1]
+yyy<-table(yyy)
+yyy
+
+yyy<-yyy[yyy>3]
+xxx<-sort(yyy, decreasing = T)
+wordcloud2(xxx, size=0.7)
+
+```
+
+
+https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=µà¶û°í
+https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=%EB%93%80%EB%9E%91%EA%B3%A0+%ED%9B%84%EA%B8%B0
+
+
+```{r}
+
+install.packages("Rfacebook")
+library(Rfacebook)
+
+page<- "moonbyun1"
+
+token<- "EAACEdEose0cBAHEIZA8el9E3jfADhjthV7LyHUk5mGeqJlVm1m0gduHn9KZBnUA5ZBN35Pvp29nhSxMLldfIu6ZByi8muy53U5tp0ZCuqgSPlv8jl0xslskwVDf5JvKZAa0lCCs27fx6NaZBkkmZBnNFuhVlwy2xo8C7lZA7xRwIstC59ZBqIryKPjsDItcBFbuUfEuYjBTiiiPAZDZD"
+
+facebook_moon<- getPage(page, token, n=100)
+
+text<- facebook_moon$message
+zzz<- NULL
+
+aaa<- SimplePos09(text[1])
+aaa<-unlist(str_match_all(aaa, '([A-Z°¡-ÆR]+)/N'))
+  aaa<-aaa[!str_detect(aaa, '/')]
+  zzz<-append(zzz,aaa)
+
+for(i in 1:50){
+  aaa<- SimplePos09(text[i])
+  
+  aaa<-unlist(str_match_all(aaa, '([A-Z°¡-ÆR]+)/N'))
+  aaa<-aaa[!str_detect(aaa, '/')]
+  zzz<-append(zzz,aaa)
+}
+  yyy<-zzz[str_length(zzz)>1]
+  yyy<-table(yyy)
+  yyy
+  
+  yyy<-yyy[yyy>3]
+  xxx<-sort(yyy, decreasing = T)
+  wordcloud2(xxx, size=0.7)
+
+
+```
+
+```{r}
+air<- read.csv("c:/r/out.csv",header = T,stringsAsFactors = F)
+
+air<- air[-1,]
+
+air
+
+colnames(air)<- gsub("X","",colnames(air))
+
+colnames(air)<- c( "±¹Àûº°" ,"2006.06",  "2006.05" , "2006.04"  ,"2006.03" , "2006.02" , "2006.01" , "2005.12" , "2005.11"  ,"2005.10"  ,"2005.09",  "2005.08",  "2005.07" ,"2005.06" , "2005.05" , "2005.04" , "2005.03" , "2005.02",  "2005.01"  ,"2004.12" , "2004.11" ,"2004.10" , "2004.09" , "2004.08",  "2004.07" , "2004.06" ,"2004.05" , "2004.04" , "2004.03" , "2004.02" , "2004.01" , "2003.12" , "2003.11" , "2003.10" , "2003.09" , "2003.08" , "2003.07" , "2003.06" ,"2003.05","2003.04" , "2003.03" , "2003.02" ,"2003.01" )
+
+air
+
+air<- melt(air,id = '±¹Àûº°')
+
+air$variable<- as.character(air$variable)
+
+air$value<- as.numeric(air$value)
+
+ggplot(air,aes(x=sort(as.character(variable)),y=as.numeric(value), colour = ±¹Àûº°, group = ±¹Àûº°), las = 2)+
+  geom_point()+
+  geom_line()
+
+
+air<- orderBy(~variable,air)
+
+air_1<- air[air$±¹Àûº°== "ÇÊ¸®ÇÉ",]
+air_1
+
+
+ggplot(air_1,aes(x=variable,y=as.numeric(value)/100, colour = ±¹Àûº°, group = ±¹Àûº°), las = 2)+
+  geom_point()+
+  geom_line()+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1, colour = 'black', size = 9))
+
+zzz<- NULL
+start<- NULL
+end<- NULL
+
+for(i in 2:length(air_1$value)){
+  if (air_1$value[i-1]/100*30<= abs(air_1$value[i-1] - air_1$value[i])){zzz<-append(zzz,air_1$variable[i])}
+}
+
+zzz
+
+a<- seq(1,101,10)
+
+search<- air_1$±¹Àûº°[1]
+
+zzz<- paste0(zzz,'.01')
+start<- as.Date(zzz,"%Y.%m.%d")-15
+end<- as.Date(zzz,format = "%Y.%m.%d")+15
+
+start<- gsub("-",".",start)
+end<- gsub("-",".",end)
+
+zzz
+start
+end
+
+html<- NULL
+text<- NULL
+
+for (i in a){
+  html<- read_html(paste0("https://search.naver.com/search.naver?ie=utf8&where=news&query=",search,"&sm=tab_pge&sort=0&photo=0&field=0&reporter_article=&pd=3&ds=",start[1],"&de=",end[1],"&docid=&nso=so:r,p:from20060115to20060215,a:all&mynews=0&cluster_rank=&start=",i,"&refresh_start=0"))
+
+  text<-  append(text,html_nodes(html,".type01 dt")%>%
+          html_nodes("a")%>%
+          html_text())
+}
+
+text
+start[1]
+end[1]
+
+text
+
+text<-gsub('[[:punct:]]',' ',text) 
+
+g1<-SimplePos09(text) 
+g2<-unlist(str_match_all(g1, '([A-Z°¡-ÆR]+)/N')) 
+g2<-g2[!str_detect(g2, '/')] 
+
+head(g2) 
+
+gt<-table(g2) 
+gt<- sort(gt,decreasing = T)
+wordcloud2(gt,size = 0.3)
+
+g3<-g2[str_length(g2)>1] 
+gt<-table(g3) 
+gt<- sort(gt,decreasing = T)
+
+wordcloud2(gt,size = 0.5)
+
+```
+  

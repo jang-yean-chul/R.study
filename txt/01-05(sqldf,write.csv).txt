@@ -1,0 +1,476 @@
+```{r}
+
+x<- subset(emp,DEPARTMENT_ID == 30 &SALARY>= 3000, select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID))
+
+y<- subset(emp,format(as.Date(HIRE_DATE),"%Y") %in% c(2002,2003) ,select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID))
+
+rbind(subset(emp,DEPARTMENT_ID == 30 &SALARY>= 3000, select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID)),subset(emp,format(as.Date(HIRE_DATE),"%Y") %in% c(2002,2003) ,select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID)))
+
+merge(y,x,all = T)
+unique(rbind(subset(emp,DEPARTMENT_ID == 30 &SALARY>= 3000, select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID)),subset(emp,format(as.Date(HIRE_DATE),"%Y") %in% c(2002,2003) ,select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID))))
+
+```
+[문제116] 30번 부서 사원이면서 급여는 3000이상 받는 사원들의 last_name, hire_date, salary, job_id, department_id 출력해주세요. 단 subset 함수를 이용하세요.
+
+subset(emp,DEPARTMENT_ID == 30 &SALARY>= 3000, select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID))
+
+[문제117] 입사한 날짜가 2002,2003년도에 입사한 사원들의 last_name, hire_date, salary, job_id, department_id 출력해주세요. 단 subset 함수를 이용하세요.
+
+subset(emp,format(as.Date(HIRE_DATE),"%Y") %in% c(2002,2003) ,select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID))
+
+[문제118] 문제116번 결과하고 문제117결과를 하나로 합쳐 주세요.
+
+rbind(subset(emp,DEPARTMENT_ID == 30 &SALARY>= 3000, select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID)),subset(emp,format(as.Date(HIRE_DATE),"%Y") %in% c(2002,2003) ,select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID)))
+
+
+[문제119] 문제116번 결과하고 문제117결과 하나로 합치되 중복되는 데이터는 제거해주세요.
+merge(y,x,all = T)
+unique(rbind(subset(emp,DEPARTMENT_ID == 30 &SALARY>= 3000, select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID)),subset(emp,format(as.Date(HIRE_DATE),"%Y") %in% c(2002,2003) ,select = c(LAST_NAME, HIRE_DATE, SALARY,JOB_ID, DEPARTMENT_ID))))
+```{r}
+
+emp[emp$SALARY > emp[emp$EMPLOYEE_ID == 150,c("SALARY")],c("LAST_NAME","SALARY")]
+
+emp[emp$SALARY == max(emp$SALARY),c("LAST_NAME","SALARY")]
+subset(emp, SALARY == max(SALARY), select= c(LAST_NAME, SALARY))
+
+emp[emp$SALARY >= max(subset(emp,JOB_ID == "SA_REP", SALARY)),c("LAST_NAME","SALARY", "JOB_ID")]
+subset(emp, SALARY >= max(subset(emp, JOB_ID =="SA_REP",select = c(SALARY))),select = c(LAST_NAME,SALARY,JOB_ID))
+
+emp[emp$MANAGER_ID %in% emp[emp$LAST_NAME == "King",c("EMPLOYEE_ID")],c("LAST_NAME","SALARY")]
+
+x<- subset(emp, LAST_NAME == "King", EMPLOYEE_ID)
+x
+subset(emp, MANAGER_ID %in% x$EMPLOYEE_ID, select = c(LAST_NAME, SALARY))
+
+x<- subset(emp,toupper(LAST_NAME)=="KING", select = (EMPLOYEE_ID))
+x
+subset(emp, MANAGER_ID %in% x$EMPLOYEE_ID, select = c(LAST_NAME, SALARY))
+
+```
+[문제120] 150번 사원의 급여보다 더 많은 급여를 받는 사원들의 last_name, salary 를 출력하세요.
+
+emp[emp$SALARY > emp[emp$EMPLOYEE_ID == 150,c("SALARY")],c("LAST_NAME","SALARY")]
+
+[문제121] 사원 테이블에서 가장 많은 급여를 받는 사원의 이름과 월급을 출력하세요.
+
+emp[emp$SALARY == max(emp$SALARY),c("LAST_NAME","SALARY")]
+
+subset(emp, SALARY == max(SALARY), select= c(LAST_NAME, SALARY))
+
+[문제122] job_id가  SA_REP인 사원의 최대급여 이상 받는 사원들의 last_name,salary,job_id를 출력하세요.
+
+emp[emp$SALARY >= max(subset(emp,JOB_ID == "SA_REP", SALARY)),c("LAST_NAME","SALARY", "JOB_ID")]
+
+subset(emp, SALARY >= max(subset(emp, JOB_ID =="SA_REP",select = c(SALARY))),select = c(LAST_NAME,SALARY,JOB_ID))
+#여기서는 내부의 subset값이 단일값이여서 사용가능한거고 120번문제에서는 data.frame으로 나와서 as.list를 사용하여야 한다.
+
+[문제123]  KING 에게 보고하는 사원들의 last_name, salary를 출력하세요.
+
+emp[emp$MANAGER_ID %in% emp[emp$LAST_NAME == "King",c("EMPLOYEE_ID")],c("LAST_NAME","SALARY")]
+
+x<- subset(emp, LAST_NAME == "King", EMPLOYEE_ID)
+x
+subset(emp, MANAGER_ID %in% x$EMPLOYEE_ID, select = c(LAST_NAME, SALARY))
+
+#subset으로 뽑아내면 데이타프레임형식으로 뽑힌다. (컬럼이 한개라도)  그러면 **as.list를 이용하여 리스트형식으로 바꿔도된다.
+#그러나 emp[,] 형식을 뽑아내게 되면 컬럼이 한개면 그냥 값들의 나열로 나오게 된다.
+
+```{r}
+emp[emp$EMPLOYEE_ID %in% emp[,c("MANAGER_ID")],c("LAST_NAME")]
+
+subset(emp,EMPLOYEE_ID %in% as.list(subset(emp,,select = c(MANAGER_ID))),select = c(LAST_NAME))
+
+
+
+E<- emp[,c("LAST_NAME","SALARY","MANAGER_ID")]
+M<- emp[,c("LAST_NAME","SALARY","EMPLOYEE_ID")]
+
+names(M) <- c("MANAGER_NAME", "MANAGER_SAL","MANAGER_ID")
+E
+M
+
+X<-merge(E,M,by = "MANAGER_ID")
+X
+X[X$SALARY > X$MANAGER_SAL,c("LAST_NAME", "SALARY", "MANAGER_NAME","MANAGER_SAL")]
+
+
+E<- emp[,c("LAST_NAME","SALARY","MANAGER_ID")]
+M<- emp[,c("LAST_NAME","SALARY","EMPLOYEE_ID")]
+
+X<- merge(E,M,by.x = "MANAGER_ID",by.y = "EMPLOYEE_ID")
+X<- X[X$SALARY.x > X$SALARY.y,]
+names(X)<- c("MANAGER_ID","LAST_NAME","SALARY","MANAGER_NAME","MANAGER_SAL")
+X[,c("LAST_NAME","SALARY","MANAGER_NAME","MANAGER_SAL")]
+
+
+E<- emp[,c("LAST_NAME","SALARY","MANAGER_ID")]
+M<- emp[,c("EMPLOYEE_ID","SALARY","LAST_NAME")]
+
+R<- merge(E,M,by.x="MANAGER_ID",by.y="EMPLOYEE_ID")
+R
+R<- R[,!names(R) %in% "MANAGER_ID"]
+R
+names(R) <- c("w_name","w_sal","m_sal","m_name")
+R[R$w_sal > R$m_sal,c("w_name","w_sal","m_name","m_sal")]
+
+
+
+unique(merge(emp,emp,by.x = "MANAGER_ID", by.y = "EMPLOYEE_ID")[,c("MANAGER_ID","LAST_NAME.y")])
+mgr_tab <- unique(merge(emp,emp,by.x = "MANAGER_ID", by.y = "EMPLOYEE_ID")[,c("MANAGER_ID","LAST_NAME.y")])
+names(mgr_tab) <- c("ID","LAST_NAME")
+mgr_tab
+
+```
+[문제124] 관리자인 사원들의 last_name을 출력하세요.
+
+emp[emp$EMPLOYEE_ID %in% emp[,c("MANAGER_ID")],c("LAST_NAME")]
+
+[문제125] 관리자 보다 더 많은 급여를 받는 사원이름, 사원급여, 관리자이름, 관리자급여를 출력하세요.
+
+#1
+E<- emp[,c("LAST_NAME","SALARY","MANAGER_ID")]
+M<- emp[,c("LAST_NAME","SALARY","EMPLOYEE_ID")]
+
+names(M) <- c("MANAGER_NAME", "MANAGER_SAL","MANAGER_ID")
+E
+M
+
+X<-merge(E,M,by = "MANAGER_ID")
+X[X$SALARY > X$MANAGER_SAL,c("LAST_NAME", "SALARY", "MANAGER_NAME","MANAGER_SAL")]
+
+
+#2
+E<- emp[,c("LAST_NAME","SALARY","MANAGER_ID")]
+M<- emp[,c("LAST_NAME","SALARY","EMPLOYEE_ID")]
+
+X<- merge(E,M,by.x = "MANAGER_ID",by.y = "EMPLOYEE_ID")
+X<- X[X$SALARY.x > X$SALARY.y,]
+names(X)<- c("MANAGER_ID","LAST_NAME","SALARY","MANAGER_NAME","MANAGER_SAL")
+X[,c("LAST_NAME","SALARY","MANAGER_NAME","MANAGER_SAL")]
+
+
+#3
+E<- emp[,c("LAST_NAME","SALARY","MANAGER_ID")]
+M<- emp[,c("EMPLOYEE_ID","SALARY","LAST_NAME")]
+
+R<- merge(E,M,by.x="MANAGER_ID",by.y="EMPLOYEE_ID")
+R
+R<- R[,!names(R) %in% "MANAGER_ID"]
+R
+names(R) <- c("w_name","w_sal","m_sal","m_name")
+R[R$w_sal > R$m_sal,c("w_name","w_sal","m_name","m_sal")]
+
+
+#4
+emp_mgr_sal <- merge(emp,emp,by.x = "MANAGER_ID", by.y = "EMPLOYEE_ID")[,c("LAST_NAME.x","SALARY.x","LAST_NAME.y","SALARY.y")]
+names(emp_mgr_sal) <- c("emp_name", "emp_sal", "mgr_name", "mgr_sal")
+
+subset(emp_mgr_sal, emp_mgr_sal$emp_sal > emp_mgr_sal$mgr_sal)
+
+```{r}
+
+
+sqldf("select * 
+       from emp")
+sqldf("select * 
+       from dept")
+sqldf("select distinct job_id 
+       from emp")
+sqldf("select last_name 
+       from emp 
+       where department_id = 10")
+
+sqldf("SELECT * 
+       FROM emp limit 10")
+sqldf("SELECT last_name, salary 
+       FROM emp 
+       ORDER BY salary")
+sqldf("SELECT last_name as name, salary 
+       FROM emp 
+       ORDER BY salary desc")
+
+sqldf("SELECT count(employee_id),sum(salary),avg(salary),variance(salary),stdev(salary),max(salary),min(salary) 
+       FROM emp")
+
+sqldf("SELECT department_id, sum(salary) 
+       FROM emp 
+       GROUP BY department_id")
+
+sqldf("SELECT last_name, upper(last_name), lower(last_name), substr(last_name,3,2),
+              length(last_name), leftstr(last_name,2),rightstr(last_name,2),reverse(last_name) 
+       FROM emp")
+
+sqldf("select salary/3, round(salary/3) 
+       FROM emp")
+
+sqldf("SELECT * 
+       FROM emp 
+       where hire_date > '2004-01-01'")
+
+sqldf("SELECT * 
+       FROM emp 
+       where department_id is null")
+
+sqldf("SELECT * 
+       FROM emp 
+       where department_id is not null")
+
+sqldf("SELECT * 
+       FROM emp 
+       where department_id in (10,20)")
+
+sqldf("SELECT * 
+       FROM emp 
+       where salary between 10000 and 20000")
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e join dept d 
+       on e.department_id = d.department_id")
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e join dept d 
+       using(department_id)")
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e left outer join dept d 
+       on e.department_id = d.department_id")
+
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e left outer join dept d 
+       on e.department_id = d.department_id 
+       union 
+       SELECT e.last_name, d.department_name 
+       FROM dept d left outer join emp e 
+       on e.department_id = d.department_id")
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e left outer join dept d 
+       on e.department_id = d.department_id 
+       UNION ALL
+       SELECT e.last_name, d.department_name 
+       FROM dept d left outer join emp e 
+       on e.department_id = d.department_id")
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e left outer join dept d 
+       on e.department_id = d.department_id 
+       INTERSECT
+       SELECT e.last_name, d.department_name 
+       FROM dept d left outer join emp e 
+       on e.department_id = d.department_id")
+
+sqldf("SELECT * 
+       FROM emp
+       WHERE salary > (select salary
+                       from emp
+                       where employee_id = 150)")
+
+sqldf("select strftime('%Y', hire_date)
+       from emp")
+
+
+sqldf("select strftime('%Y%m%d%H%M%S','now') from ~~")
+
+sqldf("select strftime('%Y-%m-%d', 'now'), last_name FROM emp WHERE hire_date BETWEEN '2002-01-01' AND '2002-12-31' ")
+
+```
+
+★sqldf
+ - sql을 이용해서 데이터를 처리
+ 
+ install.packages("sqldf")
+ library(sqldf)
+
+#사용 방법
+sqldf("select * 
+       from emp")
+sqldf("select * 
+       from dept")
+sqldf("select distinct job_id 
+       from emp")
+sqldf("select last_name 
+       from emp 
+       where department_id = 10")
+
+sqldf("SELECT * 
+       FROM emp limit 10")
+sqldf("SELECT last_name, salary 
+       FROM emp 
+       ORDER BY salary")
+sqldf("SELECT last_name as name, salary 
+       FROM emp 
+       ORDER BY salary desc")
+
+sqldf("SELECT count(employee_id),sum(salary),avg(salary),variance(salary),stdev(salary),max(salary),min(salary) 
+       FROM emp")
+
+sqldf("SELECT department_id, sum(salary) 
+       FROM emp 
+       GROUP BY department_id")
+
+sqldf("SELECT last_name, upper(last_name), lower(last_name), substr(last_name,3,2),
+              length(last_name), leftstr(last_name,2),rightstr(last_name,2),reverse(last_name) 
+       FROM emp")
+
+sqldf("select salary/3, round(salary/3) 
+       FROM emp")
+
+sqldf("SELECT * 
+       FROM emp 
+       where hire_date > '2004-01-01'")
+
+sqldf("SELECT * 
+       FROM emp 
+       where department_id is null")
+
+sqldf("SELECT * 
+       FROM emp 
+       where department_id is not null")
+
+sqldf("SELECT * 
+       FROM emp 
+       where department_id in (10,20)")
+
+sqldf("SELECT * 
+       FROM emp 
+       where salary between 10000 and 20000")
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e join dept d 
+       on e.department_id = d.department_id")
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e join dept d 
+       using(department_id)")
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e left outer join dept d 
+       on e.department_id = d.department_id")
+
+
+#Full outer join을 하기위한 방법은 left outer join과 위치를 바꾼 또다른 left outer join을 union으로 연결해서 표현 
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e left outer join dept d 
+       on e.department_id = d.department_id 
+       union 
+       SELECT e.last_name, d.department_name 
+       FROM dept d left outer join emp e 
+       on e.department_id = d.department_id")
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e left outer join dept d 
+       on e.department_id = d.department_id 
+       UNION ALL
+       SELECT e.last_name, d.department_name 
+       FROM dept d left outer join emp e 
+       on e.department_id = d.department_id")
+
+sqldf("SELECT e.last_name, d.department_name 
+       FROM emp e left outer join dept d 
+       on e.department_id = d.department_id 
+       INTERSECT
+       SELECT e.last_name, d.department_name 
+       FROM dept d left outer join emp e 
+       on e.department_id = d.department_id")
+
+sqldf("SELECT * 
+       FROM emp
+       WHERE salary > (select salary
+                       from emp
+                       where employee_id = 150)")
+
+#strftime 사용
+sqldf("select strftime('%Y', hire_date)
+       from emp")
+
+#strftime 안에 사용하는 문자 : '%Y%m%d%H%M%S','now'
+
+sqldf("select strftime('%Y-%m-%d', 'now'), last_name FROM emp WHERE hire_date BETWEEN '2002-01-01' AND '2002-12-31' ")
+
+```{r}
+sqldf("select * 
+       from emp e,(select department_id,avg(salary) sal 
+                   from emp  
+                   group by department_Id)m
+       where e.department_id= m.department_id
+       and e.salary> m.sal")
+
+
+
+sqldf("SELECT *
+       FROM emp e
+       WHERE e.salary > (SELECT avg(salary)
+                         FROM emp
+                         WHERE department_id = e.department_id)")
+
+
+x<-aggregate(emp$SALARY~emp$DEPARTMENT_ID,emp,mean)
+names(x)<- c("DEPARTMENT_ID", "MEAN_SAL")
+x
+
+y<- merge(x,emp,by = "DEPARTMENT_ID")
+y
+
+y[y$SALARY > y$MEAN_SAL,]
+
+
+```
+       
+[문제126] 자신의 부서 평균 급여보다 많이 받는 사원들의 정보를 출력하세요.(sqldf 이용하세요)
+
+#1
+sqldf("select * 
+       from emp e,(select department_id,avg(salary) sal 
+                   from emp  
+                   group by department_Id)m
+       where e.department_id= m.department_id
+       and e.salary> m.sal")
+
+
+#2(평균을 107번 구하므로 부하가 심하다.)
+sqldf("SELECT *
+       FROM emp e
+       WHERE e.salary > (SELECT avg(salary)
+                         FROM emp
+                         WHERE department_id = e.department_id)")
+
+#3
+x<-aggregate(emp$SALARY~emp$DEPARTMENT_ID,emp,mean)
+names(x)<- c("DEPARTMENT_ID", "MEAN_SAL")
+x
+
+y<- merge(x,emp,by = "DEPARTMENT_ID")
+y
+
+y[y$SALARY > y$MEAN_SAL,]
+```{r}
+sqldf("select employee_id, last_name from emp where length(last_name)>= 10")
+
+sqldf("select last_name, substr(last_name,1,3) from emp")
+
+sqldf("select last_name, salary from emp where lower(substr(last_name,2,1)) = 'm'")
+
+sqldf("select last_name, salary from emp where lower(substr(last_name,2,1)) in ('g','m')")
+ 
+sqldf("select last_name,  lpad('*', 갯수, '*') from emp")
+
+sqldf("SELECT last_name, replace(salary, '0', '*')FROM emp")
+
+sqldf("select last_name, salary, commission_pct ,case  when  commission_pct is null then salary * 12
+                                                       else (salary * 12) + (salary * 12 * commission_pct) 
+                                                       end
+      from emp ")
+
+sqldf("select last_name, salary, commission_pct,(salary*12) + (salary*12*coalesce(commission_pct, 0)) ann_sal
+              from emp")
+
+
+```
+```{r}
+
+```
+★write.csv
+ - 데이터프레임을 csv file로 저장
+
+white.csv(df,file='c:/r/df.csv', row.names= FALSE)

@@ -1,0 +1,331 @@
+```{r}
+jeju_csv<- read.csv("c:/r/제주도여행코스.csv",header = T,stringsAsFactors=F)
+
+jeju<- readLines("c:/r/제주여행코스.txt")
+
+jeju_csv
+
+center<- c(mean(jeju_csv$LON),mean(jeju_csv$LAT))
+
+map<- get_googlemap(center = center,maptype = "roadmap", zoom = 11)
+
+
+ggmap(map)+
+  geom_point(data = jeju_csv, aes(x=LON, y=LAT),size = 3,alpha=0.7,col = rainbow(length(jeju_csv$장소)))+
+  geom_path(data=jeju_csv,aes(x=LON,y=LAT),size=1,linetype = 2,col = "blue")+
+  geom_text(data=jeju_csv,aes(x=LON, y=LAT+0.01,label=장소),size=3)
+
+
+jeju
+
+
+
+```
+
+```{r}
+seoul_list <- readLines("c:/r/seoul_trip_list2.txt")
+seoul_list
+
+pop2<- geocode(enc2utf8(as.vector(seoul_list)))
+pop2
+
+
+df<- data.frame(name = seoul_list)
+df<- cbind(df,pop2)
+
+#이름을 기준으로 지우기
+#df<- df[!df$name == "",]
+#df
+
+center<- c(mean(df$lon),mean(df$lat))
+center
+
+map<- get_googlemap(center = center,maptype = "roadmap",zoom = 14)
+
+ggmap(map)+
+  geom_point(data=df,aes(x=lon,y=lat),size=4,alpha = 0.5)+
+  geom_text(data=df,aes(x=lon,y=lat+0.002,label = name),size=3)+
+  geom_path(data=df,aes(x=lon,y=lat),size=1,linetype = 2,col = "blue")
+
+
+
+
+seoul_list <- readLines("c:/r/seoul_trip_list2.txt")
+seoul_list
+
+pop2<- geocode(enc2utf8(as.vector(seoul_list)))
+pop2
+
+
+df<- data.frame(name = seoul_list)
+df<- cbind(df,pop2)
+
+seoul_t<- data.frame(name = df$name,lon =c(1:length(df$name)) ,lat = c(1:length(df$name)))  #정렬을 위한 새로운 df
+
+seoul_t[1,]<-df[1,]  #출발 점지정: 경복궁
+df<- df[-1,]  #경복궁 삭제
+
+for(i in 2:length(df$name)) {
+  seoul_t[i,] <-df[which.min(abs(seoul_t$lon[i-1]-df$lon)**2+abs(seoul_t$lat[i-1]-df$lat)**2),]
+  df<- df[-which.min(abs(seoul_t$lon[i-1]-df$lon)**2+abs(seoul_t$lat[i-1]-df$lat)**2),]
+  
+  seoul_t[length(seoul_t$name),]<-df[1,] #마지막 데이터
+}
+
+df
+seoul_t
+
+center<- c(mean(seoul_t$lon),mean(seoul_t$lat))
+center
+
+map<- get_googlemap(center = center,maptype = "roadmap",zoom = 14)
+
+ggmap(map)+
+  geom_point(data=seoul_t,aes(x=lon,y=lat),size=4,alpha = 0.5)+
+  geom_text(data=seoul_t,aes(x=lon,y=lat+0.002,label = name),size=3)+
+  geom_path(data=seoul_t,aes(x=lon,y=lat),size=1,linetype = 2,col = "blue")
+
+```
+#지점 설정 후 목록내 최단거리 지점으로 연결!연결!
+seoul_list <- readLines("c:/r/seoul_trip_list2.txt")
+seoul_list
+
+pop2<- geocode(enc2utf8(as.vector(seoul_list)))
+pop2
+
+
+df<- data.frame(name = seoul_list)
+df<- cbind(df,pop2)
+
+seoul_t<- data.frame(name = df$name,lon =c(1:length(df$name)) ,lat = c(1:length(df$name)))  #정렬을 위한 새로운 df
+
+seoul_t[1,]<-df[1,]  #출발 점지정: 경복궁
+df<- df[-1,]  #경복궁 삭제
+
+for(i in 2:length(df$name)) {
+  seoul_t[i,] <-df[which.min(abs(seoul_t$lon[i-1]-df$lon)**2+abs(seoul_t$lat[i-1]-df$lat)**2),]
+  df<- df[-which.min(abs(seoul_t$lon[i-1]-df$lon)**2+abs(seoul_t$lat[i-1]-df$lat)**2),]
+  
+  seoul_t[length(seoul_t$name),]<-df[1,] #마지막 데이터
+}
+
+df
+seoul_t
+
+center<- c(mean(seoul_t$lon),mean(seoul_t$lat))
+center
+
+map<- get_googlemap(center = center,maptype = "roadmap",zoom = 14)
+
+ggmap(map)+
+  geom_point(data=seoul_t,aes(x=lon,y=lat),size=4,alpha = 0.5)+
+  geom_text(data=seoul_t,aes(x=lon,y=lat+0.002,label = name),size=3)+
+  geom_path(data=seoul_t,aes(x=lon,y=lat),size=1,linetype = 2,col = "blue")
+  
+##얍얍!
+
+
+```{r}
+#install.packages("tm")
+library(tm)
+
+data1<- readLines("c:/r/tm_example.txt")
+data1
+
+corp1<- VCorpus(VectorSource(data1))
+corp1
+
+summary(corp1)
+inspect(corp1)
+
+corp1[[1]]
+corp1[[1]]$meta
+corp1[[1]]$content
+
+tdm<- TermDocumentMatrix(corp1)
+tdm
+
+m<- as.matrix(tdm)
+m
+
+corp2<- tm_map(corp1,stripWhitespace)
+
+corp2<- tm_map(corp2,tolower)
+
+corp2<- tm_map(corp2,removeNumbers)
+
+corp2<- tm_map(corp2,removePunctuation)
+
+corp2<- tm_map(corp2,PlainTextDocument)
+
+
+tostring<- content_transformer(function(x,from,to) gsub(from,to,x))
+
+corp2<- tm_map(corp2,tostring,"~","")
+corp2<- tm_map(corp2,tostring,"!","")
+corp2<- tm_map(corp2,tostring,",","")
+
+sword2<- c(stopwords("en"),"and","but","not")
+corp2<- tm_map(corp2,removeWords,sword2)
+
+tdm2<- TermDocumentMatrix(corp2)
+tdm2
+
+m2<- as.matrix(tdm2)
+m2
+m
+
+colnames(m2)<- c(1:4)
+
+freq1<- sort(rowSums(m2),decreasing = T)
+freq1
+
+freq2<- sort(colSums(m2),decreasing = T)
+freq2
+
+
+docs<- data.frame(doc_id = c("doc_1","doc_2"),
+                  text = c("This is a text.","This another one."),
+                  stringsAsFactors = F)
+
+ds<- DataframeSource(docs)
+x<- Corpus(ds)
+inspect(x)
+
+
+```
+
+#텍스트 마이닝!
+
+install.packages("tm")
+library(tm)
+
+data1<- readLines("c:/r/tm_example.txt")
+data1
+
+corp1<- VCorpus(VectorSource(data1))   #벡터 -> corpus변환 , DataframeSource 
+corp1
+
+summary(corp1)
+inspect(corp1)
+
+corp1[[1]]
+corp1[[1]]$meta
+corp1[[1]]$content   #저장 되어있는 데이타 확인가능
+
+#말뭉치 문서를 matrix 변환 (문서 X 단어), 가로줄 단어, 세로줄 문서
+
+tdm<- TermDocumentMatrix(corp1)
+tdm
+
+#결과물
+<<TermDocumentMatrix (terms: 16, documents: 4)>>   
+##가로는 terms, 세로는 documents  즉 16x4의 행렬로 이루어졌다고 생각하면 됨.
+Non-/sparse entries: 21/43  
+##64개의 셀중에 21은 빈도정보(1이상의 빈도의 값)가 저장되어있고 43개는 빈도정보가 저장되어있지 않은 칸이다. 
+Sparsity           : 67%
+##21개의 셀만 사용하고있고 43개의 셀은 사용하지 않고 있으므로 칸의 빈도수가 0로 되어있는 칸 67%이다.
+Maximal term length: 10
+##단어들중에 가장 긴 단어는 10이다!
+Weighting          : term frequency (tf)
+
+#단어 및 단어의 빈도수 확인가능
+m<- as.matrix(tdm)
+m
+
+#2개 이상 연이어 있는 공백을 1개의 공백으로 변환.
+corp2<- tm_map(corp1,stripWhitespace)
+
+#대문자를 소문자로 변환
+corp2<- tm_map(corp2,tolower)
+
+#숫자표현을 제거
+corp2<- tm_map(corp2,removeNumbers)
+
+#문장부호, 특수문자 제
+corp2<- tm_map(corp2,removePunctuation)
+
+#
+corp2<- tm_map(corp2,PlainTextDocument)
+
+#말뭉치내에서는 gsub을 사용 할 수 없으므로 이 과정을 거쳐서 사용한다.
+tostring<- content_transformer(function(x,from,to) gsub(from,to,x))
+
+corp2<- tm_map(corp2,tostring,"~","")  #"~" 제거
+corp2<- tm_map(corp2,tostring,"!","")  #"!" 제거
+corp2<- tm_map(corp2,tostring,",","")  #"," 제거
+
+#불용어 등록
+##불용어제거 (전치사,관사,....)
+sword2<- c(stopwords("en"),"and","but","not")
+corp2<- tm_map(corp2,removeWords,sword2)
+
+
+#확인 절차
+##빈도부분 재생
+tdm2<- TermDocumentMatrix(corp2)
+tdm2
+
+##m,m2비교
+m2<-as.matrix(tdm2)
+m2
+m
+```{r}
+library(tm)
+
+ob<- readLines("c:/r/오바마.txt")
+ob
+
+corp1<- VCorpus(VectorSource(ob))
+corp1
+
+summary(corp1)
+inspect(corp1)
+
+corp1[[1]]
+corp1[[1]]$meta
+corp1[[1]]$content
+
+tdm<- TermDocumentMatrix(corp1)
+tdm
+
+m<- as.matrix(tdm)
+m
+
+
+corp2<- tm_map(corp1,stripWhitespace)
+
+corp2<- tm_map(corp2,tolower)
+
+corp2<- tm_map(corp2,removeNumbers)
+
+corp2<- tm_map(corp2,removePunctuation)
+
+corp2<- tm_map(corp2,PlainTextDocument)
+
+tostring<- content_transformer(function(x,from,to) gsub(from,to,x))
+corp2<- tm_map(corp2,tostring,'“four',"four")  
+corp2<- tm_map(corp2,tostring,'“from',"from")
+corp2<- tm_map(corp2,tostring,'“jealous',"jealous")
+corp2<- tm_map(corp2,tostring,'“the',"the")
+corp2<- tm_map(corp2,tostring,'“you',"you")
+corp2<- tm_map(corp2,tostring,'’ve',"")
+corp2<- tm_map(corp2,tostring,'’re',"")
+corp2<- tm_map(corp2,tostring,'’ll',"")
+
+
+sword2<- c(stopwords("en"),"and","but","not","are","been","have","from","for","will","can","well","like")
+corp2<- tm_map(corp2,removeWords,sword2)
+
+tdm<- TermDocumentMatrix(corp2)
+tdm
+
+m<- as.matrix(tdm)
+m
+
+data1<- sort(rowSums(m),decreasing = T)
+df<- data.frame(name = names(data1),cnt = data1)
+#df<- df[df$cnt>=5,]
+wordcloud2(df,size = 0.4,shape = 'star')
+```
+

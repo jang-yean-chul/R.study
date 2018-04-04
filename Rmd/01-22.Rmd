@@ -1,0 +1,410 @@
+```{r}
+text<- readLines("c:/r/seoul.txt")
+text<- rev(text)
+
+big<-data.frame(text_id<- c(1:length(text)), text_name<- c(1:length(text)), text_date<- c(1:length(text)), text_view<- c(1:length(text)))
+colnames(big)<- c('text_id', 'text_name', 'text_date', 'text_view')
+big
+
+df<-strsplit(text,split = " ")
+df
+
+for(i in 1:length(text)){
+  big$text_view[i]<- df[[i]][length(df[[i]])]
+
+  big$text_date[i]<- df[[i]][length(df[[i]])-1]
+
+  a<- strsplit(text," ")[[i]][c(-1)]
+  a<- a[-length(a)]
+  a<- a[-length(a)]
+  b[i]<- a[1]
+    for(h in 2:length(a))
+    {if(length(a)<=2){}
+      else {b[i]<- paste(b[i],a[h])}
+    }
+  big$text_name[i]<- b[i]
+}
+
+big
+
+
+
+library(wordcloud)
+
+text<- readLines("c:/r/seoul.txt")
+text
+
+extractNoun(text)
+
+noun1<- unlist(extractNoun(text))
+noun2<- unlist(sapply(text, extractNoun,USE.NAMES = F))
+
+word_cn1<- table(noun1)
+word_cn2<- table(noun2)
+
+sort(word_cn1, decreasing = T)
+head(sort(word_cn1, decreasing = T),10)
+
+pal<- brewer.pal(8,"Dark2")
+
+wordcloud(names(word_cn1), freq = word_cn1,scale = c(5,0.5),random.order = F,rot.per = .1,colors = pal)
+
+
+```
+ [¹®Á¦ 181]
+ 
+text<- readLines("c:/r/seoul.txt")
+text<- rev(text)
+
+big<-data.frame(text_id<- c(1:length(text)), text_name<- c(1:length(text)), text_date<- c(1:length(text)), text_view<- c(1:length(text)))
+colnames(big)<- c('text_id', 'text_name', 'text_date', 'text_view')
+big
+
+df<-strsplit(text,split = " ")
+df
+
+for(i in 1:length(text)){
+  big$text_view[i]<- df[[i]][length(df[[i]])]
+
+  big$text_date[i]<- df[[i]][length(df[[i]])-1]
+
+  a<- strsplit(text," ")[[i]][c(-1)]
+  a<- a[-length(a)]
+  a<- a[-length(a)]
+  b[i]<- a[1]
+    for(h in 2:length(a))
+    {if(length(a)<=2){}
+      else {b[i]<- paste(b[i],a[h])}
+    }
+  big$text_name[i]<- b[i]
+}
+
+big
+
+```{r}
+
+library(KoNLP)  
+library(wordcloud)
+library(stringr)
+
+data1 <- readLines("c:/r/seoul.txt") 
+
+useSejongDic()
+
+buildDictionary(ext_dic="sejong",
+                user_dic=data.frame(c("ÃÊµîÇÐ±³","½ÃÀå´Ô"),c
+                                    ("ncn")),replace_usr_dic=T)
+
+
+##data2 <- extractNoun(data1)
+data2 <- SimplePos09(data1)
+data2 <- str_match(data2,'([°¡-ÆR]+)/N')
+data2 <- data2[,2]
+head(unlist(data2), 30) 
+data3 <- unlist(data2) 
+data3 <- Filter(function(x) {nchar(x) >= 2} ,data3) 
+data3
+data3 <- gsub("\\d+","", data3) 
+data3 <- gsub("¼­¿ï½Ã","", data3) 
+data3 <- gsub("¼­¿ï","", data3)  
+data3 <- gsub("¿äÃ»","", data3)  
+data3 <- gsub("Á¦¾È","", data3) 
+data3 <- gsub(" ","", data3)
+data3 <- gsub("-","",data3)
+data3 <- gsub("O+","",data3)
+data3
+
+write(unlist(data3),"c:/r/seoul_2.txt") 
+data4 <- read.table("c:/r/seoul_2.txt")
+
+wordcount <- table(data4) 
+wordcount
+
+head(sort(wordcount, decreasing=T),50)
+
+library(RColorBrewer) 
+palete <- brewer.pal(9,"Set3") 
+wordcloud(names(wordcount),
+          freq=wordcount,
+          scale=c(2,0.5),
+          min.freq = 1,
+          random.order=F,
+          random.color=T,
+          colors=palete)
+
+
+library(wordcloud2)
+wordcloud2(wordcount)
+
+
+```
+#¼±»ý´Ô
+
+library(KoNLP)  
+library(wordcloud)
+library(stringr)
+
+data1 <- readLines("c:/r/seoul.txt") 
+
+useSejongDic()
+
+buildDictionary(ext_dic="sejong",
+                user_dic=data.frame(c("ÃÊµîÇÐ±³","½ÃÀå´Ô"),c
+                                    ("ncn")),replace_usr_dic=T)
+
+
+##data2 <- extractNoun(data1)
+data2 <- SimplePos09(data1)
+data2 <- str_match(data2,'([°¡-ÆR]+)/N')
+data2 <- data2[,2]
+head(unlist(data2), 30) 
+data3 <- unlist(data2) 
+data3 <- Filter(function(x) {nchar(x) >= 2} ,data3) 
+data3
+data3 <- gsub("\\d+","", data3) 
+data3 <- gsub("¼­¿ï½Ã","", data3) 
+data3 <- gsub("¼­¿ï","", data3)  
+data3 <- gsub("¿äÃ»","", data3)  
+data3 <- gsub("Á¦¾È","", data3) 
+data3 <- gsub(" ","", data3)
+data3 <- gsub("-","",data3)
+data3 <- gsub("O+","",data3)
+data3
+
+write(unlist(data3),"c:/r/seoul_2.txt") 
+data4 <- read.table("c:/r/seoul_2.txt")
+
+wordcount <- table(data4) 
+wordcount
+
+head(sort(wordcount, decreasing=T),50)
+
+library(RColorBrewer) 
+palete <- brewer.pal(9,"Set3") 
+wordcloud(names(wordcount),
+          freq=wordcount,
+          scale=c(2,0.5),
+          min.freq = 1,
+          random.order=F,
+          random.color=T,
+          colors=palete)
+
+
+library(wordcloud2)
+wordcloud2(wordcount)
+
+```{r}
+library(wordcloud)
+library(wordcloud2)
+
+jeju<- readLines("c:/r/jeju.txt")
+jeju
+
+jeju2<- readLines("c:/r/jejujeju.txt")
+jeju2<- unique(jeju2)
+
+jjj<- data.frame(name =jeju2,cnt=c(1:length(jeju2)))
+
+j2<- jeju
+j2<- gsub("-"," ",j2)
+j2<- gsub("\\("," ",j2)
+j2<- gsub("\\)"," ",j2)
+j2<- gsub("\\¡Ü"," ",j2)
+j2<- gsub("\\:"," ",j2)
+j2<- gsub("\\&"," ",j2)
+j2<- gsub("\\^"," ",j2)
+j2<- gsub("\\*"," ",j2)
+j2<- gsub("\\+"," ",j2)
+j2<- gsub("\\/"," ",j2)
+j2<- gsub("\\."," ",j2)
+j2<- gsub("\\~"," ",j2)
+j2<- gsub("\\,"," ",j2)
+j2<- gsub("\\?"," ",j2)
+j2<- gsub("\\¡ß"," ",j2)
+j2<- gsub("\\¡á"," ",j2)
+j2<- gsub("\\["," ",j2)
+j2<- gsub("\\]"," ",j2)
+j2<- gsub(" °÷ "," ",j2)
+j2<- gsub("[0-9]"," ",j2)
+
+for(i in 1:length(jeju2)){
+  jjj$cnt[i]<- length(grep(gsub(" ","",paste("*",jeju2[i],"*")),j2,value = T))
+}
+
+jjj
+
+pal<- brewer.pal(8,"Dark2")
+
+wordcloud(jjj$name, freq = jjj$cnt,scale = c(3,0.1),random.order = F,rot.per = .1,colors = pal)
+wordcloud2(jjj,shape = "star",size=0.5)
+
+
+
+
+SimplePos22(jeju)
+
+text2<- SimplePos22(jeju)
+
+text_noun <- str_match(text2,'([A-Z°¡-ÆR]+)/NCN')  
+
+text_noun
+
+text3<- as.vector(na.omit(text_noun[,2]))
+
+extractNoun(text3)
+
+noun1<- unlist(extractNoun(text3))
+noun2<- unlist(sapply(text3, extractNoun,USE.NAMES = F))
+
+word_cn1<- table(noun1)
+word_cn2<- table(noun2)
+
+sort(word_cn1, decreasing = T)
+head(sort(word_cn1, decreasing = T),10)
+
+pal<- brewer.pal(8,"Dark2")
+
+wordcloud(names(word_cn2), freq = word_cn2,scale = c(5,0.5),random.order = F,rot.per = .1,colors = pal)
+
+wordcloud2(word_cn2,shape = "diamond")
+
+
+
+
+jeju2<- read.csv("c:/r/jejujeju.csv")
+
+jeju2
+
+buildDictionary(ext_dic = "sejong",user_dic = data.frame(jeju2$°ü±¤Áö¸í,c("ncn")),replace_usr_dic = T)
+
+
+
+jeju2<- readLines("c:/r/jejujeju.txt")
+
+jeju2
+
+jeju<- readLines("c:/r/jeju.txt")
+jeju
+
+
+j2<- jeju
+j2<- gsub("-"," ",j2)
+j2<- gsub("\\("," ",j2)
+j2<- gsub("\\)"," ",j2)
+j2<- gsub("\\¡Ü"," ",j2)
+j2<- gsub("\\:"," ",j2)
+j2<- gsub("\\&"," ",j2)
+j2<- gsub("\\^"," ",j2)
+j2<- gsub("\\*"," ",j2)
+j2<- gsub("\\+"," ",j2)
+j2<- gsub("\\/"," ",j2)
+j2<- gsub("\\."," ",j2)
+j2<- gsub("\\~"," ",j2)
+j2<- gsub("\\,"," ",j2)
+j2<- gsub("\\?"," ",j2)
+j2<- gsub("\\¡ß"," ",j2)
+j2<- gsub("\\¡á"," ",j2)
+j2<- gsub("\\["," ",j2)
+j2<- gsub("\\]"," ",j2)
+j2<- gsub(" °÷ "," ",j2)
+j2<- gsub("[0-9]"," ",j2)
+
+noun1<- unlist(extractNoun(j2))
+noun1<- noun1[str_count(noun1)>=2]
+
+word_cn1<- table(noun1)
+
+word_cn1<- word_cn1[word_cn1 >= 5]
+word_cn1<- word_cn1[word_cn1 <= 40]
+
+wordcloud2(word_cn1,shape = "diamond")
+
+
+
+
+
+
+sort(word_cn1, decreasing = T)
+head(sort(word_cn1, decreasing = T),10)
+
+pal<- brewer.pal(8,"Dark2")
+
+wordcloud(names(word_cn1), freq = word_cn1,scale = c(5,0.5),random.order = F,rot.per = .1,colors = pal)
+
+noun1<- unlist(extractNoun(j2))
+noun2<- unlist(sapply(j2, extractNoun,USE.NAMES = F))
+
+word_cn1<- table(noun1)
+word_cn2<- table(noun2)
+
+sort(word_cn1, decreasing = T)
+head(sort(word_cn1, decreasing = T),10)
+
+pal<- brewer.pal(8,"Dark2")
+
+wordcloud(names(word_cn1), freq = word_cn2,scale = c(5,0.5),random.order = F,rot.per = .1,colors = pal)
+
+word_cn1<- word_cn1[word_cn1 >= 5]
+word_cn1<- word_cn1[word_cn1 <= 40]
+
+wordcloud2(word_cn1,shape = "diamond")
+
+
+j3<- SimplePos22(j2)
+na.omit(j3)
+grep("*ÇÑ¶ó»ê*",j3,value = T)
+
+grep(j3,"*ÇÑ¶ó*",value = T)
+
+j3<- SimplePos22(j2)
+text_noun <- str_match(j3,'([A-Z°¡-ÆR]+)/NC')  
+text_noun<- as.vector(na.omit(text_noun[,2]))
+text_noun<- text_noun[str_count(text_noun)>=2]
+
+
+
+wordcloud2(text_noun,shape = "diamond")
+
+```
+
+library(wordcloud)
+
+jeju<- readLines("c:/r/jeju.txt")
+jeju
+
+jeju2<- readLines("c:/r/jejujeju.txt")
+jeju2
+
+jjj<- data.frame(name =jeju2,cnt=c(1:length(jeju2)))
+
+j2<- jeju
+j2<- gsub("-"," ",j2)
+j2<- gsub("\\("," ",j2)
+j2<- gsub("\\)"," ",j2)
+j2<- gsub("\\¡Ü"," ",j2)
+j2<- gsub("\\:"," ",j2)
+j2<- gsub("\\&"," ",j2)
+j2<- gsub("\\^"," ",j2)
+j2<- gsub("\\*"," ",j2)
+j2<- gsub("\\+"," ",j2)
+j2<- gsub("\\/"," ",j2)
+j2<- gsub("\\."," ",j2)
+j2<- gsub("\\~"," ",j2)
+j2<- gsub("\\,"," ",j2)
+j2<- gsub("\\?"," ",j2)
+j2<- gsub("\\¡ß"," ",j2)
+j2<- gsub("\\¡á"," ",j2)
+j2<- gsub("\\["," ",j2)
+j2<- gsub("\\]"," ",j2)
+j2<- gsub(" °÷ "," ",j2)
+j2<- gsub("[0-9]"," ",j2)
+
+for(i in 1:length(jeju2)){
+  jjj$cnt[i]<- length(grep(gsub(" ","",paste("*",jeju2[i],"*")),j2,value = T))
+}
+
+jjj
+
+#wordcloud(jjj$name, freq = jjj$cnt,scale = c(5,0.5),random.order = F,rot.per = .1,colors = pal)
+wordcloud2(jjj,shape = "triangle",size=0.5)
+

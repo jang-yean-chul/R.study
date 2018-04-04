@@ -1,0 +1,177 @@
+```{r}
+
+```
+
+information Technology -> Data Technology
+IT 시대에서 DT 시대(데이터 산업)로 넘어가고 있다. by.마윈
+
+Big Data
+기존의 관리 및 분석체계로는 감당할 수 없을 정도의 거대한 데이터의 집합
+
+Big Data 특성
+
+1. Volume
+2. Variety
+3. Velocity
+
+빅데이터의 기술 ?
+엄청난 양의 데이터가 실시간 발생될 때 무질서한 것처럼 보이는 데이터 속에서 특징 또는 일정한 패턴을 찾아내는 기술.
+
+통계를 배워야 하는가?
+
+통계학은 데이터에서 의미를 찾아내는 방법을 다루는 학문.
+빅데이터 기술의 기본은 바로 통계학이다.
+
+자료(DATA)
+
+DATA란?
+-데이터는 어떠한 가치 판단을 할 수 있는 근거가 되는 재료.
+-자료는 문제를 해결하기 위한 원재료로서 처리되지 않는 문자,숫자,이미지...
+-정치,경제,사회,문화 어떤 현상을 분석하고 문제의 해결방안을 제시하여 미래를 예측하기 위해서는 먼저 -자료를 수집하고 분석해야한다.
+
+
+용어정리
+
+모집단 : 관심있는 연구 대상 전체 집합  [모집단을 추출하는데 돈과 시간이 너무 많이든다.]
+
+모수 : 모집단의 특성을 나타내는 수
+
+표본 : 모집단을 닮은 모집단의 부분집합
+
+통계량 : 표본의 특성을 나타내는 수
+
+
+
+##통계분석을 위해 자료를 수집
+
+개체 : 관찰대상, 조사대상(신입사원, 성인냠녀 만 19세 이상)
+요인 : 개체에 관한 특성중 연구자가 관심을 갖는 특성(신입사원의 경력사항, 신체조건, 경제조건)
+변수 : 요인의 특성을 수치화하기 위해 쓰이는 속성
+       (신입사원 : 키, 몸무게, 가슴둘레, 발크기, 시력, 허리둘레, 혈액형)
+       (경력사항 : 학위, 근무연수, 직무)
+       
+       
+       
+1. 연구대상 (흡연 아빠의 신생아)
+2. 요인 (흡연 아빠의 영향)
+3-1. 변수 (신생아 몸무게)
+3-2. 척도 (g(비율척도))
+4. Data(자료)
+
+수집 -> 정리
+요약 -> 추측
+
+통계적으로 처리하는 방법
+
+1. 기술 통계학 (Descriptive Statistics)
+    - 수집된 자료를 정리, 요약하여 수치, 표, 그래프로 자료의 특징을 파악
+    
+2. 추측 통계학 (Inferential Statistics)
+    - 모집단의 일부인 표본을 분석하여 모집단에 대한 추측하고 일반화 시키는 연구분야
+    - 새로운 가설이 맞는지 틀리는지를 검증
+    - 대통령 선거 당일 2000명으로 추측한 당선 후보 예상 득표율?
+    - 5000개 형광등에서 50개 샘플로 조사한 형광등 수명으로 불량품 예측
+
+수집된 자료의 형태
+
+양적 자료 : 숫자,크기 같은 측정되는 값
+            연속형 자료 - 키,몸무게
+            이산형 자료 - 출생아 수, 남학생 수, 왼손잡이 
+
+양적자료
+      요약방법 - 수치,그래프
+      자료정리 -  산술평균, 중앙값, 표준편차, 분산, 최대값,최소값
+      그래프 -  히스토그램(넓이가 중요한 것), 상자도표, 시계열 도표, 산점도
+
+
+
+질적 자료 : 성별, 자료가 의미를 내포하고 있음.
+            순위형 자료 - 학점(A,B,C,D,F), 매우좋음,나쁨,보통....(의미와 순위가 중요한것)
+            명목형 자료 - 남자,여자,혈액형,거주지역 
+
+질적자료
+      요약방법 - 도표,그래프
+      자료정리 - 도수(개수)분포표, 분할표
+      그래프 - 막대그래프, 원그래프(빈도수를 계산 해야 되므로)
+      
+
+
+
+도수 분포표(Frequency Distribution)
+    - 처음 조사된 원자료는 그 자료의 특징 및 분포를 파악하기 어렵다
+    - 처음 조사된 원자료를 구간을 나누거나 돗수를 세거나 해서 정리하여 자료의 구조적 특징을 파악하는 표
+    - 미리 구간을 설정해 놓고 각 구간의 범위안에 조사된 데이터 값들이 몇개씩 속하는가를 표시한다.
+    - 계급(class) = 각 구간
+    - 도수(frequency) = 각 구간(계급)에 속한 데이터 값들의 개수
+    - 계급의 수의 결정 : 계급의 수 = (자료의 측정값들의 갯수) ^ (1/3)
+    - 구간(범위) 결정 : 구간 = (자료 측정값의 최대값 - 자료 측정값의 최소값) / 계급의 수
+    - 상대 도수 : 계급에 속한 도수가 전체 도수에 차지하는 비율
+    - 누적 도수 : 계급 도수와 그위에 계급에 속하는 도수를 모두 합한 값
+    
+    
+```{r}
+a<- readLines("c:/r/grade.txt")
+
+a<- gsub(" ",",",a)
+a<- str_split(a,",")
+x<- unlist(a)
+x
+rank1<- sort(unique(x))
+
+z<- data.frame(rank = rank1,cnt = c(1:length(rank1)))
+
+for (i in 1:length(rank1)){
+  z$cnt[z$rank==rank1[i]]<- length(x[x==rank1[i]])
+}
+
+z
+
+#막대 그래프
+ggplot(z,aes(x=z$rank,y=z$cnt))+
+  geom_bar(stat = 'identity', fill=heat.colors(length(z$rank)), colour = 'red')+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1, colour = 'black', size = 9))
+
+
+#원 그래프
+pie(z$cnt,
+    labels = paste0(z$rank,"\n",z$cnt/sum(z$cnt)*100,"%"),
+    main = "학점 비율",
+    col = rainbow(length(z$rank)),
+    init.angle = 40)
+
+pie3D(z$cnt,
+     labels = paste0(z$rank,"\n",z$cnt/sum(z$cnt)*100,"%"),
+     main = "학점 비율",
+     col = rainbow(length(z$rank)),
+     labelcex = 0.8,
+     explode = 0.1,
+     start= 1)
+
+
+grade<- read.table("c:/r/grade.txt")
+grade<- as.matrix(grade)
+dim(grade)
+dim(grade)<- c(50,1)
+grade
+
+##승혁이 형꺼
+grade <- read.table("c:/r/grade.txt")
+grade <- as.matrix(grade)
+str(grade)
+dim(grade) <- c(50,1)
+g_t <-table(grade)
+g_m <-as.matrix(g_t)
+g_f <- data.frame(grade = rownames(g_m), freq=g_m[,1])
+rownames(g_f) <- NULL
+g_f
+
+
+```
+[문제 184] 자료 정리
+
+
+A B C D F B C D A B
+C B C D F B B D F D
+B D C D A C C B B A
+C D C D D B C B C B
+D F C D B B C D C B

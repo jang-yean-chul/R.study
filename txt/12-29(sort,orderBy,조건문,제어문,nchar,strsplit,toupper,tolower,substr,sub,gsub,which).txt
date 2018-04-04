@@ -1,0 +1,427 @@
+```{r}
+x<- c(3,4,2,10,NA,20,5,11,NA,40)
+sort(x)
+sort(x, decreasing=FALSE) #기본값이 오름차순 
+sort(x, decreasing=TRUE) #내림차순
+
+sort(x, decreasing= TRUE, na.last=NA) #NA 출력안함
+sort(x, decreasing= TRUE, na.last=TRUE) #NA를 마지막에 출력
+sort(x, decreasing= TRUE, na.last=FALSE) #NA를 처음에 출력
+
+rev(sort(x)) #내림차순
+
+```
+
+※ sort  : 벡터 정렬
+x<- c(3,4,2,10,NA,20,5,11,NA,40)
+sort(x)
+sort(x, decreasing=FALSE) #기본값이 오름차순 
+sort(x, decreasing=TRUE) #내림차순
+
+sort(x, decreasing= TRUE, na.last=NA) #NA 출력안함
+sort(x, decreasing= TRUE, na.last=TRUE) #NA를 마지막에 출력
+sort(x, decreasing= TRUE, na.last=FALSE) #NA를 처음에 출력
+
+rev(sort(x)) #내림차순
+
+```{r}
+
+x<- c(3,4,2,10,NA,20,5,11,NA,40)
+order(x) #색인번호가 바로나온다.
+x[order(x)]
+x[order(x, decreasing = TRUE)]
+x[order(x, decreasing = TRUE, na.last=NA)]
+x[order(x, decreasing = TRUE, na.last=TRUE)]
+x[order(x, decreasing = TRUE, na.last=FALSE)]
+
+```
+※ order : 정렬한 색인을 반환
+
+x<- c(3,4,2,10,NA,20,5,11,NA,40)
+order(x) #색인번호가 바로나온다.
+x[order(x)]
+x[order(x, decreasing = TRUE)]
+x[order(x, decreasing = TRUE, na.last=NA)]
+x[order(x, decreasing = TRUE, na.last=TRUE)]
+x[order(x, decreasing = TRUE, na.last=FALSE)]
+
+```{r}
+install.packages("doBy") #doBy 설치
+library("doBy") #라이브러리 확인
+
+orderBy(~SALARY, emp[,c("LAST_NAME", "SALARY")]) #샐러리를 기준으로 오름차순 정렬
+orderBy(~-SALARY, emp[,c("LAST_NAME", "SALARY")]) #내림차순으로 정렬 하려면 기준컬럼 앞에 - 를 붙인다.
+
+orderBy(~DEPARTMENT_ID + SALARY, emp[,c("LAST_NAME", "SALARY", "DEPARTMENT_ID")]) #정렬의 기준을 2개이상 세우려면 + 를 사용
+orderBy(~DEPARTMENT_ID - SALARY, emp[,c("LAST_NAME", "SALARY", "DEPARTMENT_ID")]) #DEPARTMENT_ID는 오름차순 SALARY는 내림차순으로 정렬
+
+```
+※doBy : 데이터 프레임에 정렬
+
+install.packages("doBy") #doBy 설치
+library("doBy") #라이브러리 확인
+
+<콘솔창에서 실행>
+setwd("c:/r")
+getwd()
+emp <- read.csv ("emp.csv", header = T , stringsAsFactors = F)
+str(emp)
+names(emp)
+--------------------------------------------------------------
+
+```{r}
+df<-data.frame(id=c(100,101,102,103,104), weight=c(60,90,75,95,65), size=c("small", "large", "medium", "large", "small"), stringsAsFactors= FALSE)
+df
+
+df[order(df$weight),]
+orderBy(~weight,df[,])
+
+df[order(df$size, df$weight),]
+
+df[order(df$weight,decreasing = TRUE),]
+
+orderBy(~-SALARY, emp[emp$JOB_ID != "ST_CLERK",c("LAST_NAME", "SALARY", "JOB_ID")])
+
+orderBy(~COMMISSION_PCT, emp[,c("LAST_NAME", "SALARY", "COMMISSION_PCT")])
+
+orderBy(~COMMISSION_PCT, emp[!is.na(emp$COMMISSION_PCT),c("LAST_NAME", "SALARY", "COMMISSION_PCT")])
+```
+[문제57] df이름의 data frame 변수를 선언합니다.
+id 컬럼의 값은 100,101,102,103,104,  
+weight 컬럼의 값은 60,90,75,95,65, 
+size 컬럼의 값은 small, large, medium,large,small 값으로 생성하세요.
+
+df<-data.frame(id=c(100,101,102,103,104), weight=c(60,90,75,95,65), size=c("small", "large", "medium", "large", "small"), stringsAsFactors= FALSE)
+
+[문제58] df변수에 weight 컬럼을 기준으로 오름차순 정렬해서 df 변수에 값을 출력하세요.(order 함수를 이용하세요)
+
+df[order(df$weight),]
+
+orderBy(~weight,df[,])
+
+[문제59] df변수에 size, weight 컬럼을 기준으로 오름차순 정렬하세요.(order 함수를 이용하세요)
+
+df[order(df$size, df$weight),]
+
+orderBy(~size + weight, df[,])
+
+[문제60] df 변수에 있는 weight 컬럼을 기준으로 내림차순 정렬하세요.(order 함수를 이용하세요)
+
+df[order(df$weight,decreasing = TRUE),]
+
+orderBy(~-weight, df[,])
+
+[문제61] job_id가  ST_CLERK 가 아닌 사원들의 last_name, salary, job_id를 출력하는데 급여가 높은 사원부터 출력되게하세요.(orderBy 함수를 이용하세요)
+
+orderBy(~-SALARY, emp[emp$JOB_ID != "ST_CLERK",c("LAST_NAME", "SALARY", "JOB_ID")])
+
+[문제62] 사원 last_name, salary, commission_pct를 출력하는데 commission_pct를 기준으로 오름차순정렬하세요.(orderBy를 이용하세요)
+
+orderBy(~COMMISSION_PCT, emp[,c("LAST_NAME", "SALARY", "COMMISSION_PCT")])
+
+[문제63] commission_pct를 받고 있는 사원들의 last_name, salary, commission_pct를 출력하는데 commission_pct를 기준으로 오름차순정렬하세요.(orderBy를 이용하세요)
+
+orderBy(~COMMISSION_PCT, emp[!is.na(emp$COMMISSION_PCT),c("LAST_NAME", "SALARY", "COMMISSION_PCT")])
+```{r}
+sum<-0
+x<-c(2,4,6,8,10)
+for(i in x){print(i)
+               sum <- sum+i} 
+print(sum)
+
+i<-1
+while(i<=11){print(i)
+i <- i+1}
+
+i <- 1
+repeat{print(i)
+if(i==10)
+{break}
+i <- i+1}
+
+```
+※제어문 : 조건의 흐름을 제어
+
+1. if문 : 조건에 따라 서로 다른 코드를 수행하도록 하는 문장
+          if(조건){조건이 참일 때 수행 문장} 
+          else {조건이 거짓일 때 수행 문장}
+
+    ex) if (1>2){print("1이 2보다 크다.")} 
+        else {print("1이 2보다 작다.")}
+    
+2. ifelse 함수
+    
+    ifelse(조건,참,거짓)
+    
+    x<-2 ifelse(x%%2==0 , "2의 배수", "2의 배수가 아님")
+    
+    
+    if(x%%2==0){print("2의 배수")}
+    else{print("2의 배수가 아님")}
+
+
+※반복문
+
+1. for문
+   for(변수 in 데이터 변수){반복 수행해야 할 문장}
+   
+   for(i in 1:10){print(i)}
+   
+   
+    sum<-0
+    x<-c(2,4,6,8,10)
+    for(i in x){print(i)
+                   sum <- sum+i} 
+    print(sum)
+
+2. while문
+    while(조건){반복수행할 문장}
+    
+    i<-1
+    while(i<=10){print(i)
+    i <- i+1}
+
+3. repeat문
+    repeat{반복수행할 문장
+    break : 반복문 종료}
+    
+    i <- 1
+    repeat{print(i)
+    if(i==10)
+    {break}
+    i <- i+1}
+```{r}
+
+for (i in 1:100){if (i %% 2 != 0) {x<-append(x,i,after = length(x))}}
+     
+
+df<-data.frame(name = c(emp$LAST_NAME) , sal =c(emp$SALARY) , level = ifelse(emp$SALARY >=10000, 'A',
+                                                                      ifelse(emp$SALARY >=5000 & emp$SALARY < 10000,'B', 'C') ))
+df
+```
+[문제64] 1부터100까지 홀수만 x 변수에 입력해주세요.
+
+x <- NULL
+z <- NULL
+y <- NULL
+r <- NULL
+for(i in 1:100)
+{
+	if (i %% 2 != 0)
+	{
+		print(paste(i ,'홀수'))
+		x<-append(x,i)
+		z<-c(z,i)
+		y<-cbind(y,i)
+                r<-rbind(r,i)
+	}
+}
+
+print(x)
+print(z)
+print(y)
+print(r)
+
+str(x)
+str(z)
+str(y)
+str(r)
+
+
+for (i in 1:100){if (i %% 2 != 0) {x<-append(x,i,after = length(x))}}
+
+[문제65] 1부터100까지 전체합, 짝수합, 홀수합을 출력하세요.
+
+o <- 0
+e <- 0
+s <- 0
+
+for(i in 1:100)
+{
+	s <- s+i
+	if (i %% 2 == 1)
+	{
+		o <- o+i
+	} else {
+		e <- e+i
+        }
+}
+
+print(o)
+print(e)
+print(s)
+
+
+
+
+[문제66] emp 변수에 있는 데이터를 가지고 새로운 df변수를 생성하세요.
+last_name, salary, 급여가 10000  이상이면 A, 5000이상 10000보다 작으면 B 나머지는 C가 입력되어 있는 새로운 컬럼을 생성하세요.  
+컬럼이름은 name, sal, level 로 설정하세요.
+
+
+df <- data.frame(emp$LAST_NAME, emp$SALARY, ifelse(emp$SALARY >=10000, 'A',
+                               ifelse(emp$SALARY >=5000 & emp$SALARY < 10000,'B', 'C') ))
+
+
+names(df) <- c("name","sal","level")
+```{r}
+
+```
+■ nchar
+	문자 수
+
+> nchar('R Developer')
+[1] 11
+
+> nchar('R Developer',type = "chars")
+[1] 11
+
+> nchar('R Developer',type = "bytes")
+[1] 11
+
+> nchar('빅데이터')
+[1] 4
+
+> nchar('빅데이터',type="chars")
+[1] 4
+
+> nchar('빅데이터',type="bytes")
+[1] 8
+
+
+
+■ strsplit 
+	부분문자로 분리
+
+> strsplit('R Developer',split=character(0))
+[[1]]
+ [1] "R" " " "D" "e" "v" "e" "l" "o" "p" "e" "r"
+
+
+> strsplit('R Developer',split=" ")
+[[1]]
+[1] "R"         "Developer"
+
+> strsplit('R,Developer',split=",")
+[[1]]
+[1] "R"         "Developer"
+
+> str(strsplit('R,Developer',split=","))
+List of 1
+ $ : chr [1:2] "R" "Developer"
+
+> unlist(strsplit('R,Developer',split=","))
+[1] "R"         "Developer"
+
+> str(unlist(strsplit('R,Developer',split=",")))
+ chr [1:2] "R" "Developer"
+ 
+
+
+
+■ toupper
+	대문자
+
+> toupper('r developer')
+[1] "R DEVELOPER"
+
+
+■ tolower 
+	소문자
+
+> tolower('R DEVELOPER')
+[1] "r developer"
+
+
+■ substr
+	문자열 추출
+
+> substr('R Developer',1,1)
+[1] "R"
+
+
+■ sub
+	첫번째 일치하는 문자만 바꾼다.
+
+> sub('R','Python','R Programmer R Developer')
+[1] "Python Programmer R Developer"
+sub(찾아야할 문자, 변환 할 문자, 원본글자)
+즉 R Programmer R Developer 에서 R을 찾아서 Python으로 변환해라
+
+■ gsub
+	문자열 안에 일치하는 모든 문자를 바꾼다.
+
+
+> gsub('R','Python','R Programmer R Developer')
+[1] "Python Programmer Python Developer"
+
+> gsub('[0-2]', '*', 120304)
+[1] "***3*4"
+
+#120304에서 0-2안에 있는 숫자를 찾아서 *으로 변환해라 
+
+■ which
+	찾은 값의 색인을 리턴
+	
+
+> name <- c('scott','king','smith','Smith','july','smith')
+
+> name == 'smith'
+[1] FALSE FALSE  TRUE FALSE FALSE  TRUE
+
+> which(name=='smith')
+[1] 3 6
+
+> name[which(name == 'smith')]
+[1] "smith" "smith"
+> 
+
+```{r}
+
+emp
+data.frame(emp[nchar(emp$LAST_NAME) > 10,c("EMPLOYEE_ID", "LAST_NAME")], stringsAsFactors = FALSE)
+
+data.frame(LAST_NAME = emp$LAST_NAME, LAST_NAME2 =substr(emp$LAST_NAME,1,3),stringsAsFactors = FALSE)
+
+data.frame(emp[substr(emp$LAST_NAME,2,1) == 'm', c("LAST_NAME", "SALARY")], stringsAsFactors = FALSE)
+
+data.frame(emp[substr(emp$LAST_NAME,2,1) == 'm' | emp[substr(emp$LAST_NAME,2,1) == 'g', c("LAST_NAME", "SALARY")], stringsAsFactors = FALSE)
+
+
+data.frame(emp[substr(emp$LAST_NAME,2,2) == "m", c("LAST_NAME", "SALARY")], stringsAsFactors = FALSE)
+
+data.frame(emp[substr(emp$LAST_NAME,2,2) %in% c("m" , "g"), c("LAST_NAME", "SALARY")], stringsAsFactors = FALSE)
+
+data.frame(last_name = emp$LAST_NAME, salary = gsub(0,"*",emp$SALARY), stringsAsFactors = FALSE)
+```
+
+[문제67] last_name의 글자의 수가 10이상인 사원의 employee_id, last_name 출력하세요.
+
+>emp[nchar(emp$LAST_NAME) >= 10,c("EMPLOYEE_ID","LAST_NAME")]
+
+data.frame(emp[nchar(emp$LAST_NAME) > 10,c("EMPLOYEE_ID", "LAST_NAME")], stringsAsFactors = FALSE)
+
+
+[문제68] last_name, last_name의 첫번째 철자부터 세번째 철자까지 함께 출력하세요.
+
+>paste(emp$LAST_NAME,  substr(emp$LAST_NAME,1,3))
+
+data.frame(LAST_NAME = emp$LAST_NAME, LAST_NAME2 =substr(emp$LAST_NAME,1,3),stringsAsFactors = FALSE)
+
+[문제69] last_name의 두번째 철자가 m  인 사원들의 last_name, salary를 출력하세요.
+
+>emp[substr(emp$LAST_NAME,2,2) == "m" , c("LAST_NAME", "SALARY")] 
+
+
+[문제70] last_name의 두번째 철자가 m 또는 g 인 사원들의 last_name, salary를 출력하세요.
+
+>emp[substr(emp$LAST_NAME,2,2) %in% c("m","g") , c("LAST_NAME", "SALARY")] 
+
+
+[문제71] last_name, salary값을 화면에 출력할때 0은 * 로 출력하세요.
+
+>paste(emp$LAST_NAME, gsub(0, '*', emp$SALARY))
+
+data.frame(last_name = emp$LAST_NAME, salary = gsub(0,"*",emp$SALARY), stringsAsFactors = FALSE)
+
+

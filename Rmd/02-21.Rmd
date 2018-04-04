@@ -1,0 +1,262 @@
+```{r}
+
+x<- data.frame(beer = c(0,1,1,1,0),
+               bread = c(1,1,0,1,1),
+               cola = c(0,0,1,0,1),
+               diapers = c(0,1,1,1,1),
+               eggs = c(0,1,0,0,0),
+               milk = c(1,0,1,1,1))
+
+#install.packages("arules") # apriori함수를 사용하기 위해 설치
+library(arules)
+
+trans <- as.matrix(x, "Transaction") # Transaction : 논리적으로 dml을 하나로 묶어서 처리하는 단위.
+                                     # 장점 = 0이라는 데이터는 조작을 하지 않는다 (의미가 없으므로)
+
+rules1 <- apriori(trans, parameter=list(supp = 0.2, conf = 0.6, target = "rules")) # 매트릭스 형식으로 집어넣어야 함.(트랜젝션 모양으로 넣어야함.)
+
+rules1
+
+inspect(sort(rules1)) # apriori와 inspect는 한쌍
+
+help("apriori")
+
+rules2 <- apriori(trans, parameter=list(supp = 0.2, conf = 0.6, minlen = 2 , target = "rules")) # minlen = 2개부터 시작하겠다.
+
+inspect(sort(rules2)) # apriori와 inspect는 한쌍
+
+trans
+t(trans)
+
+b2<- t(trans) %*% trans # 
+
+diag(b2) # 대각 행렬
+
+b3<- b2 - diag(diag(b2)) # 자기자신과의 관계는 필요없으므로 빼기위해서
+
+#install.packages("sna") # 네트워크 그래프 그리기위한 설치 (연관성을 보여주기 위해서)
+#install.packages("rgl")
+library(sna)
+library(rgl)
+
+gplot(b3,
+      displaylabel = T, # 노드 레이블을 표시
+      vertex.cex=sqrt(diag(b2)), #노드 크기
+      vertex.col = "green", # 노드 색상 
+      edge.col = "blue", # 선의 색
+      boxed.labels = F, # 노드레이블에 박스
+      arrowhead.cex = 0.3, # 화살촉의 배수
+      label.pos = 3, # 노드 레이블 위치 0~5
+      edge.lwd = b3) # 선의 폭지정 배수
+
+
+```
+연관규칙
+  - 시리얼과 우유의 관계를 알아내는 대표적인 기계학습 방법
+  
+      시리얼  -->  우유
+  
+  이 규칙은 시리얼을 사면 우유도 함께 구매한다는 것을 알아내는 알고리즘이다.
+  
+                            count(x)(시리얼의 거래건수)
+  지지도(support(x))  =  ---------------------------------
+                             N(데이터 베이스 거래건수)
+                             
+                                      support(x,y)
+  신뢰도(confidence(x --> y))  =  --------------------
+                                       support(x)                             
+
+                               confidence(x -> y)
+  향상도(lift (x --> y))  =  -----------------------
+                                   support(y)                             
+
+  신뢰도(confidence), 향상도(lift)가 클수록 연관관계가 높다.
+
+
+  support(x --> y) : n(x ∩ y) / N 
+                     전체 건수중에 x하고 y가 모두 포함되어 있는 건수의 비
+
+  confidence(x --> y) : support(x,y) / support(x)
+                        항목 x를 포함하는 건수중에 x와 y를 모두 포함하는 건수의 비
+                        
+  support(우유 --> 시리얼) : 우유와 시리얼을 동시에 구매할 확률 
+                    
+  confidence(우유 --> 시리얼) : 우유를 구매 할 때 시리얼도 같이 구매할 조건부 확률
+  
+  거래번호    구매물품
+  1           우유, 버터, 시리얼
+  2           우유, 시리얼
+  3           우유, 빵
+  4           버터, 맥주, 오징어
+  
+[문제 239] 전체 판매에서 우유와 시리얼이 동시에 판매된 확률?
+
+support = 2/4  50%
+
+[문제 240] 우유를 샀을 때 시리얼을 살 조건부 확률은?
+
+confidence = 2/3 66.66%   #모집단이 우유를 구매한 건수로 바뀐다.
+
+[문제 241] 시리얼을 샀을 때 우유를 살 조건부 확률은?
+
+confidence = 2/2 100%   #모집단이 시리얼을 구매한 건수로 바뀐다.
+
+                (지지도, 신뢰도)
+우유 --> 시리얼 (50%,66%)
+시리얼 --> 우유 (50%, 100%)
+
+결론으로 우리가 찾고자 하는 연관규칙은 지지도와 신뢰도 둘 다 최소한도보다 높은것을 의미한다.
+
+x, y라는 항목의 조합의 수도 너무나도 다양하기 때문에 모든 경우의 수를 다 계산한다면 시간이 오래 걸린다.
+
+최소 지지도 이상의 데이터를 찾아주는게 좋다.
+
+거래번호      아이템
+1             A C D
+2             B C E
+3             A B C E
+4             B E
+
+아이템      지지도
+A           2
+B           3
+C           3
+D           1
+E           3
+
+지지도가 1보다 큰것만 추출해서 정리하자.
+
+아이템목록    지지도
+A B           1
+A C           2
+A E           1
+B C           2
+B E           3
+C E           2
+B C E         3
+```{r}
+build<- read.csv("c:/r/building.csv")
+build
+
+
+build[is.na(build)]<- 0  #NA데이터를 0으로 변환
+
+build[,-1] # 건물목록 제거
+
+trans <- as.matrix(build[,-1], "Transaction") #트랜젝션 상태로 전환
+
+rules<- apriori(trans,parameter=list(supp = 0.2, conf = 0.6, minlen = 1,target = "rules"))  # 모델 뽑아내기
+
+inspect(sort(rules))
+
+
+b<- t(trans) %*% trans # 
+
+diag(b) # 대각 행렬
+
+b2<- b - diag(diag(b)) # 자기자신과의 관계는 필요없으므로 빼기위해서
+
+#install.packages("sna") # 네트워크 그래프 그리기위한 설치 (연관성을 보여주기 위해서)
+#install.packages("rgl")
+library(sna)
+library(rgl)
+
+gplot(b2,
+      displaylabel = T, # 노드 레이블을 표시
+      vertex.cex=sqrt(diag(b2)), #노드 크기
+      vertex.col = "red", # 노드 색상 
+      edge.col = "gray", # 선의 색
+      boxed.labels = F, # 노드레이블에 박스
+      arrowhead.cex = 0.5, # 화살촉의 배수
+      label.pos = 3, # 노드 레이블 위치 0~5
+      edge.lwd = b2, # 선의 폭지정 배수
+      label.cex = 0.7) # 레이블 글자 크기
+
+
+```
+
+```{r}
+
+build<- read.csv("c:/r/building.csv")
+build
+
+build[is.na(build)]<- 0  #NA데이터를 0으로 변환
+
+trans <- as.matrix(build[,-1], "Transaction") # 건물목록 제거
+
+rules1 <- apriori(trans, parameter=list(supp = 0.2, conf = 0.6, target = "rules")) # 매트릭스 형식으로 집어넣어야 함.(트랜젝션 모양으로 넣어야함.)
+
+rules1
+
+inspect(sort(rules1)) # apriori와 inspect는 한쌍
+
+trans
+t(trans)
+
+b2<- t(trans) %*% trans # 
+
+diag(b2) # 대각 행렬
+
+b3<- b2 - diag(diag(b2)) # 자기자신과의 관계는 필요없으므로 빼기위해서
+
+#install.packages("sna") # 네트워크 그래프 그리기위한 설치 (연관성을 보여주기 위해서)
+#install.packages("rgl")
+library(sna)
+library(rgl)
+
+gplot(b3,
+      displaylabel = T, # 노드 레이블을 표시
+      vertex.cex=sqrt(diag(b2)), #노드 크기
+      vertex.col = "green", # 노드 색상 
+      edge.col = "blue", # 선의 색
+      boxed.labels = F, # 노드레이블에 박스
+      arrowhead.cex = 0.3, # 화살촉의 배수
+      label.pos = 3, # 노드 레이블 위치 0~5
+      edge.lwd = b3, # 선의 폭지정 배수
+      label.cex = 0.7) # 글자 크기 
+```
+
+```{r}
+movie <- read.csv("c:/r/영화.csv")
+
+movie
+
+trans <- as.matrix(movie, "Transaction")
+
+library(arules)
+rules1 <- apriori(trans, parameter=list(supp = 0.2, conf = 0.6, target = "rules")) # 매트릭스 형식으로 집어넣어야 함.(트랜젝션 모양으로 넣어야함.)
+
+rules1
+
+inspect(sort(rules1)) # apriori와 inspect는 한쌍
+
+trans
+t(trans)
+
+b2<- t(trans) %*% trans # 
+
+diag(b2) # 대각 행렬
+
+b3<- b2 - diag(diag(b2)) # 자기자신과의 관계는 필요없으므로 빼기위해서
+
+#install.packages("sna") # 네트워크 그래프 그리기위한 설치 (연관성을 보여주기 위해서)
+#install.packages("rgl")
+library(sna)
+library(rgl)
+
+gplot(b3,
+      pad=0.08,
+      displaylabel = T, # 노드 레이블을 표시
+      vertex.cex=sqrt(diag(b2)), #노드 크기
+      vertex.col = "green", # 노드 색상 
+      edge.col = "blue", # 선의 색
+      boxed.labels = F, # 노드레이블에 박스
+      arrowhead.cex = 0.3, # 화살촉의 배수
+      label.pos = 3, # 노드 레이블 위치 0~5
+      edge.lwd = b3, # 선의 폭지정 배수
+      label.cex = 0.7) # 글자 크기
+
+help(gplot)
+```
+
+[문제243] 영화.csv파일을 이용하여 연관분석을 하세요

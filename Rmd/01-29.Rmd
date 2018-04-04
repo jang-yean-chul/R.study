@@ -1,0 +1,270 @@
+```{r}
+# R Å©·Ñ¸µ ÇÏ´Â¹ý
+
+#install.packages("rvest")
+library(rvest)
+library(dplyr)
+
+html<- read_html("http://search.joins.com/News?Keyword=%EB%B9%85%EB%8D%B0%EC%9D%B4%ED%84%B0&SortType=New&SearchCategoryType=News&PeriodType=All&ScopeType=All&ImageType=All&JplusType=All&BlogType=All&ImageSearchType=Image&TotalCount=0&StartCount=0&IsChosung=False&IssueCategoryType=All&IsDuplicate=True&Page=1&PageSize=3&IsNeedTotalCount=True")
+
+html
+
+url <- html_nodes(html,css = ".list_default .headline")%>% 
+  html_nodes('a')%>%
+  html_attr('href')
+
+url
+
+
+html<- read_html("http://news.joins.com/article/22319631")
+
+html
+
+html_node(html, "#article_body")%>% 
+  html_text()
+
+
+```
+
+# R Å©·Ñ¸µ ÇÏ´Â¹ý
+
+#install.packages("rvest")
+library(rvest)
+library(dplyr)
+
+html<- read_html("http://search.joins.com/News?Keyword=%EB%B9%85%EB%8D%B0%EC%9D%B4%ED%84%B0&SortType=New&SearchCategoryType=News&PeriodType=All&ScopeType=All&ImageType=All&JplusType=All&BlogType=All&ImageSearchType=Image&TotalCount=0&StartCount=0&IsChosung=False&IssueCategoryType=All&IsDuplicate=True&Page=1&PageSize=3&IsNeedTotalCount=True")
+
+#°á°ú¹°
+html
+{xml_document}
+<html>
+  [1] <head>\n<meta http-equiv="Content-Type" content="text/html; char ...
+  [2] <body class="aside_off">\r\n        <input type="hidden" value=" ...
+
+
+url <- html_nodes(html,css = ".list_default .headline")%>%     #html¿¡ ÀÖ´Â ".list..."¿¡ Á¢¼Ó
+  html_nodes('a')%>%          #a¿¡ Á¢¼Ó
+  html_attr('href')   #href¸¦ ¹°¾î¿Í¶ó
+
+#°á°ú¹°
+Show in New WindowClear OutputExpand/Collapse Output
+ [1] "http://news.joins.com/article/22325130" "http://news.joins.com/article/22324867" "http://news.joins.com/article/22321639"
+ [4] "http://news.joins.com/article/22321149" "http://news.joins.com/article/22323658" "http://news.joins.com/article/22303430"
+ [7] "http://news.joins.com/article/22263911" "http://news.joins.com/article/22263891" "http://news.joins.com/article/22325486"
+[10] "http://news.joins.com/article/22325388" "http://news.joins.com/article/22325346" "http://news.joins.com/article/22325130"
+
+
+html<- read_html("http://news.joins.com/article/22319631")
+
+#°á°ú¹°
+{xml_document}
+<html>
+[1] <head>\n<title>[ÀÎ»ç] ¹ý¹«ºÎ èâ</title>\n<meta charset="utf-8">\n<meta http-equiv="Content-Type" content="text/html; charset=u ...
+[2] <body class="aside_off">\r\n\t<input type="hidden" value=""><!-- preLoad Image --><img src="http://images.joins.com/ui_j ...
+
+
+
+html_node(html, "#article_body")%>% # id ¼Ó¼ºÀÇ °ªÀ» Ã£À»¶§´Â #À¸·Î
+  html_text()
+
+
+```{r}
+html1 <- read_html("http://sports.news.naver.com/wfootball/index.nhn")
+
+html1
+
+url1 <- html_nodes(html1,".home_news_list")%>% 
+  html_nodes('a')%>%
+  html_attr('href')
+
+url1
+
+html2 <- read_html(paste("http://sports.news.naver.com",url,sep = "")[1])
+
+html_node(html2, "#newsEndContents")%>% 
+  html_text() 
+
+
+```
+# ³×ÀÌ¹ö ½ºÆ÷Ã÷ ´º½º Å©·Ñ¸µ
+
+html1 <- read_html("http://sports.news.naver.com/wfootball/index.nhn")
+
+#°á°ú¹°
+{xml_document}
+<html lang="ko">
+[1] <head>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n<meta charset="UTF-8">\n<meta http-equiv="X ...
+[2] <body>\n<!-- »çÀÌµå ±¤°í -->\n<div id="veta_skin_left" data-veta-preview="p_sports_dpl"></div>\n<div id="veta_skin_right" dat ...
+
+
+url1 <- html_nodes(html1,".home_news_list")%>% 
+  html_nodes('a')%>%
+  html_attr('href')
+
+#°á°ú¹°
+ [1] "/wfootball/news/read.nhn?oid=529&aid=0000020166" "/wfootball/news/read.nhn?oid=076&aid=0003207972"
+ [3] "/wfootball/news/read.nhn?oid=343&aid=0000078821" "/wfootball/news/read.nhn?oid=139&aid=0002086556"
+ [5] "/wfootball/news/read.nhn?oid=436&aid=0000027827" "/wfootball/news/read.nhn?oid=436&aid=0000027829"
+ [7] "/wfootball/news/read.nhn?oid=109&aid=0003707056" "/wfootball/news/read.nhn?oid=001&aid=0009842947"
+ [9] "/wfootball/news/read.nhn?oid=216&aid=0000092984" "/wfootball/news/read.nhn?oid=139&aid=0002086550"
+[11] "/wfootball/news/read.nhn?oid=216&aid=0000092985" "/wfootball/news/read.nhn?oid=343&aid=0000078812"
+[13] "/wfootball/news/read.nhn?oid=529&aid=0000020157" "/wfootball/news/read.nhn?oid=216&aid=0000092987"
+[15] "/wfootball/news/read.nhn?oid=468&aid=0000344464" "/wfootball/news/read.nhn?oid=382&aid=0000622529"
+[17] "/wfootball/news/read.nhn?oid=447&aid=0000128870" "/wfootball/news/read.nhn?oid=529&aid=0000020154"
+[19] "/wfootball/news/read.nhn?oid=117&aid=0003005022" "/wfootball/news/read.nhn?oid=477&aid=0000107850"
+
+
+# ³×ÀÌ¹ö ´Â µÚ¾î ÆÄÆ® º° ´º½º°¡ ºÙ´Â Çü½Ä paste·Î ³ª¿Â ÁÖ¼Ò¸¦ ºÙ¿©ÁÜ
+html2 <- read_html(paste("http://sports.news.naver.com",url,sep = "")[1])
+
+html_node(html2, "#newsEndContents")%>% 
+  html_text() 
+
+```{r}
+html3 <- read_html("http://finance.naver.com/item/board.nhn?code=050890",encoding='euc-kr') 
+
+html3
+
+
+url2 <- html_nodes(html3,"table.type2 td")%>%  
+  html_nodes('a')%>% 
+  html_attr('href') 
+
+url2
+
+html4 <- read_html(paste("http://finance.naver.com",url2,sep = "")[2],encoding='euc-kr') 
+
+html_node(html4, "#body")%>%  
+  html_text() 
+
+html5 <- NULL 
+gum <- NULL 
+
+for (i in 1:length(url2)) {  
+  html5 <- read_html(paste("http://finance.naver.com",url2,sep = "")[i],encoding='euc-kr') 
+  
+  gum[i]<-html_node(html5, "#body")%>%  
+    html_text() 
+} 
+
+gum 
+
+gum<-gsub('\r',' ',gum) 
+
+g1<-SimplePos09(gum) 
+g2<-unlist(str_match_all(g1, '([A-Z°¡-ÆR]+)/N')) 
+g2<-g2[!str_detect(g2, '/')] 
+
+head(g2) 
+
+g3<-g2[str_length(g2)>1] 
+gt<-table(g3) 
+
+gt
+
+wordcloud2(gt,size = 0.3)
+
+```
+# ³×ÀÌ¹ö ±ÝÀ¶ Å©·Ñ¸µ 
+
+html3 <- read_html("http://finance.naver.com/item/board.nhn?code=050890",encoding='euc-kr') 
+
+url2 <- html_nodes(html3,"table.type2 td")%>%  
+  html_nodes('a')%>% 
+  html_attr('href') 
+  
+# ³×ÀÌ¹ö ´Â µÚ¾î ÆÄÆ® º° ´º½º°¡ ºÙ´Â Çü½Ä paste·Î ³ª¿Â ÁÖ¼Ò¸¦ ºÙ¿©ÁÜ 
+html4 <- read_html(paste("http://finance.naver.com",url2,sep = "")[2],encoding='euc-kr') 
+
+html_node(html4, "#body")%>%  
+  html_text() 
+
+html5 <- NULL 
+gum <- NULL 
+
+for (i in 1:length(url2)) {  
+  html5 <- read_html(paste("http://finance.naver.com",url2,sep = "")[i],encoding='euc-kr') 
+  
+  gum[i]<-html_node(html5, "#body")%>%  
+    html_text() 
+} 
+
+gum 
+
+gum<-gsub('\r',' ',gum) 
+g1<-SimplePos09(gum) 
+g2<-unlist(str_match_all(g1, '([A-Z°¡-ÆR]+)/N')) 
+g2<-g2[!str_detect(g2, '/')] 
+head(g2) 
+
+g3<-g2[str_length(g2)>1] 
+gt<-table(g3) 
+
+wordcloud2(gt,size = 0.5)
+  
+```{r}
+library(KoNLP)  
+library(RJDBC)
+jdbcDriver <- JDBC(driverClass="oracle.jdbc.OracleDriver", classPath="C:/r/ojdbc6.jar")
+library(stringr)
+library(wordcloud2)
+
+install.packages('rvest')
+library(rvest)
+
+library(dplyr)
+
+html<- read_html("http://finance.naver.com/item/board.nhn?code=050890", encoding = "euc-kr")
+
+url <- html_nodes(html,css="table.type2 td.title") %>%
+  html_nodes('a')%>%
+  html_attr('href')
+
+url<-paste0("http://finance.naver.com", url)
+
+txt<-NULL
+
+for(i in 1:length(url)){
+  html1<- read_html(url[i], encoding = "euc-kr")
+  txt[i]<-html_node(html1, "#body")%>%
+    html_text()
+}
+
+
+for(i in 2:20){
+  html<- read_html(paste0("http://finance.naver.com/item/board.nhn?code=050890&page=", i), encoding = "euc-kr")
+  url <- html_nodes(html,css="table.type2 td.title") %>%
+  html_nodes('a')%>%
+    html_attr('href')
+  url<-paste0("http://finance.naver.com", url)
+  a<-length(txt)
+    for(j in 1:length(url)){
+      html1<- read_html(url[j], encoding = "euc-kr")
+      txt[a+j]<-html_node(html1, "#body")%>%
+        html_text()
+      }
+}
+
+html
+url
+txt[]
+
+txt<-gsub('\r',' ',txt)
+t1<-SimplePos09(txt)
+t2<-unlist(str_match_all(t1, '([A-Z°¡-ÆR]+)/N'))
+t2<-t2[!str_detect(t2, '/')]
+head(t2)
+
+t3<-t2[str_length(t2)>1]
+t6<-table(t3)
+
+t6<-t6[t6>3]
+t7<-sort(t6, decreasing = T)
+head(t7, 100)
+head(names(t7),100)                                   
+wordcloud2(t6, size=.5)
+```
+  
+#½ÂÇõÀÌ Çü²¨!
+
+

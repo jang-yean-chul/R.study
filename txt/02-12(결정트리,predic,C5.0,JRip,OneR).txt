@@ -1,0 +1,316 @@
+```{r}
+-(3/5) * log2(3/5)  -(2/5) * log2(2/5)
+
+
+```
+
+결정트리
+	- 학습데이터를 가지고 트리구조의 학습 모델을 만들어 새로운 테스트 데이터에 라벨을 예측하는 알고리즘
+	- 신용등급 모델
+	- 회사 채용
+	- 변심이 심한 고객이나 고객만족을 관리하는 부서와 광고부서에서 공유되어야 하는 시장조사, 쿠폰반응
+	- 연구 측정, 증상, 매우 드문 질병 진행과정을 바탕으로 한 질병 진찰
+
+의사결정 나무
+  - 데이터 마이닝 분석의 대표적인 분석 방법이다.
+  
+엔트로피(entropy)
+  - 불확성을 수치로 나타낸다.
+  - 엔트로피의 결과값을 bit로 표현한다.(정보의 기대값)
+  
+  entropy(s) = - 시그마 p log2(p)
+  
+빨강 파랑 빨강 파랑 빨강
+
+    빨강의 경우          파랑의 경우
+    -(3/5) * log2(3/5)  -(2/5) * log2(2/5)
+[1] 0.9709506
+
+
+빨강 빨강 빨강 | 파랑 파랑
+ -(3/3) * log2(3/3) = 0
+ -(2/2) * log2(2/2) = 0
+
+무질서도가 사라졌다! 0!!
+
+
+
+```{r}
+x<- c("red","blue","red","red","blue")
+
+info_entropy(x)
+
+#1
+info_entropy<- function(x){
+  y<-0
+  for(i in 1:length(table(x))){
+    y<- y+as.numeric(-table(x)[i]/length(x) * log2(table(x)[i]/length(x)))
+  }
+  return(y)
+}
+
+
+#2
+info_entropy<- function(x){
+  factor_x<- factor(x)
+  entropy<- 0
+  for(str in levels(factor_x)){
+    p<- sum(x == str) / length(x)
+    entropy<- entropy - p * log2(p)
+  }
+  return(entropy)
+}
+
+```
+[문제 227]엔트로피를 구하는 함수를 만드세요.
+
+x<- c("red","blue","red","red","blue")
+
+info_entropy(x)
+
+
+info_entropy<- function(x){
+  y<-0
+  for(i in 1:length(table(x))){
+    y<- y+as.numeric(-table(x)[i]/length(x) * log2(table(x)[i]/length(x)))
+  }
+  return(y)
+}
+
+
+
+```{r}
+skin<- read.csv("c:/r/skin.csv",stringsAsFactors=T,header=T)
+skin
+
+skin<- skin[-1]
+
+library(rpart)
+
+tree1<- rpart(cupon_react ~ ., data = skin,
+              control = rpart.control(minsplit=2))
+
+plot(tree1, compress = T, uniform = T, margin = 0.1)
+text(tree1, use.n = T, col="blue")
+
+
+#install.packages("FSelector")
+library(FSelector)
+
+information.gain(cupon_react ~ ., skin)
+
+#install.packages("rattle")
+library(rattle)
+library(rpart.plot)
+
+tree1<- rpart(cupon_react ~ ., data = skin,
+              control = rpart.control(minsplit=2))
+
+fancyRpartPlot(tree1,type = 0, cex = 1)
+
+help("fancyRpartPlot")
+
+```
+
+skin<- read.csv("c:/r/skin.csv",stringsAsFactors=T,header=T)
+skin
+
+skin<- skin[-1]
+
+library(rpart)
+
+tree1<- rpart(cupon_react ~ ., data = skin,
+              control = rpart.control(minsplit=2))
+
+plot(tree1, compress = T, uniform = T, margin = 0.1)
+text(tree1, use.n = T, col="blue")
+
+결정트리를 만들 때 가장 먼저 해야 할 일은 무엇인가?
+
+중요한 컬럼(변수)를 찾는 것이다.
+  - 정보 획득량이 높은 변수
+  - 엔트로피 함수 사용
+install.packages("FSelector")
+library(FSelector)
+
+
+information.gain(cupon_react ~ ., skin)
+
+ 
+ 
+          attr_importance
+          <dbl>
+gender	  0.080610238			
+age     	0.000000000			
+job	      0.013737789			
+marry	    0.224337222			
+car	      0.006023806	
+
+#  1에 가까울수록 정보획득량이 많다고 판단 할 수있다.
+##
+
+
+#결정트리를 보기 좋게 해주는 함수
+#install.packages("rattle")
+library(rattle)
+library(rpart.plot)
+
+tree1<- rpart(cupon_react ~ ., data = skin,
+              control = rpart.control(minsplit=2))
+
+fancyRpartPlot(tree1)
+
+
+```{r}
+
+#install.packages("C50")
+library(C50)
+
+skin_1<- C5.0(skin[-6], skin$cupon_react)
+skin_1
+summary(skin_1)
+
+
+skin_1<- C5.0(skin[-6], skin$cupon_react, trials=10)
+skin_1
+summary(skin_1)
+
+plot(skin_1)
+
+library(gmodels)
+skin_pred1 <- predict(skin_1, skin)
+
+CrossTable(skin$cupon_react, skin_pred1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+test_skin <- data.frame(gender = c('WOMAN',"MAN","MAN"),
+                        age = c(30,40,40),
+                        job = c('NO','YES','NO'),
+                        marry = c('NO','YES','NO'),
+                        car = c('NO','YES','YES'))
+
+p<- predict(skin_1, test_skin)
+p
+
+```
+
+##중요도 작성시 비교할때 사용
+#install.packages("C50")
+library(C50)
+
+skin
+  - 쿠폰반응을 보기위해서 나머지 컬럼 5개를 가지고 확인 해야한다.
+
+skin_1<- C5.0(skin[-6], skin$cupon_react)
+skin_1
+summary(skin_1)
+
+Decision tree:
+
+marry = NO: NO (10)
+marry = YES:
+:...gender = MAN:
+    :...job = NO: NO (3)
+    :   job = YES: YES (3/1)
+    gender = WOMAN:
+    :...age > 20: YES (9/1)
+        age <= 20:
+        :...job = NO: YES (3/1)
+            job = YES: NO (2)
+
+Evaluation on training data (30 cases):
+
+	    Decision Tree   
+	  ----------------  
+	  Size      Errors  
+
+	     6    3(10.0%)   <<
+
+
+	   (a)   (b)    <-classified as
+	  ----  ----
+	    15     3    (a): class NO       <- 학습이 잘못된 부분 (분류가 잘못됐다.) 18개가 NO로 나와야 되는데 3개가 YES로 응답이 된 것이다.
+	          12    (b): class YES
+
+
+
+skin_2<- C5.0(skin[-6], skin$cupon_react, trials=10)
+skin_2
+summary(skin_2)
+
+trials = 10 으로 하게 되면 10개의 모델을 만들어서 실행하여 좋은 결과를 만들어 내는것
+1차적으로 기본값일 때 잘나오면 좋지만 trials를 너무 증가시키게 될경우 과적합이 발생할 수 도 있으므로 조심해서 정해야 함.
+
+plot(skin_1)
+
+library(gmodels)
+skin_pred1 <- predict(skin_1, skin)
+
+CrossTable(skin$cupon_react, skin_pred1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+
+#test set 만들어서 비교
+test_skin <- data.frame(gender = c('WOMAN',"MAN","MAN"),
+                        age = c(30,40,40),
+                        job = c('NO','YES','NO'),
+                        marry = c('NO','YES','NO'),
+                        car = c('NO','YES','YES'))
+
+p<- predict(skin_1, test_skin)
+p
+
+
+```{r}
+
+mushrooms<- read.csv("c:/r/mushrooms.csv", stringsAsFactors=T)
+
+mushrooms
+
+str(mushrooms)
+
+mushrooms$veil.type<- NULL
+
+table(mushrooms$type)
+
+#install.packages("RWeka")
+library(RWeka)
+
+mushroom_1R<- OneR(type ~ . , data = mushrooms)
+summary(mushroom_1R)
+
+mushroom_JRip <- JRip(type ~ . , data=mushrooms)
+mushroom_JRip
+summary(mushroom_JRip)
+
+
+
+```
+1. Data 수집
+  - 독버섯을 구분하는 규칠을 식별하기 위해 카네기 멜로 대학교의 제프 슈림머가 만든 버섯 데이터 셋
+  mushrooms<- read.csv("c:/r/mushrooms.csv", stringsAsFactors=T)
+  mushrooms
+
+2. Data 준비
+  str(mushrooms)
+  mushrooms$veil.type<- NULL
+  table(mushrooms$type)
+  
+3. 데이터에 대한 모델 훈련
+install.packages("RWeka")
+library(RWeka)
+
+4. 모델 성능 개선
+RIPPER 규칙 학습 알고리즘 자바기반 JRip()함수 사용
+
+mushroom_JRip <- JRip(type ~ . , data=mushrooms)
+mushroom_JRip   #ifelse 기반  : 이거면 독버섯 이거면 독버섯 이거면 독버섯.....이게 전부 아니면 식용!
+summary(mushroom_JRip)
+
+```{r}
+
+```
+
+

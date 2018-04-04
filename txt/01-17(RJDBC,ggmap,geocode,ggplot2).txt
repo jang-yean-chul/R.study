@@ -1,0 +1,362 @@
+```{r}
+library(RJDBC)
+jdbcDriver <- JDBC(driverClass="oracle.jdbc.OracleDriver", classPath="C:/r/ojdbc6.jar")
+conn <- dbConnect(jdbcDriver, "jdbc:oracle:thin:@localhost:1521/xe", "hr",  "hr")
+
+
+dbGetQuery(conn,"
+                  SELECT job_id JOB,
+                         nvl(decode(department_id , 10, to_char(sum(salary))),' ') Dept_10,
+                         nvl(decode(department_id , 20, to_char(sum(salary))),' ') Dept_20,
+                         nvl(decode(department_id , 30, to_char(sum(salary))),' ') Dept_30,
+                         nvl(decode(department_id , 40, to_char(sum(salary))),' ') Dept_40,
+                         nvl(decode(department_id , 50, to_char(sum(salary))),' ') Dept_50,
+                         nvl(decode(department_id , 60, to_char(sum(salary))),' ') Dept_60,
+                         nvl(decode(department_id , 70, to_char(sum(salary))),' ') Dept_70,
+                         nvl(decode(department_id , 80, to_char(sum(salary))),' ') Dept_80,
+                         nvl(decode(department_id , 90, to_char(sum(salary))),' ') Dept_90,
+                         nvl(decode(department_id , 100, to_char(sum(salary))),' ') Dept_100,
+                         nvl(decode(department_id , 110, to_char(sum(salary))),' ') Dept_110,
+                         nvl(decode(department_id , null, to_char(sum(salary))),' ') Dept_null
+                  FROM employees
+                  GROUP BY job_id,department_id
+           ")
+
+
+dbGetQuery(conn, 'SELECT *
+                  FROM (SELECT nvl(department_id,0) department_id,job_id JOB,salary FROM employees)
+                  PIVOT(sum(salary) for department_id in (10 "Dept 10",20 "Dept 20",30 "Dept 30",40 "Dept 40",50 "Dept 50",
+                                                          60 "Dept 60",70 "Dept 70",80 "Dept 80",90 "Dept 90",100 "Dept 100",
+                                                          110 "Dept 110", 0 "Dept null"))')
+
+x<- dbGetQuery(conn, 'select * from employees')
+
+empdf <- dbReadTable(conn, "EMPLOYEES")
+
+empdf$DEPARTMENT_ID[is.na(empdf$DEPARTMENT_ID)] <- 0
+empdf
+
+tapply(empdf$SALARY, list(empdf$JOB_ID, empdf$DEPARTMENT_ID),sum)
+
+
+
+```
+
+
+# 환경설정이 안될 때  
+  case1) jvm.dll이 없다고 뜨면 path가 제대로 설정되어있지 않다는것
+
+## 컴퓨터 >오른쪽마우스 속성 >환경변수 >JAVAhome,path 부분에 java프로그램 설치 위치 확인
+
+
+[문제173] 아래와 같은 결과를 출력하도록 SQL문을 작성하세요.
+
+
+Job                     Dept 10    Dept 20    Dept 30    Dept 40    Dept 50    Dept 60    Dept 70    Dept 80    Dept 90   Dept 100
+-------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+AC_MGR
+AC_ACCOUNT
+IT_PROG                                                                          28800
+ST_MAN                                                                36400
+AD_ASST                       0
+PU_MAN                                          11000
+SH_CLERK                                                              64300
+AD_VP                                                                                                     35700
+FI_ACCOUNT                                                                                                           39600
+MK_MAN                               13000
+PR_REP                                                                                      10000
+FI_MGR                                                                                                               12008
+PU_CLERK                                        13900
+SA_MAN                                                                                                 61000
+MK_REP                                6000
+AD_PRES                                                                                                   26400
+SA_REP                                                                                                243500
+HR_REP                                                      6500
+ST_CLERK                                                              55700
+
+
+                  
+                  SELECT job_id "JOB",
+                         nvl(decode(department_id , 10, to_char(sum(salary))),' ') "Dept 10",
+                         nvl(decode(department_id , 20, to_char(sum(salary))),' ') "Dept 20",
+                         nvl(decode(department_id , 30, to_char(sum(salary))),' ') "Dept 30",
+                         nvl(decode(department_id , 40, to_char(sum(salary))),' ') "Dept 40",
+                         nvl(decode(department_id , 50, to_char(sum(salary))),' ') "Dept 50",
+                         nvl(decode(department_id , 60, to_char(sum(salary))),' ') "Dept 60",
+                         nvl(decode(department_id , 70, to_char(sum(salary))),' ') "Dept 70",
+                         nvl(decode(department_id , 80, to_char(sum(salary))),' ') "Dept 80",
+                         nvl(decode(department_id , 90, to_char(sum(salary))),' ') "Dept 90",
+                         nvl(decode(department_id , 100, to_char(sum(salary))),' ') "Dept 100",
+                         nvl(decode(department_id , 110, to_char(sum(salary))),' ') "Dept 110",
+                         nvl(decode(department_id , null, to_char(sum(salary))),' ') "Dept null"
+                  FROM employees
+                  GROUP BY job_id,department_id;
+                  
+
+[문제174] 문제173을 R에서 오라클로 접속하셔서 수행하세요. SQL문을 수행해서 결과 집합을 만드세요.
+
+library(RJDBC)
+jdbcDriver <- JDBC(driverClass="oracle.jdbc.OracleDriver", classPath="C:/r/ojdbc6.jar")
+conn <- dbConnect(jdbcDriver, "jdbc:oracle:thin:@localhost:1521/xe", "hr",  "hr")
+
+
+dbGetQuery(conn,"
+                  SELECT job_id JOB,
+                         nvl(decode(department_id , 10, to_char(sum(salary))),' ') Dept10,
+                         nvl(decode(department_id , 20, to_char(sum(salary))),' ') Dept20,
+                         nvl(decode(department_id , 30, to_char(sum(salary))),' ') Dept30,
+                         nvl(decode(department_id , 40, to_char(sum(salary))),' ') Dept40,
+                         nvl(decode(department_id , 50, to_char(sum(salary))),' ') Dept50,
+                         nvl(decode(department_id , 60, to_char(sum(salary))),' ') Dept60,
+                         nvl(decode(department_id , 70, to_char(sum(salary))),' ') Dept70,
+                         nvl(decode(department_id , 80, to_char(sum(salary))),' ') Dept80,
+                         nvl(decode(department_id , 90, to_char(sum(salary))),' ') Dept90,
+                         nvl(decode(department_id , 100, to_char(sum(salary))),' ') Dept100,
+                         nvl(decode(department_id , 110, to_char(sum(salary))),' ') Dept110,
+                         nvl(decode(department_id , null, to_char(sum(salary))),' ') Deptnull
+                  FROM employees
+                  GROUP BY job_id,department_id
+           ")
+
+
+[문제175] R에서 오라클로 접속하셔서 EMPLOYEES 테이블을 읽어 들인 후 R함수를 이용하셔서 문제173번 동일한 결과를 출력하세요.
+
+empdf <- dbReadTable(conn, "EMPLOYEES")
+
+tapply(empdf$SALARY, list(emp$JOB_ID, emp$DEPARTMENT_ID),sum)
+
+```{r}
+#install.packages("ggmap")
+library(ggmap)
+
+gc<- geocode(enc2utf8("서울시"))
+gc
+
+cen<- as.numeric(gc)
+
+map<- get_googlemap(center = cen, zoom = 18, maptype = "satellite")
+map2<- get_googlemap(center = cen, zoom = 18, maptype = "terrain")
+map3<- get_googlemap(center = cen, zoom = 18, maptype = "roadmap")
+map4<- get_googlemap(center = cen, zoom = 18, maptype = "hybrid")
+
+ggmap(map)
+ggmap(map2)
+ggmap(map3)
+ggmap(map4)
+
+
+
+
+map5<- get_map(location = enc2utf8("우유니 사막"), zoom = 8, maptype = "satellite")
+ggmap(map5)
+
+
+
+gc<- geocode(enc2utf8("제주도 서귀포"))
+cen<- as.numeric(gc)
+map<- get_googlemap(center=cen, maptype = "roadmap", maker=gc)
+ggmap(map)
+
+
+serch_map<-function(x,y){
+map<- get_map(location = enc2utf8(x), zoom = y, maptype = "satellite")
+ggmap(map)}
+
+serch_map("루브르 박물관",18)
+
+```
+# google map
+
+ggmap : google map, stamen map 을 정적으로 보여주는 기능의 패키지
+
+install.packages("ggmap")
+library(ggmap)
+
+geocode("지역명 또는 주소에 대한 벡터값") : 위도 경도값을 반환하는 함수
+
+gc<- geocode(enc2utf8("서울시"))
+# enc2utf8() 한글지역명을 utf8형식으로 변환하는 함수
+gc
+# lon(longitude) : 경도, 세로선     lat(latitude) : 위도, 가로선
+
+cen<- as.numeric(gc)
+
+# get_googlemap : 구글에서 제공하는 맵객체를 반환,위도 경도를 중심으로 하는 지도 정보 반환
+## center = 지도 중심 좌표 , zoom = 지도크기 (기본값 = 10(도시),3(대륙),21(빌딩)) , size = 지도의 가로세로 픽셀 크기(기본값 = c(640,640))
+## maptype = 지도 유형(satellite(위성), terrain(지형정보기반지도), roadmap(도로명표시), hybrid(위성,도로명))
+## marker = gc(위도 경도 위치에 마커 출력)
+map<- get_googlemap(center = cen, zoom = 10, maptype = "satellite")
+map2<- get_googlemap(center = cen, zoom = 16, maptype = "terrain")
+map3<- get_googlemap(center = cen, zoom = 3, maptype = "roadmap")
+map4<- get_googlemap(center = cen, zoom = 21, maptype = "hybrid")
+
+
+
+ggmap(map)
+ggmap(map2)
+ggmap(map3)
+ggmap(map4)
+
+
+map5<- get_map(location = "batican", zoom = 10, maptype = "roadmap")
+ggmap(map5)
+help("get_map")
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+
+names <- c("1.협재해수욕장","함덕해수욕장")
+addr<- c("제주특별자치도 제주시 한림읍 협재리 2497-1","제주특별자치도 제주시 조천읍 함덕리 1008")
+
+gc<- geocode(enc2utf8(addr))
+gc
+df<- data.frame(name = names, lon = gc$lon, lat = gc$lat)
+cen<- c(mean(df$lon), mean(df$lat))
+map<- get_googlemap(center = cen, maptype = "satellite",zoom = 11)
+ggmap(map)
+gc
+
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+df
+
+s<- df[df$subject == "SQL",]
+s
+barplot(s$grade,
+        names.arg = s$name,
+        ylim = c(0,100),
+        col = rainbow(length(s$name)),
+        cex.names = 0.7,
+        las= 2)
+
+ggplot(s,aes(x=name, y=grade))+
+        geom_bar(stat = 'identity', fill='green', colour = 'red')+
+        theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1, colour = "blue", size = 10))
+
+```
+#ggplot2 : 그래픽 출력을 위한 기능을 제공하는 패키지
+
+install.packages("ggplot2")
+library(ggplot2)
+
+names <- c("1.협재해수욕장","함덕해수욕장")
+addr<- c("제주특별자치도 제주시 한림읍 협재리 2497-1","제주특별자치도 제주시 조천읍 함덕리 1008")
+
+gc<- geocode(enc2utf8(addr))
+gc
+df<- data.frame(name = names, lon = gc$lon, lat = gc$lat)
+cen<- c(mean(df$lon), mean(df$lat))
+map<- get_googlemap(center = cen, maptype = "satellite",zoom = 11)
+ggmap(map)
+gc
+
+df<- read.csv("c:/r/exam.csv", header = T, stringsAsFactors = F)
+df
+
+s<- df[df$subject == "SQL",]
+s
+barplot(s$grade,
+        names.arg = s$name,
+        ylim = c(0,100),
+        col = rainbow(length(s$name)),
+        cex.names = 0.7,
+        las= 2)
+#ggplot(s라는 데이터셋, aes(x축에 name컬럼, y축에 grade컬럼))연결은 +로 geom_bar(바차트로) fill= green으로 채우고 바의 테두리는 red로
+ggplot(s,aes(x=name, y=grade))+
+        geom_bar(stat = 'identity', fill='green', colour = 'red')+
+#theme테마 axis.text.x  x축의 정보를 입력 각도(angle)  글자위치(hjust,vjust), 색(colour), 크기(size)
+        theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1, colour = "blue", size = 10))
+```{r}
+
+
+c<- emp[,c("DEPARTMENT_ID","EMPLOYEE_ID")]
+
+c[is.na(c$DEPARTMENT_ID),"DEPARTMENT_ID"]<- 0
+
+c<-aggregate(EMPLOYEE_ID~ DEPARTMENT_ID, c,length)
+
+c[,"DEPARTMENT_ID"]<- ordered(c[,"DEPARTMENT_ID"],seq(min(c$DEPARTMENT_ID),max(c$DEPARTMENT_ID),10))
+
+c
+
+ggplot(c,aes(x=DEPARTMENT_ID,y=EMPLOYEE_ID, colour = DEPARTMENT_ID))+
+  geom_bar(stat = 'identity', fill = rainbow(length(c$DEPARTMENT_ID)))+
+  labs(title = "부서별 인원 현황", x= "부서번호", y= "인원수(명)")+
+  theme(plot.title = element_text(face = "bold", color = "blue", hjust = 0.5))+
+  theme(axis.title.x = element_text(face = "bold.italic",color = "brown", size = 6))+
+  theme(axis.title.y = element_text(face = "bold.italic", color = "brown"))
+help("geom_abline")
+ 
+m<-ddply(emp,'DEPARTMENT_ID',summarise,length(EMPLOYEE_ID))  
+ 
+names(m)<-c("DEPARTMENT_ID","COUNT")
+
+m[is.na(m$DEPARTMENT_ID),"DEPARTMENT_ID"]<- 0
+
+m
+
+ggplot(m,aes(x=DEPARTMENT_ID,y=COUNT))+
+  geom_bar(stat = 'identity', fill = rainbow(length(m$DEPARTMENT_ID)))+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1, colour = "blue", size = 10))
+
+
+
+y<- dbGetQuery(conn, "select department_id, count(*) cn from employees group by department_id")
+y[is.na(y$DEPARTMENT_ID),"DEPARTMENT_ID"]<- 0
+y[,"DEPARTMENT_ID"]<- ordered(y[,"DEPARTMENT_ID"],seq(min(y$DEPARTMENT_ID),max(y$DEPARTMENT_ID),10))
+
+ggplot(y, aes(x=DEPARTMENT_ID, y=CN))+
+  geom_bar(stat = "identity", fill = rainbow(length(y$DEPARTMENT_ID)))+
+  labs(title = "부서별 인원 현황", x= "부서번호", y= "인원수(명)")+
+  theme(plot.title = element_text(face = "bold", color = "blue", hjust = 0.5))+
+  theme(axis.title.x = element_text(face = "bold.italic",color = "brown", size = 6))+
+  theme(axis.title.y = element_text(face = "bold.italic", color = "brown"))
+
+
+ggplot(data=PlantGrowth, aes(x=group, y=weight, fill=group)) +
+  geom_boxplot()
+bp
+```
+[문제176] 부서 인원수를 ggplot를 이용해서 막대그래프를 출력하세요.
+#내꺼
+c<- emp[,c("DEPARTMENT_ID","EMPLOYEE_ID")]
+
+c[is.na(c$DEPARTMENT_ID),"DEPARTMENT_ID"]<- 0
+
+c<-aggregate(EMPLOYEE_ID~ DEPARTMENT_ID, c,length)
+
+#factor형태로 바꿔줘야지 숫자형으로 인식하지 않아 정렬 될 수 있다.
+##seq(최소값,최대값,단위)
+c[,"DEPARTMENT_ID"]<- ordered(c[,"DEPARTMENT_ID"],seq(min(c$DEPARTMENT_ID),max(c$DEPARTMENT_ID),10))
+
+c
+#identity = y축에대한 막대그래프로 표현하겠다.
+ggplot(c,aes(x=DEPARTMENT_ID,y=EMPLOYEE_ID))+
+  geom_bar(stat = 'identity', fill = rainbow(length(c$DEPARTMENT_ID)))+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1, colour = "blue", size = 10))
+
+
+#광표꺼
+m<-ddply(emp,'DEPARTMENT_ID',summarise,length(EMPLOYEE_ID))  
+ 
+names(m)<-c("DEPARTMENT_ID","COUNT")
+
+m[is.na(m$DEPARTMENT_ID),"DEPARTMENT_ID"]<- 0
+
+m
+
+ggplot(m,aes(x=DEPARTMENT_ID,y=COUNT))+
+  geom_bar(stat = 'identity', fill = rainbow(length(m$DEPARTMENT_ID)))+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1, colour = "blue", size = 10))
+  
+#선생님꺼(약간의 수정 = is.na  &  ordered) 
+y<- dbGetQuery(conn, "select department_id, count(*) cn from employees group by department_id")
+y[is.na(y$DEPARTMENT_ID),"DEPARTMENT_ID"]<- 0
+y[,"DEPARTMENT_ID"]<- ordered(y[,"DEPARTMENT_ID"],seq(min(y$DEPARTMENT_ID),max(y$DEPARTMENT_ID),10))
+
+ggplot(y, aes(x=DEPARTMENT_ID, y=CN))+
+  geom_bar(stat = "identity", fill = rainbow(length(y$DEPARTMENT_ID)))+
+  labs(title = "부서별 인원 현황", x= "부서번호", y= "인원수(명)")+
+  theme(plot.title = element_text(face = "bold", color = "blue", hjust = 0.5))+
+  theme(axis.title.x = element_text(face = "bold.italic",color = "brown", size = 6))+
+  theme(axis.title.y = element_text(face = "bold.italic", color = "brown"))
+

@@ -1,0 +1,791 @@
+```{r}
+library(wordcloud)
+library(wordcloud2)
+
+jeju<- readLines("c:/r/jeju.txt")
+jeju
+
+jeju2<- readLines("c:/r/jejujeju.txt")
+jeju2<- unique(jeju2)
+
+jjj<- data.frame(name =jeju2,cnt=c(1:length(jeju2)))
+
+j2<- jeju
+j2<- gsub("-"," ",j2)
+j2<- gsub("\\("," ",j2)
+j2<- gsub("\\)"," ",j2)
+j2<- gsub("\\●"," ",j2)
+j2<- gsub("\\:"," ",j2)
+j2<- gsub("\\&"," ",j2)
+j2<- gsub("\\^"," ",j2)
+j2<- gsub("\\*"," ",j2)
+j2<- gsub("\\+"," ",j2)
+j2<- gsub("\\/"," ",j2)
+j2<- gsub("\\."," ",j2)
+j2<- gsub("\\~"," ",j2)
+j2<- gsub("\\,"," ",j2)
+j2<- gsub("\\?"," ",j2)
+j2<- gsub("\\◆"," ",j2)
+j2<- gsub("\\■"," ",j2)
+j2<- gsub("\\["," ",j2)
+j2<- gsub("\\]"," ",j2)
+j2<- gsub(" 곳 "," ",j2)
+j2<- gsub("[0-9]"," ",j2)
+
+for(i in 1:length(jeju2)){
+  jjj$cnt[i]<- length(grep(gsub(" ","",paste("*",jeju2[i],"*")),j2,value = T))
+}
+
+jjj
+
+pal<- brewer.pal(8,"Dark2")
+
+wordcloud(jjj$name, freq = jjj$cnt,scale = c(3,0.1),random.order = F,rot.per = .1,colors = pal)
+wordcloud2(jjj,shape = "star",size=0.5)
+
+
+for(i in jeju2){
+  map5<- get_map(location = enc2utf8(i), zoom = 8, maptype = "satellite")
+  ggmap(map5)
+}
+
+serch_map<-function(x,y){
+  print(jeju2[x])
+  map<- get_map(location = enc2utf8(jeju2[x]), zoom = y, maptype = "satellite")
+  ggmap(map)}
+
+serch_map(2,18)
+
+
+ggplot(jjj,aes(x=name, y=cnt))+
+        geom_bar(stat = 'identity', fill='green', colour = 'red')+
+        theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 1, colour = "blue", size = 5))
+
+
+```
+
+#jeju 관광지 워드 클라우딩
+library(wordcloud)
+library(wordcloud2)
+
+jeju<- readLines("c:/r/jeju.txt")
+jeju
+
+jeju2<- readLines("c:/r/jejujeju.txt")
+jeju2<- unique(jeju2)
+
+jjj<- data.frame(name =jeju2,cnt=c(1:length(jeju2)))
+
+j2<- jeju
+j2<- gsub("-"," ",j2)
+j2<- gsub("\\("," ",j2)
+j2<- gsub("\\)"," ",j2)
+j2<- gsub("\\●"," ",j2)
+j2<- gsub("\\:"," ",j2)
+j2<- gsub("\\&"," ",j2)
+j2<- gsub("\\^"," ",j2)
+j2<- gsub("\\*"," ",j2)
+j2<- gsub("\\+"," ",j2)
+j2<- gsub("\\/"," ",j2)
+j2<- gsub("\\."," ",j2)
+j2<- gsub("\\~"," ",j2)
+j2<- gsub("\\,"," ",j2)
+j2<- gsub("\\?"," ",j2)
+j2<- gsub("\\◆"," ",j2)
+j2<- gsub("\\■"," ",j2)
+j2<- gsub("\\["," ",j2)
+j2<- gsub("\\]"," ",j2)
+j2<- gsub(" 곳 "," ",j2)
+j2<- gsub("[0-9]"," ",j2)
+
+for(i in 1:length(jeju2)){
+  jjj$cnt[i]<- length(grep(gsub(" ","",paste("*",jeju2[i],"*")),j2,value = T))
+}
+
+jjj
+
+pal<- brewer.pal(8,"Dark2")
+
+wordcloud(jjj$name, freq = jjj$cnt,scale = c(3,0.1),random.order = F,rot.per = .1,colors = pal)
+wordcloud2(jjj,shape = "star",size=0.5)
+
+
+#jeju2전체 위성사진
+
+for(i in jeju2){
+  map5<- get_map(location = enc2utf8(i), zoom = 8, maptype = "satellite")
+  ggmap(map5)
+}
+
+
+#jeju2 목록의 번호로 위성사진 zoom 크기
+serch_map<-function(x,y){
+  print(jeju2[x])
+  map<- get_map(location = enc2utf8(jeju2[x]), zoom = y, maptype = "satellite")
+  ggmap(map)}
+
+serch_map(2,18)
+
+#전체목록 그래프
+ggplot(jjj,aes(x=name, y=cnt))+
+        geom_bar(stat = 'identity', fill='green', colour = 'red')+
+        theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 1, colour = "blue", size = 5))
+
+```{r}
+jeju<- readLines("c:/r/jeju.txt")
+jeju
+
+a<- unlist(strsplit(jeju,"[^[:digit:]]"))
+a<- a[nchar(a)>0]
+a<- sort(as.numeric(a))
+
+jnum<- data.frame(number = as.character(unique(a)),cnt = c(1:length(unique(a))))
+
+for(i in unique(a)){
+  jnum$cnt[jnum$number == i]<- length(a[a==i])
+}
+jnum
+
+wordcloud2(jnum,shape = "star",size=0.5)
+
+
+ggplot(jnum,aes(x=number, y=cnt))+
+        geom_bar(stat = 'identity', fill='green', colour = 'red')+
+        theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 1, colour = "blue", size = 5))
+
+
+
+
+jeju<- readLines("c:/r/jeju.txt")
+jeju
+
+a<- unlist(strsplit(jeju,"[^[:digit:]]"))
+a<- a[nchar(a)>0]
+a<- sort(as.numeric(a))
+
+a
+
+jnum
+jnum2<- data.frame(number = unique(a), char_front= c(1:length(unique(a))),char_back= c(1:length(unique(a))),char_between= c(1:length(unique(a))), char_x = c(1:length(unique(a))))
+
+jnum2
+gsub(" ","",paste("*",unique(a),"*"))
+
+for(i in unique(a)){
+  jnum2$char_between[jnum2$number== i]<- length(grep(paste("*",i,"*"),jeju))
+  jnum2$char_back[jnum2$number== i]<- length(grep(paste(i,"*"),jeju))
+  jnum2$char_front[jnum2$number== i]<- length(grep(paste("*",i),jeju))
+  
+  jnum2$char_x[jnum2$number== i]<- length(grep(paste(" ",i," "),jeju))
+}
+jnum2
+
+jeju[grep("[:digit:][^[:digit:]]*",jeju)]
+jeju[grep("[^[:digit:]]*[:digit:]*",jeju)]
+
+
+```
+[문제183] jeju.txt 파일에 있는 데이터를 R로 읽은 후 모든 숫자들의 빈도수를 확인하세요.
+
+jeju<- readLines("c:/r/jeju.txt")
+jeju
+
+
+a<- unlist(strsplit(jeju,"[^[:digit:]]"))
+a<- a[nchar(a)>0]
+a<- sort(as.numeric(a))
+
+jnum<- data.frame(number = as.character(unique(a)),cnt = c(1:length(unique(a))))
+
+for(i in unique(a)){
+  jnum$cnt[jnum$number == i]<- length(a[a==i])
+}
+jnum
+
+wordcloud2(jnum,shape = "star",size=0.5)
+
+#막대 그래프
+ggplot(jnum,aes(x=number, y=cnt))+
+        geom_bar(stat = 'identity', fill='green', colour = 'red')+
+        theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 1, colour = "blue", size = 5))
+
+
+[문제184] jeju.txt 파일에 있는 데이터를 R로 읽은 후 모든 숫자들의 앞,뒤에 문자가 있거나 없는경우 빈도수를 확인하세요.
+
+```{r}
+data<- readLines("c:/r/jeju.txt")
+data
+
+table(unlist(str_extract_all(data,"\\d+")))
+
+mydigits <- str_extract_all(data,"[[:digit:]]{1,}")
+mydigits
+table(unlist(mydigits))
+
+table(unlist(str_extract_all(data,"\\w?\\d+\\w?")))
+
+mydigits<- str_extract_all(data,"[[:alpha:]]{0,}[[:digit:]]{1,}[[:alpha:]]{0,}")
+table(unlist(mydigits))
+
+mydigits<- str_extract_all(data,"[[:punct:]]{0,}[[:digit:]]{1,}[[:punct:]]{0,}")
+table(unlist(mydigits))
+
+mydigits<- str_extract_all(data,"[^[:digit:]]{1,1}[[:digit:]]{1,}[^[:digit:]]{1,1}")
+table(unlist(mydigits))
+
+data<- str_replace_all(data,"1100고지","천백고지")
+data
+
+mydigits <- str_extract_all(data,"[[:alpha:]]{0,}습니다.")
+table(unlist(mydigits))
+
+
+```
+#선생님 답안
+data<- readLines("c:/r/jeju.txt")
+data
+
+table(unlist(str_extract_all(data,"\\d+")))
+
+mydigits <- str_extract_all(data,"[[:digit:]]{1,}")
+table(unlist(mydigits))
+
+table(unlist(str_extract_all(data,"\\w?\\d+\\w?")))
+
+mydigits<- str_extract_all(data,"[[:alpha:]]{0,}[[:digit:]]{1,}[[:alpha:]]{0,}")
+table(unlist(mydigits))
+
+mydigits<- str_extract_all(data,"[[:punct:]]{0,}[[:digit:]]{1,}[[:punct:]]{0,}")
+table(unlist(mydigits))
+
+mydigits<- str_extract_all(data,"[^[:digit:]]{1,1}[[:digit:]]{1,}[^[:digit:]]{1,1}")
+table(unlist(mydigits))
+
+#데이터 바꿔주기 
+data<- str_replace_all(data,"1100고지","천백고지")
+data
+
+#습니다.찾기
+mydigits <- str_extract_all(data,"[[:alpha:]]{0,}습니다.")
+table(unlist(mydigits))
+```{r}
+
+gregexpr()
+
+sentence <- "r big data analysis for value creation"
+
+regexpr("a",sentence)
+
+regexpr("big",sentence)
+
+attr(regexpr("a",sentence),"match.length")
+
+gregexpr("a", sentence)
+
+gregexpr("a", sentence)[[1]][1]
+txt<- "abcdefABCDEF012345+!-ghizk가나다라마바"
+
+g_alpha<- gregexpr("[A-z]",txt)
+
+index<- g_alpha[[1]]
+index
+
+len<- length(index)
+len
+
+for (i in 1:len){
+  cat(substr(txt,index[i],index[i]))
+}
+
+for (i in unlist(g_alpha)){
+  cat(substr(txt,i,i))
+}
+
+
+x<- unlist(str_extract_all(txt,"[A-z]"))
+r<- c()
+for (i in 1:length(x)){
+  r<- paste(r,x[i],sep="")
+}
+r
+
+regmatches(txt,g_alpha)
+regmatches(txt,g_alpha,  invert=T)
+
+
+```
+
+regexpr() : 지정된 패턴 문자가 처음나오는 위치를 반환하는 함수 결과는 리스트 형식으로 반환합니다.
+
+gregexpr() : 지정된 패턴 문자가 나오는 모든 위치를 반환하는 함수 결과는 리스트 형식으로 반환합니다.
+
+
+#1
+txt<- "abcdefABCDEF012345+!-ghizk가나다라마바"
+
+g_alpha<- gregexpr("[A-z]",txt)
+
+index<- g_alpha[[1]]
+index
+
+len<- length(index)
+len
+
+for (i in 1:len){
+  cat(substr(txt,index[i],index[i]))
+}
+
+#2
+txt<- "abcdefABCDEF012345+!-ghizk가나다라마바"
+
+g_alpha<- gregexpr("[A-z]",txt)
+
+index<- g_alpha[[1]]
+index
+
+len<- length(index)
+len
+
+for (i in unlist(g_alpha)){
+  cat(substr(txt,i,i))
+}
+
+#3
+txt<- "abcdefABCDEF012345+!-ghizk가나다라마바"
+
+x<- unlist(str_extract_all(txt,"[A-z]"))
+r<- c()
+for (i in 1:length(x)){
+  r<- paste(r,x[i],sep="")
+}
+r
+
+
+```{r}
+review<- readLines("c:/r/review.txt")
+
+review
+
+str_extract_all(review,"리뷰 점수: [[:digit:]]{1,1}")
+unlist(str_extract_all(review,"리뷰 점수: [[:digit:]]{1,1}"))
+review_score<- table(unlist(str_extract_all(review,"리뷰 점수: [[:digit:]]{1,1}")))
+
+df<- data.frame(score = c(1:5),vote = c(1:5))
+for(i in df$score){
+  df$vote[df$score==i]<-review_score[i]
+}
+
+df
+
+ggplot(df,aes(x=score,y=vote), fill = score)+
+  geom_bar(stat = 'identity', fill=rainbow(5))+
+  labs(title = "평점 현황표",x = "점수", y= "투표수", fill = "년도")+
+  theme(plot.title = element_text(face='bold', color = "darkblue", hjust=0.5))+
+  theme(axis.title.x = element_text(face='bold', color = "darkblue"))+
+  theme(axis.title.y = element_text(face='bold', color = "darkblue"))+
+  theme(legend.title.align = 0.5, legend.box.background = element_rect(),legend.box.margin = margin(t=0.1,r=0.1,b=0.1,l=0.1,unit = "cm"))+
+  geom_text(aes(y=vote, label = paste(vote, "표")), col = "black",size = 4, position = position_stack(vjust= 0.5))
+
+
+
+pie(df$vote,
+    main = "고객 점수표",
+    labels = paste(df$score,"점 :",df$vote,"표"))
+
+
+pie3D(df$vote,
+      main = "고객 점수표",
+      labels = paste(df$score,"점 :",round(df$vote/sum(df$vote)*100,2),"%"),
+      explod = 0.1,
+      labelcex = 1)
+
+
+
+```
+#고객 만족도
+review<- readLines("c:/r/review.txt")
+
+review
+
+str_extract_all(review,"리뷰 점수: [[:digit:]]{1,1}")
+unlist(str_extract_all(review,"리뷰 점수: [[:digit:]]{1,1}"))
+review_score<- table(unlist(str_extract_all(review,"리뷰 점수: [[:digit:]]{1,1}")))
+
+df<- data.frame(score = c(1:5),vote = c(1:5))
+for(i in df$score){
+  df$vote[df$score==i]<-review_score[i]
+}
+
+df
+
+ggplot(df,aes(x=score,y=vote), fill = score)+
+  geom_bar(stat = 'identity', fill=rainbow(5))+
+  labs(title = "평점 현황표",x = "점수", y= "투표수", fill = "년도")+
+  theme(plot.title = element_text(face='bold', color = "darkblue", hjust=0.5))+
+  theme(axis.title.x = element_text(face='bold', color = "darkblue"))+
+  theme(axis.title.y = element_text(face='bold', color = "darkblue"))+
+  theme(legend.title.align = 0.5, legend.box.background = element_rect(),legend.box.margin = margin(t=0.1,r=0.1,b=0.1,l=0.1,unit = "cm"))+
+  geom_text(aes(y=vote, label = paste(vote, "표")), col = "black",size = 4, position = position_stack(vjust= 0.5))
+
+
+
+pie(df$vote,
+    main = "고객 점수표",
+    labels = paste(df$score,"점 :",df$vote,"표"))
+
+
+pie3D(df$vote,
+      main = "영업팀별 매출액",
+      labels = paste(df$score,"점 :",round(df$vote/sum(df$vote)*100,2),"%"),
+      explod = 0.1,
+      labelcex = 1)
+      
+```{r}
+
+
+review<- readLines("c:/r/review.txt")
+
+data1<- review
+data1<- gsub("리뷰 점수: [[:digit:]]{1,1}","",data1)
+data1<- gsub("[ㄱ-ㅎ]","",data1)
+data1<- gsub("[ㅏ-ㅢ]","",data1)
+data1<- gsub("리뷰","",data1)
+data1<- gsub("점수","",data1)
+data1<- gsub("제목","",data1)
+data1<- gsub("내용","",data1)
+data1<- gsub("[[:punct:]]","",data1)
+
+
+data1<- extractNoun(data1)
+data1<- data1[grep("[^''|' ']",data1)]
+data1<- table(unlist(data1))
+
+data1<- sort(data1,decreasing = T)
+data_head<- head(data1,50)
+data_head
+
+data1<- data1[str_count(data1)>=2]
+data1<- data1[data1 >= 5]
+
+wordcloud2(data1,shape = "star",size = 0.5)
+
+
+
+```
+      
+#가장 많이 언급된 단어  
+
+review<- readLines("c:/r/review.txt")
+
+data1<- review
+data1<- gsub("리뷰 점수: [[:digit:]]{1,1}","",data1)
+data1<- gsub("[ㄱ-ㅎ]","",data1)
+data1<- gsub("[ㅏ-ㅢ]","",data1)
+data1<- gsub("리뷰","",data1)
+data1<- gsub("점수","",data1)
+data1<- gsub("제목","",data1)
+data1<- gsub("내용","",data1)
+data1<- gsub("[[:punct:]]","",data1)
+
+
+data1<- extractNoun(data1)
+data1<- data1[grep("[^''|' ']",data1)]
+data1<- table(unlist(data1))
+
+data1<- sort(data1,decreasing = T)
+data_head<- head(data1,10)
+data_head
+
+data1<- data1[data1 >= 5]
+
+wordcloud2(data1,shape = "star",size = 0.5)
+
+
+
+```{r}
+data<- readLines("c:/r/review.txt")                                       
+data
+
+
+
+posDic <- readLines("c:/r/posDic.txt")
+negDic <- readLines("c:/r/negDic.txt")
+#posDic <- readLines("c:/r/pos_word.txt")
+#negDic <- readLines("c:/r/neg_word.txt")
+length(posDic)                                                       
+length(negDic) 
+ 
+
+
+#감성분석을 위한 함수 정의
+sentimental <- function(sentences, posDic, negDic){
+   
+  scores = laply(sentences, function(sentence, posDic, negDic) {
+     
+    sentence = gsub('[[:punct:]]', '', sentence) # 문장부호 제거
+    sentence = gsub('[[:cntrl:]]', '', sentence) # 특수문자 제거
+    sentence = gsub('\\d+', '', sentence)        # 숫자 제거
+    sentence = tolower(sentence)                 # 모두 소문자로 변경(단어가 모두 소문자 임)
+     
+    word.list = str_split(sentence, '\\s+')      # 공백 기준으로 단어 생성 -> \\s+ : 공백 정규식, +(1개 이상)
+    words = unlist(word.list)                    # unlist() : list를 vector 객체로 구조변경
+     
+    pos.matches = match(words, posDic)           # words의 단어를 posDic에서 matching
+    neg.matches = match(words, negDic)
+     
+    pos.matches = !is.na(pos.matches)            # NA 제거, 위치(숫자)만 추출
+    neg.matches = !is.na(neg.matches)
+     
+    score = sum(pos.matches) - sum(neg.matches)  # 긍정 - 부정   
+    return(score)
+  }, posDic, negDic)
+   
+  scores.df = data.frame(score=scores, text=sentences)
+  return(scores.df)
+}
+ 
+
+
+
+result<- sentimental(data, posDic, negDic)
+result
+names(result)  
+
+ 
+#score값을 대상으로 color 칼럼 추가
+result$color[result$score >=1] = "blue"
+result$color[result$score ==0] = "green"
+result$color[result$score < 0] = "red"
+ 
+#감성분석 결과 차트보기
+plot(result$score, col=result$color) # 산포도 색생 적용
+barplot(result$score, col=result$color, main ="감성분석 결과화면")   # 막대차트
+ 
+ 
+#감성분석 빈도수
+table(result$color)
+ 
+#score 칼럼 리코딩
+result$remark[result$score >=1] = "긍정"
+result$remark[result$score ==0] = "중립"
+result$remark[result$score < 0] = "부정"
+ 
+sentiment_result= table(result$remark)
+sentiment_result
+ 
+#제목, 색상, 원크기
+pie(sentiment_result, main="감성분석 결과",
+    col=c("blue","red","green"), radius=0.8)                        
+
+senti<- sentiment_result[c("긍정","부정")]
+
+
+pie(senti, main="감성분석 결과",
+    col=c("blue","red"), radius=0.8)                        
+
+```
+
+
+# ************************************************
+# -- 감성 분석(단어의 긍정/부정 분석)
+#    시각화 : 파랑/빨강 -> 불만고객 시각화
+# ************************************************
+ 
+# ------------------------------
+# -- 1) 데이터 가져오기("../Rwork/Part-II/reviews.csv")
+# ------------------------------
+data=read.csv(file.choose())                                         # file.choose() 파일 선택
+head(data,2)
+dim(data)                                                            # 100   2
+str(data)                                                            # 변수명 : company, review = 고객 인터뷰 내용
+ 
+# ------------------------------
+# -- 2) 단어 사전에 단어추가
+# ------------------------------
+ 
+# -- 긍정단어와 부정단어를 카운터하여 긍정/부정 형태로 빈도 분석
+#    neg.txt : 부정어 사전
+#    pos.txt : 긍정어 사전
+ 
+# -- (1) 긍정어/부정어 영어 사전 가져오기
+setwd("C:\\RProject\\Rwork\\Part-II")
+posDic = readLines("posDic.txt")
+negDic = readLines("negDic.txt")
+length(posDic)                                                       # 2006
+length(negDic)                                                       # 4783
+ 
+# -- (2) 긍정어/부정어 단어 추가
+posDic.final =c(posDic, 'victor')
+negDic.final =c(negDic, 'vanquished')
+ 
+# -- 마지막에 단어 추가
+tail(posDic.final)
+tail(negDic.final)
+ 
+# ------------------------------
+# -- 3) 감성 분석 함수 정의-sentimental
+# ------------------------------
+ 
+# -- (1) 문자열 처리를 위한 패키지 로딩
+library(plyr)                                                        # laply()함수 제공
+library(stringr)                                                     # str_split()함수 제공
+ 
+# -- (2) 감성분석을 위한 함수 정의
+sentimental = function(sentences, posDic, negDic){
+   
+  scores = laply(sentences, function(sentence, posDic, negDic) {
+     
+    sentence = gsub('[[:punct:]]', '', sentence) # 문장부호 제거
+    sentence = gsub('[[:cntrl:]]', '', sentence) # 특수문자 제거
+    sentence = gsub('\\d+', '', sentence)        # 숫자 제거
+    sentence = tolower(sentence)                 # 모두 소문자로 변경(단어가 모두 소문자 임)
+     
+    word.list = str_split(sentence, '\\s+')      # 공백 기준으로 단어 생성 -> \\s+ : 공백 정규식, +(1개 이상)
+    words = unlist(word.list)                    # unlist() : list를 vector 객체로 구조변경
+     
+    pos.matches = match(words, posDic)           # words의 단어를 posDic에서 matching
+    neg.matches = match(words, negDic)
+     
+    pos.matches = !is.na(pos.matches)            # NA 제거, 위치(숫자)만 추출
+    neg.matches = !is.na(neg.matches)
+     
+    score = sum(pos.matches) - sum(neg.matches)  # 긍정 - 부정   
+    return(score)
+  }, posDic, negDic)
+   
+  scores.df = data.frame(score=scores, text=sentences)
+  return(scores.df)
+}
+ 
+# ------------------------------
+# -- 4) 감성 분석 : 두번째 변수(review) 전체 레코드 대상 감성분석
+# ------------------------------
+result=sentimental(data[,2], posDic.final, negDic.final)
+result
+names(result)                                                        # "score" "text"
+dim(result)                                                          # 100   2
+result$text
+result$score                                                         # 100 줄 단위로 긍정어/부정어 사전을 적용한 점수 합계
+ 
+# -- score값을 대상으로 color 칼럼 추가
+result$color[result$score >=1] = "blue"
+result$color[result$score ==0] = "green"
+result$color[result$score < 0] = "red"
+ 
+# -- 감성분석 결과 차트보기
+plot(result$score, col=result$color) # 산포도 색생 적용
+barplot(result$score, col=result$color, main ="감성분석 결과화면")   # 막대차트
+ 
+# ------------------------------
+# -- 5) 단어의 긍정/부정 분석
+# ------------------------------
+ 
+# -- (1) 감성분석 빈도수
+table(result$color)
+ 
+# -- (2) score 칼럼 리코딩
+result$remark[result$score >=1] = "긍정"
+result$remark[result$score ==0] = "중립"
+result$remark[result$score < 0] = "부정"
+ 
+sentiment_result= table(result$remark)
+sentiment_result
+ 
+# -- (3) 제목, 색상, 원크기
+pie(sentiment_result, main="감성분석 결과",
+    col=c("blue","red","green"), radius=0.8)                         # ->  1.2
+
+```{r}
+review<- readLines("c:/r/review.txt")
+
+data1<- review
+data1<- gsub("리뷰 점수: [[:digit:]]{1,1}","",data1)
+data1<- gsub("[ㄱ-ㅎ]","",data1)
+data1<- gsub("[ㅏ-ㅢ]","",data1)
+data1<- gsub("리뷰","",data1)
+data1<- gsub("점수","",data1)
+data1<- gsub("제목","",data1)
+data1<- gsub("내용","",data1)
+data1<- gsub("[[:punct:]]","",data1)
+
+
+data1<- extractNoun(data1)
+data1<- data1[grep("[^''|' ']",data1)]
+data1<- table(unlist(data1))
+
+data1<- sort(data1,decreasing = T)
+data_head<- head(data1,10)
+data_head
+
+data1<- data1[str_count(data1)>=2]
+data1<- data1[data1 >= 5]
+
+wordcloud2(data1,shape = "star",size = 0.5)
+
+
+
+
+ext<- list(1:length(data_head))
+
+for(i in names(data_head)){
+  review2<- strsplit(review, split = "\\.")
+  review2<- unlist(review2)
+  review2[str_detect(review2,i)]
+  data1<- review2
+  data1<- gsub("리뷰 점수: [[:digit:]]{1,1}","",data1)
+  data1<- gsub("[ㄱ-ㅎ]","",data1)
+  data1<- gsub("[ㅏ-ㅢ]","",data1)
+  data1<- gsub("리뷰","",data1)
+  data1<- gsub("점수","",data1)
+  data1<- gsub("제목","",data1)
+  data1<- gsub("내용","",data1)
+  data1<- gsub("[[:punct:]]","",data1)
+  
+  
+  data1<- extractNoun(data1)
+  data1<- data1[grep("[^''|' ']",data1)]
+  data1<- table(unlist(data1))
+  
+  data1<- sort(data1,decreasing = T)
+  data_head<- head(data1,50)
+  data_head
+  
+  data1<- data1[data1 >= 5]
+  
+  wordcloud2(data1,shape = "star",size = 0.5)
+}
+
+
+
+review2<- strsplit(review, split = "\\.")
+review2<- unlist(review2)
+review2[str_detect(review2,"호텔")]
+
+data1<- review2
+data1<- gsub("리뷰 점수: [[:digit:]]{1,1}","",data1)
+data1<- gsub("[ㄱ-ㅎ]","",data1)
+data1<- gsub("[ㅏ-ㅢ]","",data1)
+data1<- gsub("리뷰","",data1)
+data1<- gsub("점수","",data1)
+data1<- gsub("제목","",data1)
+data1<- gsub("내용","",data1)
+data1<- gsub("[[:punct:]]","",data1)
+
+
+data1<- extractNoun(data1)
+data1<- data1[grep("[^''|' ']",data1)]
+data1<- table(unlist(data1))
+
+data1<- sort(data1,decreasing = T)
+data_head<- head(data1,50)
+data_head
+
+data1<- data1[data1 >= 5]
+
+wordcloud2(data1,shape = "star",size = 0.5)
+
+
+
+```
+
+

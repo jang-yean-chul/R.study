@@ -1,0 +1,614 @@
+```{r}
+credit <- read.csv("c:/r/credit.csv")
+credit
+
+table(credit$default)/sum(table(credit$default))
+
+credit1<- sample(NROW(credit),900)
+
+train<- credit[credit1,]
+test<- credit[-credit1,]
+
+train
+
+library(C50)
+
+credit_1<- C5.0(train[,-17], train$default)
+credit_1
+summary(credit_1)
+
+
+library(gmodels)
+credit_pred1 <- predict(credit_1, credit)
+
+CrossTable(credit$default, credit_pred1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+p1<- predict(credit_1, test[,-17])
+p1
+
+CrossTable(test[,17], p1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+
+
+credit_2<- C5.0(train[,-17], train$default, trials=5)
+credit_2
+summary(credit_2)
+
+p2<- predict(credit_2, test[,-17])
+p2
+
+CrossTable(test[,17], p2,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+
+credit_3<- C5.0(train[,-17], train$default, trials=10)
+credit_3
+summary(credit_3)
+
+p3<- predict(credit_3, test[,-17])
+p3
+
+CrossTable(test[,17], p3,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+
+library(RWeka)
+credit_JRip <- JRip(default ~ . , data=credit)
+summary(credit_JRip)
+
+credit_OneR<- OneR(default ~ . , data=credit)
+summary(credit_OneR)
+
+
+#1분위에서 3분위 사이 500개 (25%씩 짜른값)
+credit_50<-credit[credit$amount >= 1366 & credit$amount <= 3972,]
+
+#450개 번호 골라담기
+credit_train_num<- sample(NROW(credit),450)
+
+#번호 기준으로 450개 트레이닝 셋 50개 테스트 셋
+train1<- credit_50[credit_train_num,]
+test1<- credit_50[-credit_train_num,]
+
+#C5.0모델 굴리기
+library(C50)
+
+credit_50_1<- C5.0(train1[,-17], train1$default)
+credit_50_1
+summary(credit_50_1)
+
+library(gmodels)
+
+credit_pred1 <- predict(credit_50_1, credit)
+
+CrossTable(credit$default, credit_pred1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+p_50_1<- predict(credit_50_1, test1[,-17])
+p_50_1
+
+CrossTable(test1[,17], p_50_1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+
+```
+■ 독일 은행의 대출 채무이행
+
+1. 데이터를 로드한다.
+
+credit <- read.csv("c:/r/credit.csv")
+str(credit)
+
+* 컬럼 소개 
+
+1. 라벨 : default 변수 -->  yes : 대출금 상환 안함 
+                            no  : 대출금 상환
+
+2. checking_balance  --> 예금 계좌 
+3. savings_balance  ---> 적금 계좌 
+
+설명 : 대출 신청자의 예금계좌와 적금계좌의
+예금 정도를 확인해서 예금액이 많을수록
+대출이 안전하다고 가정할수있다.
+
+table(credit$checking_balance) 
+table(credit$savings_balance)
+
+4. amount : 대출 금액
+
+summary(credit$amount)
+
+Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+250    1366    2320    3271    3972   18424 
+
+대출금액이 250 마르크에서 18424 마르크로 구성
+
+100 마르크 우리나라돈으로 6~7만원 
+
+[문제] 대출금 상환을 한 사람과 안 한 사람의 비율을 출력하세요.
+
+table(credit$default)/sum(table(credit$default))
+
+[문제] credit 데이터를 shuffle 시키고 훈련데이터(900)와 테스트데이터(100)로 나누시오
+
+credit1<- sample(NROW(credit),900)
+
+train<- credit[credit1,]
+test<- credit[-credit1,]
+
+[문제] 훈련 데이터를 의사결정트리 알고리즘중 C5.0 알고리즘을 적용해서 예측 모델을 생성 하세요.
+
+library(C50)
+
+credit_1<- C5.0(train[,-17], train$default)
+credit_1
+summary(credit_1)
+
+[문제] 위에서 만든 결과로 이원 교차표를 생성하세요.
+
+library(gmodels)
+credit_pred1 <- predict(credit_1, credit)
+
+CrossTable(credit$default, credit_pred1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+
+[문제] 모델의 성능을 개선해 보세요.
+   
+#trials값을 늘리면 오히려 독이 되는 지표
+
+credit_2<- C5.0(train[,-17], train$default, trials=5)
+credit_2
+summary(credit_2)
+
+p2<- predict(credit_2, test[,-17])
+p2
+
+CrossTable(test[,17], p2,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+
+credit_3<- C5.0(train[,-17], train$default, trials=10)
+credit_3
+summary(credit_3)
+
+p3<- predict(credit_3, test[,-17])
+p3
+
+CrossTable(test[,17], p3,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+```{r}
+credit <- read.csv("c:/r/credit.csv")
+credit
+str(credit)
+
+credit1<- sample(NROW(credit),900)
+
+train<- credit[credit1,]
+test<- credit[-credit1,]
+
+table(train$default)
+
+train_2<-train[train$checking_balance != "unknown" & train$savings_balance != "unkown",]
+test_2<-test[test$checking_balance != "unknown" & test$savings_balance != "unkown",]
+
+
+credit_1<- C5.0(train_2[,-17], train_2$default)
+credit_1
+summary(credit_1)
+
+
+library(gmodels)
+
+credit_pred1 <- predict(credit_1, credit)
+
+CrossTable(credit$default, credit_pred1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+p1<- predict(credit_1, test[,-17])
+p1
+
+CrossTable(test[,17], p1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+
+credit[credit$default == 'yes',]
+credit[credit$default == 'no',]
+
+
+help("factor")
+```
+
+```{r}
+credit <- read.csv("c:/r/credit.csv")
+credit
+str(credit)
+
+credit1<- sample(NROW(credit),900)
+
+train<- credit[credit1,]
+test<- credit[-credit1,]
+
+table(train$default)
+
+train$checking_balance <- factor(train$checking_balance, exclude = "unknown")
+test$checking_balance <- factor(test$checking_balance, exclude = "unknown")
+
+train$savings_balance <- factor(train$savings_balance, exclude = "unknown")
+test$savings_balance <- factor(test$savings_balance, exclude = "unknown")
+
+credit_1<- C5.0(train_2[,-17], train_2$default,trials=10)
+credit_1
+summary(credit_1)
+
+
+library(gmodels)
+
+credit_pred1 <- predict(credit_1, credit)
+
+CrossTable(credit$default, credit_pred1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+p1<- predict(credit_1, test[,-17])
+p1
+
+CrossTable(test[,17], p1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+
+#정보량 확인
+information.gain(default~.,credit)
+#정보량 = 0인애들 빼고
+credit_c<- credit[,c(1,2,3,4,5,6,7,11,12,14,16)] 
+
+credit1<- sample(NROW(credit_c),900)
+
+train<- credit[credit1,]
+test<- credit[-credit1,]
+
+credit_1<- C5.0(train_2[,-17], train_2$default,trials=10)
+credit_1
+summary(credit_1)
+
+
+library(gmodels)
+
+credit_pred1 <- predict(credit_1, credit)
+
+CrossTable(credit$default, credit_pred1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+p1<- predict(credit_1, test[,-17])
+p1
+
+CrossTable(test[,17], p1,
+           prop.chisq= F, prop.c=F, prop.r=F,
+           dnn = c('actual default', 'predicted default'))
+
+```
+
+
+```{r}
+
+#선생님 답안
+credit <- read.csv("c:/r/credit.csv")
+str(credit)
+
+table(credit$checking_balance) 
+table(credit$savings_balance)
+
+summary(credit$amount)
+
+prop.table(table(credit$default))
+
+
+
+#[문제] credit 데이터를 shuffle 시키고 훈련데이터(900)와 테스트데이터(100)로 나누시오
+
+set.seed(1)
+
+train_index <- sample(2,nrow(credit), prob=c(0.9,0.1), replace=T )
+
+credit_train <- credit[train_index==1, ] 
+credit_test  <- credit[train_index==2, ]
+
+prop.table(table(credit_train$default))
+prop.table(table(credit_test$default))
+
+#[문제] 위의 훈련 데이터를 의사결정트리 알고리즘중 C5.0 알고리즘을 적용해서 예측 모델을 생성 하세요.
+
+#install.packages("C50")
+library(C50)
+
+credit_model <- C5.0(credit_train[,-17], credit_train[,17] )
+credit_model
+summary(credit_model)
+credit_result <- predict(credit_model, credit_test[,-17])
+
+#[문제] 위에서 만든 결과로 이원 교차표를 그리세요.
+
+library(gmodels)
+
+CrossTable(credit_test[,17],credit_result, prop.chisq = F,prop.r = F,prop.c = F,dnn=c('actual default','predicted default'))
+
+
+#[문제] 모델의 성능을 개선해 보세요.
+
+credit_model2 <- C5.0(credit_train[,-17],
+                      credit_train[,17] ,
+                      trials=10)
+credit_model2
+credit_result2 <- predict(credit_model2,
+                          credit_test[,-17])
+
+CrossTable(credit_test[,17],credit_result2, prop.chisq = F,prop.r = F,prop.c = F,dnn=c('actual default','predicted default'))
+
+
+
+```
+■ 독일 은행의 대출 채무이행
+
+1. 데이터를 로드한다.
+
+credit <- read.csv("c:/r/credit.csv")
+str(credit)
+
+* 컬럼 소개 
+
+1. 라벨 : default 변수 -->  yes : 대출금 상환 안함 
+                            no  : 대출금 상환
+
+2. checking_balance  --> 예금 계좌 
+3. savings_balance  ---> 적금 계좌 
+
+설명 : 대출 신청자의 예금계좌와 적금계좌의
+예금 정도를 확인해서 예금액이 많을수록
+대출이 안전하다고 가정할수있다.
+
+table(credit$checking_balance) 
+table(credit$savings_balance)
+
+4. amount : 대출 금액
+
+summary(credit$amount)
+
+Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+250    1366    2320    3271    3972   18424 
+
+대출금액이 250 마르크에서 18424 마르크로 구성
+
+100 마르크 우리나라돈으로 6~7만원 
+
+[문제] 대출금 상환을 한 사람과 안 한 사람의 비율을 출력하세요.
+
+라벨 : default 변수 -->  yes : 대출금 상환 안함 
+no : 대출금 상환
+
+prop.table(table(credit$default))
+
+과거 데이터를 분석해보니 대출금 상환 불이행자가
+30%나 되니 앞으로 30% 이내로 떨어뜨리는게 
+은행의 목표가 되겠금 model 을 생성해야한다.
+
+
+
+[문제] credit 데이터를 shuffle 시키고 훈련데이터(900)와 테스트데이터(100)로 나누시오
+
+set.seed(1)
+
+train_index <- sample(2,nrow(credit), prob=c(0.9,0.1), replace=T )
+
+credit_train <- credit[train_index==1, ] 
+credit_test  <- credit[train_index==2, ]
+
+prop.table(table(credit_train$default))
+prop.table(table(credit_test$default))
+
+[문제] 위의 훈련 데이터를 의사결정트리 알고리즘중 C5.0 알고리즘을 적용해서 예측 모델을 생성 하세요.
+
+install.packages("C50")
+library(C50)
+
+credit_model <- C5.0(credit_train[,-17], credit_train[,17] )
+credit_model
+summary(credit_model)
+credit_result <- predict(credit_model, credit_test[,-17])
+
+[문제] 위에서 만든 결과로 이원 교차표를 그리세요.
+
+library(gmodels)
+
+CrossTable(credit_test[,17],credit_result, prop.chisq = F,prop.r = F,prop.c = F,dnn=c('actual default','predicted default'))
+
+
+[문제] 모델의 성능을 개선해 보세요.
+
+credit_model2 <- C5.0(credit_train[,-17],
+                      credit_train[,17] ,
+                      trials=10)
+credit_model2
+credit_result2 <- predict(credit_model2,
+                          credit_test[,-17])
+
+CrossTable(credit_test[,17],credit_result2, prop.chisq = F,prop.r = F,prop.c = F,dnn=c('actual default','predicted default'))
+```{r}
+c <- c(3,4,1,5,7,9,5,4,6,8,4,5,9,8,7,8,6,7,2,1)
+row <- c("A","B","C","D","E","F","G","H","I","J")
+col <- c("X","Y")
+
+data<- matrix(c, nrow = 10, ncol = 2, byrow = T, dimnames = list(row,col))
+data
+
+plot(data)
+
+library(stats)
+
+km<- kmeans(data,2)
+km
+
+km$centers
+km$cluster
+
+cbind(data,km$cluster)
+
+plot(round(km$centers), col = km$centers, pch = 22, bg = km$centers, xlim=range(0:10), ylim=range(0:10))
+par(new = T)
+plot(data, col = km$cluster +1 , xlim = range(0:10), ylim=range(0:10))
+
+```
+##군집화(Kmeans)
+  - 데이터를 클러스터(cluster)로 자동 분리하는 비지도 학습의 머신러닝(unsupervised)
+  - 군집화는 데이터 안에서 발견되는 자연스런 그룹에 대한 통찰력을 제공
+  - 레이블이 없는 상태에서 분류
+  
+활용
+  - 타겟마케팅 캠페인을 위해 유사한 인구 통계나 구매 패턴을 가진 그룹으로 고객을 세분화
+  - 알고있는 클러스터 밖의 사용패턴을 찾아 무단 네트워크 침입과 같은 이상행동을 탐지
+  - 유사한 값을 갖는 특징을 적은 개수의 동질적인 범주로 그룹핑해 초대형 데이터셋을 단순화 할 때
+k-means algorithm
+  - k개의 클러스터 중 하나에 할당하는데 이 때 k는 사전에 결정된 수
+  - 특정값을 다차원 특징 공간의 좌표로 취급
+  - 유클리드 거리계산
+  
+k 값
+knn = sqrt(n)
+k-means = sqrt(n/2)  
+
+
+k-means 한계점
+  - k값 입력을 직접 지정해야 한다.
+  - 이상치값 민감.
+
+ex)
+c <- c(3,4,1,5,7,9,5,4,6,8,4,5,9,8,7,8,6,7,2,1)
+row <- c("A","B","C","D","E","F","G","H","I","J")
+col <- c("X","Y")
+
+data<- matrix(c, nrow = 10, ncol = 2, byrow = T, dimnames = list(row,col))
+data
+
+plot(data)
+
+library(stats)
+
+km<- kmeans(data,2)
+km
+
+km$centers
+km$cluster
+
+cbind(data,km$cluster)
+
+plot(round(km$centers), col = km$centers, pch = 22, bg = km$centers, xlim=range(0:10), ylim=range(0:10))
+par(new = T)
+plot(data, col = km$cluster +1 , xlim = range(0:10), ylim=range(0:10))
+```{r}
+sns<- read.csv("c:/r/snsdata.csv")
+sns
+
+```
+■ k-평균(k-mean)을 활용한 군집화(10대 시장 찾기)
+
+◈ 1단계 : 데이터 수집
+
+◈ 2단계 : 데이터 준비와 살펴보기 
+
+teens <- read.csv("c:/r/snsdata.csv")
+str(teens)
+
+# gender 변수의 결측 데이터 확인
+table(teens$gender)
+table(teens$gender, useNA = "ifany")
+table(is.na(teens$gender))
+summary(teens$gender)
+
+# age 변수의 결측 데이터 확인
+summary(teens$age)
+
+# age 이상치(outliers) 제거
+teens$age <- ifelse(teens$age >= 13 & teens$age < 20, teens$age, NA)
+
+summary(teens$age)
+
+# 성별 재부여
+teens$female <- ifelse(teens$gender == "F" & !is.na(teens$gender), 1, 0)
+teens$no_gender <- ifelse(is.na(teens$gender), 1, 0)
+teens$female
+teens$no_gender
+
+# 재지정한 작업에 대한 확인
+table(teens$gender, useNA = "ifany")
+table(teens$female, useNA = "ifany")
+table(teens$no_gender, useNA = "ifany")
+
+# 집단(cohort)별 나이 평균
+mean(teens$age) # doesn't work
+mean(teens$age, na.rm = TRUE) 
+
+# 집단별 나이
+aggregate(data = teens, age ~ gradyear, mean, na.rm = TRUE)
+
+# 각 개인에 대한 예측된 나이 계산
+ave_age <- ave(teens$age, teens$gradyear,
+               FUN = function(x) mean(x, na.rm = TRUE))
+
+
+teens$age <- ifelse(is.na(teens$age), ave_age, teens$age)
+
+# 제거한 결측치에 대한 요약 결과 확인
+summary(teens$age)
+
+◈ 3단계 : 데이터로 모델 훈련
+
+interests <- teens[5:40]
+interests_z <- as.data.frame(lapply(interests, scale))
+
+teen_clusters <- kmeans(interests_z, 5)
+teen_clusters
+
+◈ 4단계 : 모델 성능 평가
+
+# 군집의 크기 확인
+teen_clusters$size
+
+# 군집의 중앙점(centers) 확인
+teen_clusters$centers
+
+teen_clusters$center
+teen_clusters$withinss
+teen_clusters$tot.withinss
+teen_clusters$totss
+
+◈ 5단계 : 모델 성능 향상
+
+# 본래 데이터 프레임에 군집ID(cluster ID) 적용
+teens$cluster <- teen_clusters$cluster
+
+# 처음 5개 데이터 확인
+teens[1:5, c("cluster", "gender", "age", "friends")]
+
+# 군집별 평균 나이
+aggregate(data = teens, age ~ cluster, mean)
+
+# 군집별 여성 비율
+aggregate(data = teens, female ~ cluster, mean)
+
+# 군집별 친구 수의 평균
+aggregate(data = teens, friends ~ cluster, mean)
+

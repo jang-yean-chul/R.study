@@ -1,0 +1,15 @@
+library(ggplot2)
+library(ggmap)
+
+jeju <- read.csv("c:/r/제주도여행코스.csv",header=T)
+jeju
+jeju1 <- get_map(location = c(lon = 126.52916660000005, lat = 33.3616666), zoom=10, maptype = "roadmap")
+jeju.map <- ggmap(jeju1)+
+            geom_point(data=jeju, aes(x=LON, y=LAT),size=1,alpha=0.7,col="red")
+
+# geom_path 함수를 써서 경로를 선으로 연결해서 표시합니다.
+
+jeju.map + geom_path(data=jeju,aes(x=LON,y=LAT),size=1,linetype=2,col="blue")+
+  geom_text(data=jeju, aes(x = LON, y = LAT+0.01, label=장소),size=3)
+
+ggsave("c:/r/jeju.png",dpi=300)

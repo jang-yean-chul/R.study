@@ -1,0 +1,318 @@
+```{r}
+aggregate(SALARY~JOB_ID, emp, mean)
+
+tapply(emp$SALARY, emp$JOB_ID,mean)
+
+
+aggregate(SALARY~format(as.Date(HIRE_DATE),"%Y"), emp, mean)
+
+tapply(emp$SALARY, format(as.Date(emp$HIRE_DATE),"%Y"), mean)
+
+
+
+tapply(emp$EMPLOYEE_ID, wday(as.Date(emp$HIRE_DATE),week_start = 1, label= T), NROW)
+
+tapply(emp$EMPLOYEE_ID, weekdays(as.Date(emp$HIRE_DATE)), NROW)
+
+aggregate(emp$HIRE_DATE, list(wday(as.Date(emp$HIRE_DATE), week_start = 1, label = T)), length)
+
+help("orderBy")
+```
+
+[문제101] 직업별 평균월급을 세로(aggregate), 가로(tapply)로 출력하세요.
+
+세로 : aggregate(SALARY~JOB_ID, emp, mean)
+
+가로 : tapply(emp$SALARY, emp$JOB_ID,mean)
+
+
+[문제102] 입사한 년도별 평균월급을 세로(aggregate), 가로(tapply)로 출력하세요.
+
+세로 : aggregate(SALARY~format(as.Date(HIRE_DATE),"%Y"), emp, mean)
+
+가로 : tapply(emp$SALARY, format(as.Date(emp$HIRE_DATE),"%Y"), mean)
+
+
+[문제103] 요일별 입사한 인원수를 아래와 같은 화면 출력으로 하세요.
+
+월 화 수 목 금 토 일 
+10 13 15 16 19 19 15 
+
+tapply(emp$EMPLOYEE_ID, wday(as.Date(emp$HIRE_DATE),week_start = 1, label= T), NROW)
+
+
+```{r}
+x1 <- data.frame(id = c(100,200,300), sql = c(90,70,80))
+x2 <- data.frame(id = c(100,200,500), python = c(80,60,70))
+
+rbind(x1,x2)  
+cbind(x1,x2)
+
+merge(x1,x2)
+merge(x1,x2,all=T)
+merge(x1,x2,all.x=T)  
+merge(x1,x2,all.y=T)
+
+x1 <- data.frame(id = c(100,200,300), sql = c(90,70,80))
+x3 <- data.frame(no = c(100,200,500), python = c(80,60,70))
+
+merge(x1,x3, by.x = "id", by.y = "no")
+merge(x1,x2, by = "id")
+
+
+help(merge)
+```
+
+★merge
+ - 두 데이터 프레임의 공통된 값을 기준으로 병합한다.
+ 
+x1 <- data.frame(id = c(100,200,300), sql = c(90,70,80))
+x2 <- data.frame(id = c(100,200,500), python = c(80,60,70))
+
+rbind(x1,x2)  #오류가 난다 -> why? rbind는 컬럼이름을 기준으로 row를 붙이는 것이므로
+cbind(x1,x2)  #id값이 중복된다.
+
+merge(x1,x2)  #공통된 컬럼을 기준으로 (여기서는 id컬럼) 붙여준다. 단, 키값이 일치되는 값들만 나온다.
+merge(x1,x2,all=T)
+merge(x1,x2,all.x=T)  #left outer join
+merge(x1,x2,all.y=T)  #Right outer join
+
+x1 <- data.frame(id = c(100,200,300), sql = c(90,70,80))
+x3 <- data.frame(no = c(100,200,500), python = c(80,60,70))
+
+merge(x1,x3, by.x = "id", by.y = "no") #컬럼이름은 다른데 같은 데이터를 담고있을 경우
+merge(x1,x2, by = "id")  #같은 컬럼이 여러개 있을 경우 통합하고싶은 컬럼 지정
+```{r}
+x1<- data.frame(emp$LAST_NAME,emp$SALARY,emp$DEPARTMENT_ID)
+x2<- data.frame(dept$DEPARTMENT_NAME,dept$DEPARTMENT_ID)
+merge(x1,x2, by.x = "emp$DEPARTMENT_ID", by.y = "dept$DEPARTMENT_ID")
+
+
+merge(emp, dept, by = "DEPARTMENT_ID")[,c("LAST_NAME", "SALARY","DEPARTMENT_NAME")]
+merge(emp, dept, by = "DEPARTMENT_ID",all.x = T)[,c("LAST_NAME", "SALARY","DEPARTMENT_NAME")]
+merge(emp, dept, by = "DEPARTMENT_ID",all.y = T)[,c("LAST_NAME", "SALARY","DEPARTMENT_NAME")]
+
+x<- merge(emp, dept, by = "DEPARTMENT_ID")[,c("DEPARTMENT_ID","LAST_NAME", "SALARY", "JOB_ID", "DEPARTMENT_NAME")]
+x[x$DEPARTMENT_ID == 20, ]
+
+merge(emp[emp$DEPARTMENT_ID == c('20'),],dept, by="DEPARTMENT_ID")[,c("LAST_NAME","SALARY","JOB_ID","DEPARTMENT_NAME")]
+
+emp_20<- emp[emp$DEPARTMENT_ID == 20,]
+merge(emp_20, dept, by = "DEPARTMENT_ID")[,c("LAST_NAME","SALARY","JOB_ID","DEPARTMENT_NAME")]
+
+
+merge(emp[emp$DEPARTMENT_ID ==20,c("LAST_NAME","SALARY","DEPARTMENT_ID")],dept[dept$DEPARTMENT_ID == 20,], by = "DEPARTMENT_ID")[,c("LAST_NAME","SALARY","DEPARTMENT_NAME")]
+
+emp[emp$SALARY >= 3000 & emp$JOB_ID == "ST_CLERK",c("EMPLOYEE_ID","SALARY", "JOB_ID", "DEPARTMENT_ID")]
+
+emp_ST <- emp[emp$SALARY >= 3000 & emp$JOB_ID == "ST_CLERK",c("EMPLOYEE_ID","SALARY", "JOB_ID", "DEPARTMENT_ID")]
+merge(emp_ST,dept[,c("DEPARTMENT_ID","DEPARTMENT_NAME")])[,c("EMPLOYEE_ID","SALARY", "JOB_ID", "DEPARTMENT_ID","DEPARTMENT_NAME")]
+
+
+x<-merge(emp[,c("DEPARTMENT_ID","SALARY")], dept[,c("DEPARTMENT_ID","DEPARTMENT_NAME")])
+aggregate(SALARY~DEPARTMENT_NAME,merge(emp[,c("DEPARTMENT_ID","SALARY")], dept[,c("DEPARTMENT_ID","DEPARTMENT_NAME")]),sum)
+
+
+aggregate(SALARY~DEPARTMENT_NAME+JOB_ID,merge(emp[,c("DEPARTMENT_ID","JOB_ID","SALARY")],dept[,c("DEPARTMENT_ID", "DEPARTMENT_NAME")]),sum)
+
+x<- aggregate(emp$SALARY~emp$DEPARTMENT_ID+emp$JOB_ID,emp,sum)
+names(x)<- c("DEPARTMENT_ID", "JOB_ID","SUM_SAL")
+merge(x, dept[,c("DEPARTMENT_ID", "DEPARTMENT_NAME")])[,c("DEPARTMENT_NAME", "JOB_ID","SUM_SAL")]
+
+
+
+```
+[문제104] last_name, salary, department_name을 출력하세요.
+
+merge(emp, dept, by = "DEPARTMENT_ID")[,c("LAST_NAME", "SALARY","DEPARTMENT_NAME")]
+merge(emp, dept, by = "DEPARTMENT_ID",all.x = T)[,c("LAST_NAME", "SALARY","DEPARTMENT_NAME")]  #부서지정이 되지않은 사원도 출력 
+merge(emp, dept, by = "DEPARTMENT_ID",all.y = T)[,c("LAST_NAME", "SALARY","DEPARTMENT_NAME")]  #사원이 없는 부서도 출력
+
+[문제105] 20번 부서에 소속되어 있는 사원의 last_name, salary, job_id, department_name을 출력해주세요.
+
+#별도로 처음에 부서의 번호를 제한 할 수 없다.
+x<- merge(emp, dept, by = "DEPARTMENT_ID")[,c("DEPARTMENT_ID","LAST_NAME", "SALARY", "JOB_ID", "DEPARTMENT_NAME")]
+x[x$DEPARTMENT_ID == 20, ]
+
+merge(emp[emp$DEPARTMENT_ID == c('20'),],dept, by="DEPARTMENT_ID")[,c("LAST_NAME","SALARY","JOB_ID","DEPARTMENT_NAME")]
+
+emp_20<- emp[emp$DEPARTMENT_ID == 20,]
+merge(emp_20, dept, by = "DEPARTMENT_ID")[,c("LAST_NAME","SALARY","JOB_ID","DEPARTMENT_NAME")]
+#필요한 열만 뽑아내는 습관을 들이자
+
+[문제106] salary가 3000 이상이고 job_id는 ST_CLERK인 사원들의 employee_id, salary, job_id, department_id를 출력하세요.
+
+emp[emp$SALARY >= 3000 & emp$JOB_ID == "ST_CLERK",c("EMPLOYEE_ID","SALARY", "JOB_ID", "DEPARTMENT_ID")]
+
+[문제107] salary가 3000 이상이고 job_id는 ST_CLERK인 사원들의 employee_id, salary, job_id, department_id,department_name을 출력하세요.
+
+emp_ST <- emp[emp$SALARY >= 3000 & emp$JOB_ID == "ST_CLERK",c("EMPLOYEE_ID","SALARY", "JOB_ID", "DEPARTMENT_ID")]
+merge(emp_ST,dept[,c("DEPARTMENT_ID","DEPARTMENT_NAME")])[,c("EMPLOYEE_ID","SALARY", "JOB_ID", "DEPARTMENT_ID","DEPARTMENT_NAME")]
+
+[문제108] 부서이름별 총액 급여를 출력하세요.
+
+aggregate(SALARY~DEPARTMENT_NAME,merge(emp[,c("DEPARTMENT_ID","SALARY")], dept[,c("DEPARTMENT_ID","DEPARTMENT_NAME")]),sum)
+
+[문제109] 부서이름,직업별 급여의 총액을 구하세요.
+
+aggregate(SALARY~DEPARTMENT_NAME+JOB_ID,merge(emp[,c("DEPARTMENT_ID","JOB_ID","SALARY")],dept[,c("DEPARTMENT_ID", "DEPARTMENT_NAME")]),sum)
+
+x<- aggregate(emp$SALARY~emp$DEPARTMENT_ID+emp$JOB_ID,emp,sum)
+names(x)<- c("DEPARTMENT_ID", "JOB_ID","SUM_SAL")
+merge(x, dept[,c("DEPARTMENT_ID", "DEPARTMENT_NAME")])[,c("DEPARTMENT_NAME", "JOB_ID","SUM_SAL")]
+```{r}
+emp[is.na(emp$COMMISSION_PCT),c("LAST_NAME","COMMISSION_PCT","DEPARTMENT_ID")]
+dept[,c("DEPARTMENT_NAME","DEPARTMENT_ID")]
+
+merge(emp[is.na(emp$COMMISSION_PCT),c("LAST_NAME","COMMISSION_PCT","DEPARTMENT_ID")],dept[,c("DEPARTMENT_NAME","DEPARTMENT_ID")],all.x = T)
+
+
+
+
+
+merge(emp[is.na(emp$COMMISSION_PCT),c("LAST_NAME","COMMISSION_PCT","DEPARTMENT_ID")],dept[,c("DEPARTMENT_NAME","DEPARTMENT_ID")],all.x = T)
+
+x<- merge(emp, dept, by = "DEPARTMENT_ID")[,c("DEPARTMENT_ID","LAST_NAME","COMMISSION_PCT","DEPARTMENT_NAME")]
+x[x$DEPARTMENT_ID == 10 | x$DEPARTMENT_ID ==20, ]
+x[x$DEPARTMENT_ID %in% c(10,20), ]
+merge(emp[emp$DEPARTMENT_ID %in% c(10,20),c("LAST_NAME","COMMISSION_PCT","DEPARTMENT_ID")],dept[dept$DEPARTMENT_ID %in% c(10,20),c("DEPARTMENT_NAME","DEPARTMENT_ID")])
+
+
+merge(emp[!is.na(emp$COMMISSION_PCT),c("LAST_NAME","COMMISSION_PCT","DEPARTMENT_ID")],dept[,c("DEPARTMENT_NAME","DEPARTMENT_ID")],all.x = T)
+
+```
+
+[문제110]  커미션이 NA 인 사원들의 last_name, commission_pct, department_id, department_name을 출력하세요.
+
+merge(emp[is.na(emp$COMMISSION_PCT),c("LAST_NAME","COMMISSION_PCT","DEPARTMENT_ID")],dept[,c("DEPARTMENT_NAME","DEPARTMENT_ID")])
+
+
+[문제111]  커미션이 NA가 아닌 사원들의 last_name, commission_pct,department_id, department_name을 출력하세요.
+
+merge(emp[!is.na(emp$COMMISSION_PCT),c("LAST_NAME","COMMISSION_PCT","DEPARTMENT_ID")],dept[,c("DEPARTMENT_NAME","DEPARTMENT_ID")])
+#부서배치를 못받은 사원은 제외됨
+
+[문제112] 부서번호가 10,20번인 사원들의 last_name,salary, department_id, department_name을 출력하세요.
+
+merge(emp[emp$DEPARTMENT_ID %in% c(10,20),c("LAST_NAME","COMMISSION_PCT","DEPARTMENT_ID")],dept[dept$DEPARTMENT_ID %in% c(10,20),c("DEPARTMENT_NAME","DEPARTMENT_ID")])
+
+x<- merge(emp, dept, by = "DEPARTMENT_ID")[,c("DEPARTMENT_ID","LAST_NAME","COMMISSION_PCT","DEPARTMENT_NAME")]
+x[x$DEPARTMENT_ID == 10 | x$DEPARTMENT_ID ==20, ]
+x[x$DEPARTMENT_ID %in% c(10,20), ]
+
+[문제113]커미션이 NA가 아닌 사원들의 last_name, commission_pct, department_id, department_name을 출력하세요.
+	단 department_id가 NA인 사원도 출력해주세요.
+
+merge(emp[!is.na(emp$COMMISSION_PCT),c("LAST_NAME","COMMISSION_PCT","DEPARTMENT_ID")],dept[,c("DEPARTMENT_NAME","DEPARTMENT_ID")],all.x = T)
+
+```{r}
+x1<- loc[loc$CITY == "Toronto",c("STREET_ADDRESS","LOCATION_ID")]
+x2<- emp[,c("LAST_NAME","SALARY","DEPARTMENT_ID")]
+x3<- dept[,c("DEPARTMENT_ID","DEPARTMENT_NAME","LOCATION_ID")]
+
+x4<- cbind(x1,x2)
+x4
+merge(x4,x3)[,c('LAST_NAME','SALARY','DEPARTMENT_ID','DEPARTMENT_NAME','STREET_ADDRESS')]
+
+
+
+l<- loc[loc$CITY == "Toronto",c("STREET_ADDRESS","LOCATION_ID")]
+e<- emp[,c("LAST_NAME","SALARY","DEPARTMENT_ID")]
+d<- dept[,c("DEPARTMENT_ID","DEPARTMENT_NAME","LOCATION_ID")]
+
+t<- merge(l,d,by = "LOCATION_ID")
+
+merge(e,t,by = "DEPARTMENT_ID")[,c('LAST_NAME','SALARY','DEPARTMENT_ID','DEPARTMENT_NAME','STREET_ADDRESS')]
+
+merge(e,merge(l,d))[,c('LAST_NAME','SALARY','DEPARTMENT_ID','DEPARTMENT_NAME','STREET_ADDRESS')]
+
+
+
+
+w <- emp[,c("LAST_NAME","MANAGER_ID")]
+m <- emp[,c("EMPLOYEE_ID", "LAST_NAME")]
+
+merge(w,m,by.x = "MANAGER_ID",by.y="EMPLOYEE_ID", all.x = T)[,c("LAST_NAME.x", "LAST_NAME.y")]
+
+```
+
+[문제114] loc.csv 파일을 loc 변수로 로드하세요.
+	 Toronto 지역에 근무하는 사원들의 'LAST_NAME','SALARY','DEPARTMENT_ID','DEPARTMENT_NAME','STREET_ADDRESS' 정보를 출력하세요.
+
+x1<- loc[loc$CITY == "Toronto",c("STREET_ADDRESS","LOCATION_ID")]
+x2<- emp[,c("LAST_NAME","SALARY","DEPARTMENT_ID")]
+x3<- dept[,c("DEPARTMENT_ID","DEPARTMENT_NAME","LOCATION_ID")]
+
+x4<- cbind(x1,x2)
+merge(x4,x3)[,c('LAST_NAME','SALARY','DEPARTMENT_ID','DEPARTMENT_NAME','STREET_ADDRESS')]
+
+
+
+l<- loc[loc$CITY == "Toronto",c("STREET_ADDRESS","LOCATION_ID")]
+e<- emp[,c("LAST_NAME","SALARY","DEPARTMENT_ID")]
+d<- dept[,c("DEPARTMENT_ID","DEPARTMENT_NAME","LOCATION_ID")]
+
+t<- merge(l,d,by = "LOCATION_ID")
+
+merge(e,t,by = "DEPARTMENT_ID")[,c('LAST_NAME','SALARY','DEPARTMENT_ID','DEPARTMENT_NAME','STREET_ADDRESS')]
+
+merge(e,merge(l,d))[,c('LAST_NAME','SALARY','DEPARTMENT_ID','DEPARTMENT_NAME','STREET_ADDRESS')]
+
+[문제115] 사원의 last_name, 관리자 last_name을 출력해주세요. 관리자가 없는 사원도 출력해주세요.
+
+w <- emp[,c("LAST_NAME","MANAGER_ID")]
+m <- emp[,c("EMPLOYEE_ID", "LAST_NAME")]
+
+merge(w,m,by.x = "MANAGER_ID",by.y="EMPLOYEE_ID", all.x = T)[,c("LAST_NAME.x", "LAST_NAME.y")]
+```{r}
+
+split(emp,emp$DEPARTMENT_ID)
+
+split(emp$SALARY, emp$DEPARTMENT_ID)
+
+lapply(split(emp$SALARY, emp$DEPARTMENT_ID),mean)
+
+emp[emp$DEPARTMENT_ID == 30,]
+
+subset(emp,DEPARTMENT_ID == 30)
+
+emp[emp$DEPARTMENT_ID == 30 & emp$SALARY >= 3000,]
+
+subset(emp,DEPARTMENT_ID ==30 &SALARY >= 3000)
+
+subset(emp,DEPARTMENT_ID ==30 &SALARY >= 3000,select = c(LAST_NAME,SALARY, DEPARTMENT_ID))
+
+emp[,!names(emp) %in% c("LAST_NAME","SALARY", "DEPARTMENT_ID")]
+
+subset(emp,DEPARTMENT_ID ==30 &SALARY >= 3000, select = -c(LAST_NAME,SALARY, DEPARTMENT_ID))
+
+```
+
+★split()
+ - 조건에 따라 데이터를 분리
+ 
+split(emp,emp$DEPARTMENT_ID)
+split(데이터, 분리해야 될 조건)
+
+split(emp$SALARY, emp$DEPARTMENT_ID)  #분리해야될 기준은 1개만 가능
+
+lapply(split(emp$SALARY, emp$DEPARTMENT_ID),mean)
+
+
+★subset()
+ - 조건에 만족하는 데이터를 선택
+ 
+#두개의 결과물이 같다.
+emp[emp$DEPARTMENT_ID == 30,]    ==    subset(emp,DEPARTMENT_ID == 30)
+
+emp[emp$DEPARTMENT_ID == 30 & emp$SALARY >= 3000,]
+
+subset(emp,DEPARTMENT_ID ==30 &SALARY >= 3000)
+
+subset(emp,DEPARTMENT_ID ==30 &SALARY >= 3000, select = c(LAST_NAME,SALARY, DEPARTMENT_ID))  #subset에서는 ""나 ''를 사용하면 안된다.
+
+emp[,!names(emp) %in% c("LAST_NAME","SALARY", "DEPARTMENT_ID")]   #100개의 열중에 3개의 열만 빼고 봐야 될 때는 이렇게 해야된다.
+
+subset(emp,DEPARTMENT_ID ==30 &SALARY >= 3000, select = -c(LAST_NAME,SALARY, DEPARTMENT_ID))  #100개의 열중에 3개의 열만 빼고 봐야 될 때는 이렇게 해야된다.
+
+

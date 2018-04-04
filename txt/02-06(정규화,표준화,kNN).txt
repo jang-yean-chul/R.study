@@ -1,0 +1,416 @@
+```{r}
+
+```
+
+kNN 최근접 이웃
+  - 거리 유사도를 기준(유클리드거리(Euclidean Distance))
+  - 유클리드거리 
+    ex) a지점과 b지점 사이의 거리
+        자로 두 점을 연결해서 일직선 거리를 측정한다
+        |a - b|
+        
+        평면상의 거리
+        sqrt((a-b)^2)
+        
+재료    단맛    아삭한맛    음식종류      토마토와의 거리
+포도    8       5           과일          sqrt((6-8)^2 + (4-5)^2) = 2.2
+콩      3       7           단백질          sqrt((6-3)^2 + (4-7)^2) = 4.2
+견과    3       6           단백질        sqrt((6-3)^2 + (4-6)^2) = 3.6
+오렌지  7       3           과일          sqrt((6-7)^2 + (4-3)^2) = 1.4
+
+
+토마토   단맛 : 6   아삭한맛 : 4
+
+k=1
+오렌지와 토마토의 거리는 1.4로 가까운 이웃으로 과일로 분
+
+k=3
+오렌지,포도,견과 다수결로 정한다.
+
+만약에 k=4로 하고
+베이컨  3       5           단백질        sqrt((6-3)^2 + (4-5)^2)이 들어가게 되면 토마토는 단백질로 분류되게 된다.
+
+- k값이 크면 노이지 데이터의 변화량은 줄어들기는 하지만 패턴을 무시하는 위험을 갖는 학습기로 편향된 자료가 나올 수 있다.
+- 하나의 최근접이웃을 사용한다면 노이지 데이터나 이상치에 영향을 받을 수 있다.
+
+k값은 3이상 하는게 보편적이다.
+traning dataset 제곱근을 이용한다.
+sqrt(16) =4 짝수보다는 홀수가 좋다.
+```{r}
+x1 <- c(1,2,3,4,5)
+x2 <- c(10,20,30,40,50)
+
+x1/max(x1)
+x2/max(x2)
+
+nom<- function(x){
+  return((x-min(x)) / (max(x)-min(x)))
+}
+
+nom(x1)
+nom(x2)
+
+
+(x1 - mean(x1))/sd(x1)
+scale(x1)
+
+```
+
+[문제213] 벡터에 있는 값을 0, 1사이의 범위 값으로 변환하세요.
+
+x1 <- c(1,2,3,4,5)
+x2 <- c(10,20,30,40,50)
+
+
+x1/max(x1)
+x2/max(x2)
+
+
+정규화
+  - 모든 속성의 값을 0과 1사이의 범위값으로 변환한다.
+  - 다수 항목에 대해서 값이 상호다름으로 모든 값들에 대해서 동일한 범위로 표현하기 위해서 정규화 한다.
+  
+  - (x-min(x)) / (max(x)-min(x))
+
+표준 점수(standard score)
+  - 표준값, z값, z점수
+  
+z점수 표준화
+  - z점수는 범위가 정해지지 않은 양수, 음수가 된다.
+  - 극단적으로 값이 중앙쪽으로 모이지 않기 때문에 악성조직을 가지고 있는 조직은 매우 크게 자라기 때문에 일부 매우 극단적인 이상치를 볼 수 있다.
+    거리 계산에서 이상치에 더 큰 가중치를 부여하여 계산된 값을 볼 수 있다.
+  - (특정값 - 평균) / 표준편차  = 표준 값
+  - scale함수 사용
+  
+  
+```{r}
+buy<- read.csv("c:/r/buy.csv",stringsAsFactors=F)
+
+buy
+
+test<- data.frame(나이 = 44, 월수입 = 400)
+
+
+## 정규화
+knn(buy[,-3],test,buy[,3],k=sqrt(NROW(buy)),prob = T)
+
+train<- buy[,-3]
+get<- buy[,3]
+train$월수입<- (train$월수입 - min(train$월수입)) / (max(train$월수입) - min(train$월수입))   #정규화 작업
+train$나이<- (train$나이 - min(train$나이)) / (max(train$나이) - min(train$나이))  
+
+test$월수입<- (test$월수입 - min(train$월수입)) / (max(train$월수입) - min(train$월수입))   #정규화 작업
+test$나이<- (test$나이 - min(train$나이)) / (max(train$나이) - min(train$나이))  
+
+
+
+knn(train, test, get, k = sqrt(NROW(buy)),prob = T)
+
+knn(train, test, get, k = 5,prob = T) #k의 값은 짝수보다 홀수가 좋으므로 4.5를 5로 바꿔준다.
+
+
+## z점수 표준화
+test$나이<- (test$나이 - mean(buy$나이)) / sd(buy$나이)
+test$월수입<- (test$월수입 - mean(buy$월수입)) / sd(buy$월수입)
+
+knn(train, test, get, k = sqrt(NROW(buy)),prob = T)
+
+
+```
+[문제_214]  나이, 월수입, 상품구매여부 3개의 데이터를 갖는 데이터가 있다.
+           이 데이터를 이용해서 나이가 44 이고 월급이 400 만원인 사람이
+           상품을 구매할지 비구매할지를 knn 분류 알고리즘으로 분석하세요.
+
+```{r}
+
+```
+[문제_214]  나이, 월수입, 상품구매여부 3개의 데이터를 갖는 데이터가 있다.
+           이 데이터를 이용해서 나이가 44 이고 월급이 400 만원인 사람이
+           상품을 구매할지 비구매할지를 knn 분류 알고리즘으로 분석하세요.
+
+##선생님 답안
+library(class)
+buy <- read.csv("c:/r/buy.csv" , stringsAsFactors = F , header = T)
+buy
+
+normalize <- function(x) {
+  return( (x-min(x)) / (max(x) - min(x)))
+}
+
+buy$age <- normalize(buy$나이)
+buy$pay <- normalize(buy$월수입)
+buy
+
+test <- data.frame(age=44 , pay=400)
+
+train <- buy[,c(4,5)]
+labels <- buy[,3]
+train
+
+test$age <- (test$age - min(buy$나이)) / (max(buy$나이) -  min(buy$나이))
+test$pay <- (test$pay - min(buy$월수입)) / (max(buy$월수입) - min(buy$월수입))
+test
+
+knnpred1 <- knn(train , test , labels , k=3 , prob=TRUE) 
+knnpred2 <- knn(train , test , labels , k=6 , prob=TRUE) 
+knnpred1
+knnpred2
+
+
+
+
+
+library(class)
+buy <- read.csv("c:/r/buy.csv" , stringsAsFactors = F , header = T)
+buy
+
+buy$age <- scale(buy$나이)
+buy$pay <- scale(buy$월수입)
+buy
+
+test <- data.frame(age=44 , pay=400)
+
+train <- buy[,c(4,5)]
+labels <- buy[,3]
+train
+
+
+test$age <- (test$age - mean(buy$나이)) / sd(buy$나이)
+test$pay <- (test$pay - mean(buy$월수입)) / sd(buy$월수입)
+
+knnpred1 <- knn(train , test , labels , k=3 , prob=TRUE) 
+knnpred2 <- knn(train , test , labels , k=6 , prob=TRUE) 
+knnpred1
+knnpred2
+```{r}
+zoo<- read.csv("c:/r/zoo.csv", header=T,stringsAsFactors=T)
+zoo
+
+colnames(zoo)<- c(c(1:18))
+zoo1
+
+train<- zoo[-100,c(2:17)]
+train
+
+test<- zoo[100,c(2:17)]
+test
+
+group<-as.factor(zoo$`18`[-100])
+
+knn(train,test,group,k=sqrt(NROW(train)),prob=T)
+knn(train,test,group,k=9,prob=T)
+
+
+zoo
+zoo_t<- table(train$`18`)
+
+bp<- barplot(zoo_t,
+             col = heat_hcl(length(names(zoo_t))),
+             border=NA,
+             ylim = c(0,50))
+text(x=bp, y=zoo_t+2,label = zoo_t)
+heat_hcl()
+
+c('포유류','조류','파충류','어류','양서류','곤충','갑각류'),
+  
+help(barplot)
+
+ggplot(train, aes(x=train$`18`))+
+  geom_bar()+
+  geom_text(y=train$`18`, label = NROW(train$`18`))
+
+library(colorspace)
+```
+[문제215] zoo.csv 데이터 집합은 동물의 특징과 부류 정보가 있습니다. 
+	  특정 데이터 동물 정보가 어느 부류에 속하는 지를 knn 알고리즘을 이용해서 분석하세요.
+
+[변수 정보]
+
+   1. animal name:      Unique for each instance
+   2. hair		Boolean
+   3. feathers		Boolean
+   4. eggs		Boolean
+   5. milk		Boolean
+   6. airborne		Boolean
+   7. aquatic		Boolean
+   8. predator		Boolean
+   9. toothed		Boolean
+  10. backbone		Boolean
+  11. breathes		Boolean
+  12. venomous		Boolean
+  13. fins		Boolean
+  14. legs		Numeric (set of values: {0,2,4,5,6,8})
+  15. tail		Boolean
+  16. domestic		Boolean
+  17. catsize		Boolean
+  18. type		Numeric (integer values in range [1,7])
+
+[18. type]
+1 : 포유류
+2 : 조류
+3 : 파충류
+4 : 어류
+5 : 양서류 
+6 : 곤충
+7 : 갑각류 
+
+
+
+```{r}
+
+```
+
+[문제216] 유방암 데이터 악성과 양성분류입니다.
+
+
+1 단계 : 데이터 수집
+
+- 위스콘신대학의 연구원들의 자료
+- 유방 종양의 미세침 흡인물 디지털 이미지에서 측정한 값 이며 이 값은 디지털 이미지에 나타난 세포 핵의 특징이다.
+- 암조직 검사에 대한 관측값은 569개, 변수(속성) 32
+- 식별숫자, 암진단 여부(악성(Malignant),양성(Benign)), 30개 수치 측정치
+- 세포핵의 모양과 크기관련된 10개 특성
+* radius(반지름)
+* texture(질감)
+* perimeter(둘레)
+* area(넓이)
+* smoothness(매끄러움)
+* compactness(조밀성)
+* concavity(오목함)
+* concave points(오목점)
+* symmetry(대칭성)
+* fractal dimension(프랙탈 차원)
+
+
+2 단계  : 데이터 준비와 살펴보기 
+
+2-1. wisc_bc_data.csv 파일을 wbcd 변수에 임포트하세요.
+
+#데이터셋 가져오기
+wbcd <- read.csv("c:/r/wisc_bc_data.csv", stringsAsFactors = FALSE)
+
+
+2-2. wbcd 데이터 프레임의 구조 확인하세요.
+
+#구조 확인
+str(wbcd)
+head(wbcd)
+
+2-3. id 속성 제거 하세요.
+
+#id제거 (결과 값 예측에 필요 없음)
+wbcd <- wbcd[-1]
+
+2-4. diagnosis 변수에 빈도수를 확인하세요.
+
+#변수 종류와 빈도수 확인
+table(wbcd$diagnosis)
+
+2-5. factor형으로 diagnosis값을 변환하세요. B -> Benign , M -> Malignant
+
+#팩터형 B,M 으로 되어있음을 확인했으니깐 B,M을 Benign,Malignant로 표현한다 라고 해주는 것
+wbcd$diagnosis <- factor(wbcd$diagnosis, levels = c("B", "M"), labels = c("Benign", "Malignant"))
+head(wbcd)
+
+2-6. diagnosis 변수 비율을 구하세요.
+
+#변수의 비율 확인(%)
+round(prop.table(table(wbcd$diagnosis)) * 100, digits = 1)
+
+2-7. radius_mean, area_mean, smoothness_mean 변수에 대한 요약을 하세요.
+
+#3개의 데이터 요약값 확인
+summary(wbcd[c("radius_mean", "area_mean", "smoothness_mean")])
+
+2-8. wbcd 데이터 정규화하세요.
+
+#정규화 normalization
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+normalize(c(1, 2, 3, 4, 5))
+normalize(c(10, 20, 30, 40, 50))
+
+#lapply = 리스트 형식으로
+wbcd_n <- as.data.frame(lapply(wbcd[2:31], normalize))
+
+head(wbcd)
+head(wbcd_n)
+
+summary(wbcd_n$area_mean)
+summary(wbcd_n$concavity_worst)
+
+##선생님이 아니라 나의 방식
+wbcd2<-wbcd1
+
+for(i in 2:31){
+  wbcd2[,i]<- (wbcd1[,i]- min(wbcd1[,i])) / (max(wbcd1[,i]) - min(wbcd1[,i]))
+}
+
+
+train<- wbcd2[c(1:469),-1]
+test<- wbcd2[c(470:569),-1]
+
+train_l<- wbcd2[c(1:469),1]
+test_l<- wbcd2[c(470:569),1]
+
+
+2-9. 훈련 데이터(1~469)와 테스트 데이터(470~569) 생성하세요.
+
+#훈련 데이터
+wbcd_train <- wbcd_n[1:469, ]
+#테스트 데이터
+wbcd_test <- wbcd_n[470:569, ]
+
+str(wbcd)
+str(wbcd_train)
+
+2-10. 훈련 데이터와 테스트 데이터에 대한 라벨 생성
+
+#라벨 따로 떼두기
+wbcd_train_labels <- wbcd[1:469, 1]
+#라벨 따로 떼두기
+wbcd_test_labels <- wbcd[470:569, 1]
+
+3단계 : 데이터로 모델 훈련
+
+library(class)
+# 예측 값test꺼 기존에 있던게 아니라 따로 예측을 해본다.
+wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+                      cl = wbcd_train_labels, k=21)
+
+4 단계 : 모델 성능 평가 
+library(gmodels)
+
+4-1 예측값과 실제값의 교차표 생성
+#교차표를 생성해서 살펴본다 실제값과 예측을 해서 나온 값의 차이를 본다.
+CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq=FALSE)
+
+
+5 단계 : 모델 성능 향상 
+
+#정규화가 아니라 표준화를 해서 해본다.
+wbcd_z <- as.data.frame(scale(wbcd[-1]))
+
+summary(wbcd_z$area_mean)
+
+wbcd_train <- wbcd_z[1:469, ]
+wbcd_test <- wbcd_z[470:569, ]
+
+wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test, cl = wbcd_train_labels, k=21)
+
+#test_l 쪽이 실제 값이고 test_p 쪽이 예측 값이다.
+CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq=FALSE)
+
+[문제217] 12번째 환자의 초음파 결과를 보고 종양이 양성인지 악성인지를 분석해 주세요.
+
+#환자 데이터 불러오기
+p12<- read.csv("c:/r/patient12.csv",stringsAsFactors=F)
+#필요없는 아이디와 라벨칸 떼어내기
+p12<-p12[c(-1,-2)]
+
+#wbcd = 기존자료 의 값을 기준으로 정규화 진행(기존train자료를 이미 정규화했다.)
+p12<- (p12- min(wbcd1[,-1])) / (max(wbcd1[,-1]) - min(wbcd1[,-1]))
+
+knn(train = train, test = p12, cl = train_l,k = sqrt(NROW(wbcd1)), prob= T)

@@ -1,0 +1,263 @@
+
+```{r}
+s<- read.csv("c:/r/score.csv",stringsAsFactors=F,header=T)
+s
+
+score<- s$성적
+IQ<- s$IQ
+
+model<- lm(score ~ IQ)
+model
+
+coef(model)
+fitted(model)
+predict(model, data.frame(IQ = 130))
+# 답 : 81.98838
+
+```
+[문제236] IQ따른 시험 성적의 상관관계가 있는지를 파악하시고 130일때 시험 성적은?
+
+s<- read.csv("c:/r/score.csv",stringsAsFactors=F,header=T)
+attach(s)
+s
+
+
+score<- s$성적
+IQ<- s$IQ
+
+model<- lm(score ~ IQ)
+model
+
+coef(model)
+fitted(model)
+predict(model, data.frame(IQ = 130))
+# 답 : 81.98838
+
+#상관분석(correlation) : 두 변수 사이의 관련성을 파악하는 방법
+                         1:1 비교
+
+#회귀분석(regression) : 하나의 변수가 원인이 되어 다른 변수(들)에 영향을 미치는 관계
+                        1:N 비교 (종속변수,독립변수들을 찾아야 한다.)
+                        원인과 결과분석
+                        크로스 테이블은 질적변수를 검증할 때 많이 사용한다.
+
+#공분산 : 두 변수가 얼마나 함께 변하는지를 측정
+cov(성적, IQ)
+
+#상관계수 : 두 변수의 관계를 하나의 수치로 나타내는 값
+cov(성적, IQ) / (sd(IQ) * sd(성적))
+cor(성적, IQ)
+-1 <= r <= 1
+
+1.0 >= r >= 0.7 : 매우 강한 양(+)의 상관관계
+0.7 > r >= 0.3 : 강한 양(+)의 상관관계
+0.3 > r >= 0.1 : 약한 양(+)의 상관관계
+0.1 > r >= -0.1 : 상관관계 없음
+-0.1 > r >= -0.3 : 약한 음(-)의 상관관계
+-0.3 > r >= -0.7 : 강한 음(-)의 상관관계
+-0.7 > r >= -1.0 : 매우 강한 음(-)의 상관관계
+
+#회귀분석
+lm1<- lm(성적 ~ IQ)
+lm1
+
+y<- (-5.2918 + (0.6714 * 130))
+y 
+predict(lm1, data.frame(IQ = 130))
+
+lm2<- lm(성적 ~ 다니는학원수)
+lm2
+
+lm3<- lm(성적 ~ IQ+다니는학원수+게임하는시간+TV시청시간)
+lm3
+
+y<- (((23.2992 + (0.4684 * 135) + (0.7179 * 5)) + (-0.8390 * 1 )) + (-1.3854 * 1))
+y
+```{r}
+insu<- read.csv("c:/r/insurance.csv")
+attach(insu)
+insu  # age,sex, bmi, children, smoker, region, charges
+
+predict(model, data.frame(age = 19,bmi= 27.9, children = 0))
+
+cor(insu[c("age","bmi","children","charges")]) # 4개의 끼리끼리 상관계수 구하기(벡터형으로 넣기)
+
+#나이가 많을 수록 높은 의료비가 예상된다.
+
+model<- lm(charges~age+bmi+children, data = insu)
+model #model의 결과로는 가족수가 가장 높은 영향도를 끼친다.
+
+model2<- lm(charges~., data = insu)
+model2 # children 의 수가 1명 늘어날 때마다 청구되는 비용이 늘어나고 가장 영향력이 큰것은 흡연이다. 
+
+
+insu$bmi<- ifelse(insu$bmi>= 30,1,0)   #고도비만인가 아닌가
+
+l2<- lm(charges ~ bmi*smoker, data=insu)
+l2
+
+  (Intercept)            bmi      smokeryes  bmi:smokeryes  
+       7977.0          865.7        13386.2        19329.1
+
+bmi:smokeryes = 흡연자이면서 고도비만인 사람은 19329.1만큼 비용이 증가하게 된다.
+라는 결과를 도출해 낼 수 있다.
+       
+       
+l2<- lm(charges ~ bmi:smoker, data=insu)
+l2
+
+Coefficients:
+  (Intercept)   bmi:smokerno  bmi:smokeryes  
+        10714          -1871          30844
+
+        
+install.packages("psych")
+library(psych)
+pairs.panels(insu[c("age","bmi","children","charges")])
+        
+pairs.panels(insu[c("age","bmi","children","smoker","charges")])
+        
+       
+    
+       
+       
+
+0 library(ggplot2)
+
+ggplot(insu,aes( x = rownames(insu),y = age, col = charges))+
+  geom_point(stat="identity",size = 1)
+
+library(factoextra)
+
+insu2<- data.frame(charges = insu$charges,age = insu$age)
+
+km <- kmeans(insu2, 3)
+km
+
+fviz_cluster(km, data = insu2,
+             stand=F, 
+             ellipse.type = "t")
+
+library(tripack)
+library(RColorBrewer)
+
+color <- brewer.pal(4, "Pastel1")
+academy_V <- voronoi.mosaic(km$centers[,1], km$centers[,2])
+academy_P <- voronoi.polygons(academy_V)
+plot(insu2, pch = 19, col = color[km$cluster])
+points(km$centers[,1], km$centers[,2], pch =3, cex = 1.5, lwd=2)
+plot(academy_V, add = T)
+
+
+
+ggplot(insu,aes(x=bmi,y=charges,col=smoker))+
+  geom_point()+
+  geom_smooth(method="lm")+
+  facet_wrap(~region)
+
+```
+[문제237] 의료 비용 예측 
+보험회사는 이윤을 창출하기 위해 매년 보험료를 보험 가입자에게 지불하는 금액보다 많이 모아야한다.
+결과적으로 보험사는 정확하게 의료비를 예측하는 모델을 만드는데 많은 시간과 자금을 투자 한다.
+
+## 1단게 : 데이터 수집
+
+
+## 2단계 : 데이터 준비
+insurance <- read.csv("c:/r/insurance.csv", stringsAsFactors = TRUE)
+
+str(insurance)
+
+# age : 주 수익자의 연령
+# sex : 보험 계약자 성별, 여성(female), 남성(male)
+# bmi : 신체 용적 지수(body mass index), 키에 상대적으로 초과되거나 미달되는 몸무게에 대한 이해를 제공 
+#       신장과 체중의 비율을 사용한 체중의 객관적인 지수(kg/m^2), 이상적인 값은 18.5 ~ 24.9
+# children : 의료보험이 적용되는 자녀 수/ 부양가족수 
+# smoker : 흡연여부
+# region : 미국 내 수익자의 거주지역, 북동(northeast), 남동(southeast), 남서(southwest),북서(northwest)
+# charges : 의료보험에 청구된 개인별 의료비
+```{r}
+
+```
+
+## 와인 품질 추정
+## 단계 1: 데이터 수집
+
+## 단계 2: 데이터 준비
+
+wine <- read.csv("c:/r/whitewines.csv")
+wine
+# 와인 데이터 확인
+str(wine)
+
+colnames(wine)
+
+#fixed.acidity       : 고정 산도
+#volatile.acidity    : 휘발성 산도
+#citric.acid         : 시트르산
+#residual.sugar      : 잔류 설탕
+#chlorides           : 염화물
+#free.sulfur.dioxide : 자유 이산화황
+#total.sulfur.dioxide: 총 이산화황
+#density             : 밀도
+#pH                  : pH
+#sulphates           : 황산염
+#alcohol             : 알코올
+#quality             : 품질
+
+# 품질 등급 분포(0(매우나쁨) ~ 10(아주좋음))
+hist(wine$quality)
+
+# 와인 데이터의 요약 통계
+summary(wine)
+
+# 훈련데이터 75% 테스트데이터 25%
+wine_train <- wine[1:3750, ]
+wine_test <- wine[3751:4898, ]
+
+## 3 단계 : 데이터에 대한 모델 훈련 
+# rpart를 활용한 회귀 트리 
+# rpart(종속변수 ~ 독립변수, data=종속변수,독립변수가 있는데이터프레임)
+library(rpart)
+m <- rpart(quality ~ ., data = wine_train) 
+
+
+# 트리에 대한 기본 정보
+m
+
+# 트리에 대한 세부 정보
+summary(m)
+
+# 시각화 하기 위해 rpart.plot 패키지 사용
+library(rpart.plot)
+
+# 기본 결정 트리 다이어그램
+rpart.plot(m, digits = 3)
+
+# 일부 조정 다이어그램
+rpart.plot(m, digits = 4, fallen.leaves = TRUE, type = 3, extra = 101)
+
+## 4단계 : 모델 성능 평가
+
+# 테스트 데이터셋에 대해 예측치 생성
+p.rpart <- predict(m, wine_test)
+
+# 실제값과 예측값의 분포 비교
+summary(p.rpart)
+summary(wine_test$quality)
+
+# 상관 관계 비교
+cor(p.rpart, wine_test$quality)
+
+# 평균 절대 오차(mean absolute error)를 계산하는 함수
+MAE <- function(actual, predicted) {
+  mean(abs(actual - predicted))  
+}
+
+# 예측값과 실제값간의 평균 절대 오차
+MAE(p.rpart, wine_test$quality)
+
+# 예측값과 실제값간의 평균 절대 오차
+mean(wine_train$quality) # result = 5.87
+MAE(5.87, wine_test$quality)
+

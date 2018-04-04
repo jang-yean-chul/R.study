@@ -1,0 +1,154 @@
+```{r}
+move<- read.csv("c:/r/½Ã±º±¸º°_ÀÌµ¿ÀÚ¼ö2.csv")
+move
+
+colnames(move)<-c("ÇàÁ¤±¸¿ª","ÃÑÀüÀÔ(9¿ù)","ÃÑÀüÃâ(9¿ù)","¼øÀÌµ¿(9¿ù)","½Ãµµ³»ÀÌµ¿(9¿ù)","½Ãµµ³»ÀüÀÔ(9¿ù)","½Ãµµ³»ÀüÃâ(9¿ù)","½Ãµµ°£ÀüÀÔ(9¿ù)","½Ãµµ°£ÀüÃâ(9¿ù)","ÃÑÀüÀÔ(10¿ù)","ÃÑÀüÃâ(10¿ù)","¼øÀÌµ¿(10¿ù)","½Ãµµ³»ÀÌµ¿(10¿ù)","½Ãµµ³»ÀüÀÔ(10¿ù)","½Ãµµ³»ÀüÃâ(10¿ù)","½Ãµµ°£ÀüÀÔ(10¿ù)","½Ãµµ°£ÀüÃâ(10¿ù)","ÃÑÀüÀÔ(11¿ù)","ÃÑÀüÃâ(11¿ù)","¼øÀÌµ¿(11¿ù)","½Ãµµ³»ÀÌµ¿(11¿ù)","½Ãµµ³»ÀüÀÔ(11¿ù)","½Ãµµ³»ÀüÃâ(11¿ù)","½Ãµµ°£ÀüÀÔ(11¿ù)","½Ãµµ°£ÀüÃâ(11¿ù)")
+
+all<- data.frame("µµ½Ã"= move[,1],"¼øÀÌµ¿"= c(move$`¼øÀÌµ¿(9¿ù)`+move$`¼øÀÌµ¿(10¿ù)`+move$`¼øÀÌµ¿(11¿ù)`))
+all<- all[-1,]
+
+ggplot(data = all, aes(x=all$µµ½Ã,y=all$¼øÀÌµ¿))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 1,size= 8))+
+  labs(title = "ÀÎ±¸ÀÌµ¿",x = "µµ½Ã", y= "ÀÌµ¿ÀÎ¿ø(¸í)", fill = "³âµµ")
+
+
+ggplot(all,aes(x=µµ½Ã, y=¼øÀÌµ¿))+
+        geom_bar(stat = 'identity', fill=heat.colors(length(all$µµ½Ã)), colour = 'red')+
+        theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1, colour = 'black', size = 9))
+
+
+
+help("barplot")
+```
+
+```{r}
+pop<- read.csv("c:/r/pop.csv")
+colnames(pop)<-c("city","to_pop") 
+pop<- pop[-c(1:4),]
+pop
+
+pop2<- geocode(enc2utf8(as.vector(pop$city)))
+pop<- cbind(pop,pop2)
+
+
+
+center <- c(mean(pop$lon), mean(pop$lat))
+center
+
+map <- get_googlemap(center=center, maptype="satellite", zoom=7)
+ggmap(map)
+
+ggmap(map) + 
+  geom_point(data=pop, aes(pop$lon, pop$lat, size=pop$to_pop, colour=pop$city, alpha=0.5))+
+  scale_size_area(max_size=15)
+
+
+
+
+
+```
+
+```{r}
+all_korea <- map_data('world',region = c('South Korea','North Korea'))
+all_korea
+S_korea <- map_data('world',region = c('South Korea'))
+
+ggplot(all_korea,aes(x=long,y=lat,group = group,fill=region))+
+  geom_polygon(colour = 'black')+
+  scale_fill_brewer(palette='set1')+
+  geom_point(data=pop, aes(pop$lon, pop$lat, size=pop$to_pop, colour=pop$city, alpha=0.5))
+
+ ggplot() + 
+   geom_polygon(data=all_korea, aes(x=long, y=lat, group=group, fill=region),colour="black") +
+   scale_fill_brewer(palette="Set1")+
+   geom_point(data=pop, aes(pop$lon, pop$lat, size=pop$to_pop, colour=pop$city, alpha=0.5))
+
+ 
+ 
+S_korea <- map_data('world',region = c('South Korea'))
+
+ggplot() + 
+  geom_polygon(data=S_korea, aes(x=long, y=lat, group=group, fill=region),colour="black") +
+  scale_fill_brewer(palette="Set1")+
+  geom_point(data=pop, aes(pop$lon, pop$lat, size=pop$to_pop, colour=pop$city, alpha=0.5))+
+  scale_size_area(max_size=15)
+
+
+```
+
+
+```{r}
+happy<- readLines("c:/r/seoul_trip.txt") 
+data1<- happy
+
+data1<- gsub("[[:punct:]]"," ",data1)
+data1<- gsub("¼­¿ï","",data1)
+data1<- gsub("¼­¿ï¸í¼Ò","",data1)
+data1<- gsub("¸í¼Ò","",data1)
+data1<- gsub("ºí·Î±×","",data1)
+data1<- gsub("°Ë»ö","",data1)
+data1<- gsub("°ü±¤","",data1)
+data1<- gsub("ÃßÃµ","",data1)
+data1<- gsub("µ¥ÀÌÆ®","",data1)
+
+data2<- SimplePos22(data1)
+data2<- str_extract_all(data2,'([°¡-ÆR]+)/N', simplify = TRUE)
+data2<- unlist(data2)
+data2<- gsub("/N","",data2)
+
+data3<- table(data2)
+data3<- data3[-1]
+data3<- data3[nchar(names(data3)) >= 2] 
+data3<- data3[data3>=5]
+
+wordcloud2(data3,size= 0.5)
+
+
+
+
+
+happy<- readLines("c:/r/seoul_trip.txt") 
+data1<- happy
+
+data1<- gsub("[[:punct:]]"," ",data1)
+data1<- gsub("¼­¿ï","",data1)
+data1<- gsub("¼­¿ï¸í¼Ò","",data1)
+data1<- gsub("¸í¼Ò","",data1)
+data1<- gsub("ºí·Î±×","",data1)
+data1<- gsub("°Ë»ö","",data1)
+data1<- gsub("°ü±¤","",data1)
+data1<- gsub("ÃßÃµ","",data1)
+data1<- gsub("µ¥ÀÌÆ®","",data1)
+
+data2<- SimplePos22(data1)
+data2<- str_extract_all(data2,'([°¡-ÆR]+)/N', simplify = TRUE)
+
+seoul_list <- readLines("c:/r/seoul_trip_list.txt")
+seoul_list
+
+df<- data.frame(name=seoul_list,cnt = length(seoul_list))
+
+for(i in seoul_list){
+  df$cnt[df$name==i]<- length(data2[grep(paste(i,"+",sep=""),data2)])
+}
+df
+
+wordcloud2(df,size=0.5)
+
+
+length(data2[grep(paste("ºÏÃÌ","+",sep=""),data2)])
+
+
+table(unlist(str_extract_all(happy,"[[:alpha:]]{0,}[[:space:]]{0,}ÇÑ¿Á[[:space:]]{0,}[[:alpha::]]{0,}")))
+
+
+```
+
+
+#ÀÎÆ¼ÀúÅ¸ÀÔ Áï, ¼Ò¼öÁ¡À» ¹Ù¶óº¸Áö ¾Ê°Ú´Ù ½Ç¼öÇüÀ¸·ÎÇÏ°Ú´Ù ÇÏ¸é ¼ýÀÚµÚ¿¡ LÀ» ´Þ¾ÆÁà¾ßÇÑ´Ù.\
+
+
+
+#Æ¯Á¤´Ü¾î ¾ÕµÚ·Î ¹«¾ð°¡ ´Ü¾î°¡ ºÙÀº°ÍÀ» º¸±âÀ§ÇÑ °Í
+table(unlist(str_extract_all(txt,"[[:alpha:]]{0,}[[:space:]]{0,}ÇÑ¿Á[[:space:]]{0,}[[:alpha::]]{0,}", simplify = TRUE)))

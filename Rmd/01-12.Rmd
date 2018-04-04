@@ -1,0 +1,722 @@
+```{r}
+
+
+s_t<-exam[exam$subject == "SQL",c('name','grade')]
+s<- s_t[,"grade"]
+s
+s_name<- s_t[,"name"]
+s_name
+
+barplot(s,
+        names.arg = s_name,
+        col = rainbow(length(s_name)),
+        ylim = c(0,100),
+        cex.names = 0.7,
+        main = "SQL점수")
+
+
+r_t<-exam[exam$subject == "R",c('name','grade')]
+r<- r_t[,"grade"]
+r
+r_name<- r_t[,"name"]
+r_name
+
+barplot(r,
+        names.arg = r_name,
+        col = rainbow(length(name)),
+        ylim = c(0,100),
+        cex.names = 0.7,
+        main = "R점수")
+
+
+
+p_t<-exam[exam$subject == "PYTHON",c('name','grade')]
+p<- p_t[,"grade"]
+p
+p_name<- p_t[,"name"]
+p_name
+
+barplot(p,
+        names.arg = p_name,
+        col = rainbow(length(name)),
+        ylim = c(0,100),
+        cex.names = 0.7,
+        main = "PYTHON점수")
+
+
+
+t_t<- aggregate(grade~name,exam,sum)[,c('name','grade')]
+t<- t_t[,'grade']
+t_name<- t_t[,'name']
+
+
+barplot(t,
+        names.arg = t_name,
+        col = rainbow(length(name)),
+        ylim = c(0,300),
+        cex.names = 0.7,
+        main = "TOTAL 점수")
+
+
+s1<- matrix(s,1,)
+r1<- matrix(r,1,)
+p1<- matrix(p,1,)
+
+t1<- rbind(s1,r1,p1)
+
+colnames(t1) <-  c(t_name)
+rownames(t1) <- c("SQL","R","PYTHON")
+t1
+
+barplot(t1,
+        names.arg = t_name,
+        col = rainbow(length(name)),
+        ylim = c(0,300),
+        cex.names = 0.7,
+        beside = F,
+        main = "TOTAL 점수",
+        legend.text = rownames(t1),
+        args.legend = list(cex = 0.7, x="topright"))
+
+
+barplot(t1,
+        names.arg = t_name,
+        col = c("red","green","darkblue"),
+        ylim = c(0,100),
+        cex.names = 0.7,
+        beside = T,
+        main = "TOTAL 점수",
+        legend.text = rownames(t1),
+        args.legend = list(cex = 0.7, x="topright"))
+
+
+
+total<-merge(s_t,r_t,by = "name")
+total<-merge(total,p_t,by = "name")
+total
+total<- t(as.matrix(total))
+
+colnames(total)<- total[1,]
+total<- total[2:4,]
+rownames(total)<- c("SQL","R","PYTHON")
+total
+
+
+help("barplot")
+
+```
+
+
+[문제155] exam.csv file에는 학생들의 시험점수가 있습니다. 학생들의 SQL 점수를 막대그래프로 출력해주세요.
+
+s_t<-exam[exam$subject == "SQL",c('name','grade')]
+s<- s_t[,"grade"]
+s
+s_name<- s_t[,"name"]
+s_name
+
+barplot(s,
+        names.arg = s_name,
+        col = rainbow(length(name)),
+        ylim = c(0,100),
+        cex.names = 0.7)
+
+
+[문제156] exam.csv file에는 학생들의 시험점수가 있습니다. 학생들의 R 점수를 막대그래프로 출력해주세요.
+
+r_t<-exam[exam$subject == "R",c('name','grade')]
+r<- r_t[,"grade"]
+r
+r_name<- r_t[,"name"]
+r_name
+
+barplot(r,
+        names.arg = r_name,
+        col = rainbow(length(name)),
+        ylim = c(0,100),
+        cex.names = 0.7)
+
+[문제157] exam.csv file에는 학생들의 시험점수가 있습니다. 학생들의 PYTHON 점수를 막대그래프로 출력해주세요.
+
+p_t<-exam[exam$subject == "PYTHON",c('name','grade')]
+p<- p_t[,"grade"]
+p
+p_name<- p_t[,"name"]
+p_name
+
+barplot(p,
+        names.arg = p_name,
+        col = rainbow(length(name)),
+        ylim = c(0,100),
+        cex.names = 0.7)
+
+
+[문제158] exam.csv file에는 학생들의 시험점수가 있습니다. 학생들의 과목 총 점수를 막대그래프로 출력하세요.
+
+#total 점수
+t_t<- aggregate(grade~name,exam,sum)[,c('name','grade')]
+t<- t_t[,'grade']
+t_name<- t_t[,'name']
+
+
+barplot(t,
+        names.arg = t_name,
+        col = rainbow(length(name)),
+        ylim = c(0,300),
+        cex.names = 0.7)
+
+
+s1<- matrix(s,1,)
+r1<- matrix(r,1,)
+p1<- matrix(p,1,)
+
+t1<- rbind(s1,r1,p1)
+
+colnames(t1) <-  c(t_name)
+rownames(t1) <- c("SQL","R","PYTHON")
+t1
+[문제159] 학생들의 이름을 기준으로 과목점수를 스택형 막대그래프로 생성하세요.
+
+#total stack
+barplot(t1,
+        names.arg = t_name,
+        col = rainbow(length(name)),
+        ylim = c(0,300),
+        cex.names = 0.7,
+        beside = F,
+        main = "TOTAL 점수",
+        legend.text = rownames(t1),
+        args.legend = list(cex = 0.7, x="topright"))
+        
+#선생님
+t <- tapply(exam$grade, list(exam$subject, exam$name), sum)
+
+bp <- barplot(t, names.arg=names(t), ylim=c(0,350),
+              xlab='이름', ylab='성적',
+              col=c('blue','green','purple'),
+              main='과목별 점수',
+              las=2)
+legend('topright',
+       legend=rownames(t),
+       title='과목',
+       pch=15,
+       col=c('blue','green','purple'),
+       cex=0.9, pt.cex=1)
+
+
+[문제160] 학생들의 이름을 기준으로 과목점수를 그룹형 막대그래프로 생성하세요.
+
+#total group
+barplot(t1,
+        names.arg = t_name,
+        col = c("red","green","darkblue"),
+        ylim = c(0,100),
+        cex.names = 0.7,
+        beside = T,
+        main = "TOTAL 점수",
+        legend.text = rownames(t1),
+        args.legend = list(cex = 0.7, x="topright"))
+        
+#선생님
+bp <- barplot(t, names.arg=names(t), beside=TRUE, ylim=c(0,110),
+              xlab='이름', ylab='성적',
+              col=c('blue','green','purple'),
+              main='과목별 점수',
+              las=2)
+legend('topright',
+       legend=rownames(t),
+       title='과목',
+       pch=15,
+       col=c('blue','green','purple'),
+       cex=0.8, pt.cex=0.6)
+        
+```{r}
+
+graphics.off()
+par(mfrow=c(1,1))
+par(mfrow=c(2, 2))
+
+```
+
+# 사이드쪽에있는 Plots창에서 행렬의 수 만큼 그래프를 띄워서 볼수있는 방법
+# 콘솔에서는 작동하고 Rnote에서는 작동하지 않는다.
+graphics.off()
+par(mfrow=c(1,1))   #기본값
+par(mfrow=c(2, 2))
+```{r}
+
+
+total<-merge(s_t,r_t,by = "name")
+total<-merge(total,p_t,by = "name")
+total
+
+colors<- c()
+
+for(i in 1:length(total$grade.x)){
+                      ifelse(total$grade.x[i] >= sum(total$grade.x)/length(total$grade.x),colors <- c(colors,"red"),colors <- c(colors,"yellow"))
+}
+
+
+barplot(total$grade.x,
+        main = "SQL",
+        names.arg = total$name,
+        col=colors,
+        ylim = c(0,100),
+        cex.names = 0.7,
+        legend.text = c("평균이상","평균이하"),
+        args.legend = list(cex=0.8,x="topright",fill= c("red","yellow")))
+
+
+```
+#평균 이상이면 빨간생 평균 이하면 노란색
+
+total<-merge(s_t,r_t,by = "name")
+total<-merge(total,p_t,by = "name")
+total
+
+colors<- c()
+
+for(i in 1:length(total$grade.x)){
+                            ifelse(total$grade.x[i] >= sum(total$grade.x)/length(total$grade.x),colors <- c(colors,"red"),colors <- c(colors,"yellow"))
+}
+
+
+barplot(total$grade.x,
+        main = "SQL",
+        names.arg = total$name,
+        col=colors,
+        ylim = c(0,100),
+        cex.names = 0.7,
+        legend.text = c("평균이상","평균이하"),
+        args.legend = list(cex=0.8,x="topright",fill= c("red","yellow")))
+        
+```{r}
+setwd("c:/r")
+getwd()
+open <- read.csv ("창업건수.csv", header = T , stringsAsFactors = F)
+str(open)
+names(open)
+
+setwd("c:/r")
+getwd()
+close <- read.csv ("폐업건수.csv", header = T , stringsAsFactors = F)
+str(close)
+names(close)
+
+
+open
+close
+
+koko_o<- open[,c("X","치킨집")]
+koko_o
+barplot(koko_o$치킨집,
+        main = "치킨집 오픈",
+        names.arg = koko_o$X,
+        col=rainbow(length(koko_o$X)),
+        ylim = c(0,1200),
+        cex.names = 0.7)
+
+koko_c<- close[,c("X","치킨집")]
+koko_c
+koko<- merge(koko_o,koko_c,by = "X")
+colnames(koko)<- c("X","koko_o","koko_c")
+koko
+
+
+barplot(t(as.matrix(koko[,c("koko_o","koko_c")])),
+        main = "치킨집 창업&폐업",
+        names.arg = koko$X,
+        col=c("grey","black"),
+        ylim = c(0,4000),
+        cex.names = 0.7,
+        beside = T,
+        legend.text = c("창업","폐업"),
+        args.legend = list(cex=0.8,x="topright",fill= c("grey","black")))
+
+
+```
+
+[문제161] 창업건수.csv 파일에 데이터 중에 년도별 치킨집 창업 건수를 막대그래프로 생성하세요.
+
+koko_o<- open[,c("X","치킨집")]
+koko_o
+barplot(koko_o$치킨집,
+        main = "치킨집 오픈",
+        names.arg = koko_o$X,
+        col=rainbow(length(koko_o$X)),
+        ylim = c(0,1200),
+        cex.names = 0.7)
+
+
+[문제162] 년도별 치킨집 차업, 폐업 건수를 그룹형 막대그래프로 생성하세요.
+
+
+koko_c<- close[,c("X","치킨집")]
+koko_c
+koko<- merge(koko_o,koko_c,by = "X")
+colnames(koko)<- c("X","koko_o","koko_c")
+koko
+
+
+barplot(t(as.matrix(koko[,c("koko_o","koko_c")])),
+        main = "치킨집 창업&폐업",
+        names.arg = koko$X,
+        col=c("grey","black"),
+        ylim = c(0,4000),
+        cex.names = 0.7,
+        beside = T,
+        legend.text = c("창업","폐업"),
+        args.legend = list(cex=0.8,x="topright",fill= c("grey","black")))
+        
+```{r}
+
+open2014<- open[open$X ==2014,]
+t<- open2014[2:8]
+open2014
+as.matrix(t)
+
+label<- round(t/sum(t)*100,2)
+label<- paste(colnames(t), round(t/sum(t)*100,2),"%")
+label
+
+pie(as.matrix(t),
+    labels=label,
+    main = "2014년도 창업 현황",
+    col = rainbow(length(colnames(t))))
+
+pie3D(as.matrix(t),
+      main = "2014년도 창업 현황",
+      labels=label, 
+      explode=0.1,
+      labelcex = 0.7,
+      radius = 1.5)
+help("pie")
+help("pie3D")
+```
+[문제163] 2014 년도 업종별 창업 비율을 원형 그래프로 생성하세요.
+
+open2014<- open[open$X ==2014,]
+t<- open2014[2:8]
+open2014
+as.matrix(t)
+
+label<- round(t/sum(t)*100,2)
+label<- paste(colnames(t), round(t/sum(t)*100,2),"%")
+label
+
+pie(as.matrix(t),
+    labels=label,
+    main = "2014년도 창업 현황",
+    col = rainbow(length(colnames(t))))
+
+pie3D(as.matrix(t),
+      main = "2014년도 창업 현황",
+      labels=label, 
+      explode=0.1,
+      labelcex = 0.7,
+      radius = 1.5)
+```{r}
+show<- function(x){
+                    t<- open[open$X ==x,]
+                    t<- t[2:8]
+                    t
+                    as.matrix(t)
+                    
+                    label<- round(t/sum(t)*100,2)
+                    label<- paste(colnames(t), round(t/sum(t)*100,2),"%")
+                    label
+                    
+                    pie(as.matrix(t),
+                        labels=label,
+                        main = paste(x,"년도 창업 현황"),
+                        col = rainbow(length(colnames(t))))
+}
+show(2006)
+show3D<- function(x){
+                      t<- open[open$X ==x,]
+                      t<- t[2:8]
+                      t
+                      as.matrix(t)
+                      
+                      label<- round(t/sum(t)*100,2)
+                      label<- paste(colnames(t), round(t/sum(t)*100,2),"%")
+                      label
+                      
+                      pie3D(as.matrix(t),
+                      main = paste(x,"년도 창업 현황"),
+                      labels=label, 
+                      explode=0.1,
+                      col = topo.colors(length(t)),
+                      labelcex = 0.7,
+                      radius = 1.5)
+}
+
+show3D(2006)
+
+
+show_pie <- function(x){
+  graphics.off()
+  x2<- open[open$X==x,(2:8)]
+  cnt_labels<- round(x2/sum(x2) * 100,2)
+  cnt_labels2 <- paste(colnames(cnt_labels),t(cnt_labels),"%")
+  pie(t(cnt_labels), col=rainbow(7), labels= cnt_labels2,main=paste(x,"년 업종별 창업비율",sep = ""))
+}
+
+show_pie(2006)
+
+```
+
+[문제164] 년도를 입력하면 해당 년도의 원형 그래프 생성할 수 있는 함수를 생성하세요.
+#pie
+show<- function(x){
+                    t<- open[open$X ==x,]
+                    t<- t[2:8]
+                    t
+                    as.matrix(t)
+                    
+                    label<- round(t/sum(t)*100,2)
+                    label<- paste(colnames(t), round(t/sum(t)*100,2),"%")
+                    label
+                    
+                    pie(as.matrix(t),
+                        labels=label,
+                        main = paste(x,"년도 창업 현황"),
+                        col = rainbow(length(colnames(t))))
+}
+
+show(2005)
+
+
+#pie3D
+show3D<- function(x){
+                      t<- open[open$X ==x,]
+                      t<- t[2:8]
+                      t
+                      as.matrix(t)
+                      
+                      label<- round(t/sum(t)*100,2)
+                      label<- paste(colnames(t), round(t/sum(t)*100,2),"%")
+                      label
+                      
+                      pie3D(as.matrix(t),
+                      main = paste(x,"년도 창업 현황"),
+                      labels=label, 
+                      explode=0.1,
+                      col = topo.colors(length(t)),
+                      labelcex = 0.7,
+                      radius = 1.5)
+}
+
+show3D(2006)
+
+
+#선생님 답
+show_pie <- function(x){
+  graphics.off()
+  x2<- open[open$X==x,(2:8)]
+  cnt_labels<- round(x2/sum(x2) * 100,2)
+  cnt_labels2 <- paste(colnames(cnt_labels),t(cnt_labels),"%")
+  pie(t(cnt_labels), col=rainbow(7), labels= cnt_labels2,main=paste(x,"년 업종별 창업비율",sep = ""))
+}
+
+show_pie(2006)
+```{r}
+install.packages("jpeg")
+library(jpeg)
+
+
+x_2014 <-  open[open$X== '2014',(2:8)]
+cnt_labels<- round(x_2014/sum(x_2014) * 100,2)
+cnt_labels2 <- paste(colnames(cnt_labels),t(cnt_labels),"%")
+
+jpeg('c:/r/1.jpg')
+
+pie(t(cnt_labels),
+    col = rainbow(7),
+    labels = cnt_labels2,
+    main= "2014년 업종별 창업비율")
+
+dev.off()
+
+
+```
+#패키지 설치 
+install.packages("jpeg")
+library(jpeg)
+
+
+```{r}
+
+library(help=datasets)
+
+help(women)
+
+women
+str(women)
+
+
+plot(women$weight)
+plot(women$height)
+
+
+plot(x=women$height,
+     y=women$weight,
+     xlab = "키",
+     ylab = "몸무게",
+     main = "여성의 표준 키와 몸무게",
+     sub = "미국의 70년대 기준",
+     type = "b",
+     lty = 6,
+     lwd = 4,
+     pch = 5)
+
+
+```
+★ 산점도 (scatter plot)
+    주어진 데이터를 점으로 표시해서 흩뿌리듯이 시각화한 그래프.
+    데이터의 실제값들이 표시되므로 데이터의 분포를 한눈에 파악 가능한 그래프.
+
+산포도(상관도)
+    자료에서 2개 항목간의 관계를 아는데도 산포도가 편리하다.
+
+x - y plotting 
+
+library(help=datasets)
+
+help(women)
+
+women
+
+plot(women$weight)
+plot(women$height)
+
+
+plot(x=women$height,
+     y=women$weight,
+     xlab = "키",
+     ylab = "몸무게",
+     main = "여성의 표준 키와 몸무게",
+     sub = "미국의 70년대 기준",
+     type = "p",
+     lty = 4,
+     lwd = 2)
+     
+#type 
+      p = point 
+      l = line 
+      b =점과 선(점을 선으로 연결)
+      c = b에서 점만 빼고
+      o = 점 위에 선 
+      h = 수직선
+      s,S = 계단형(시작지점의 모양이 다르다.)
+      n = 나타나지 않음.
+#lty 선의 유형(0~6)
+      0 : 그리지않음
+      1 : 실선(기본값)
+      2 : 대시(-)
+      3 : 점
+      4 : 점과 대시
+      5 : 긴대시
+      6 : 두개의 대시
+#lwd 선의 굵기 기본값(1)
+#pch 점의 종류
+      0~18 S언어가 사용하던 특수문자
+      19~25 R언어가 확장한 특수문자
+#cex 점의 크기(기본값 1 )
+
+
+```{r}
+help("Orange")
+Orange
+
+a1<- Orange[Orange$Tree==1,c("age","circumference")]
+a2<- Orange[Orange$Tree==2,c("age","circumference")]
+a3<- Orange[Orange$Tree==3,c("age","circumference")]
+a4<- Orange[Orange$Tree==4,c("age","circumference")]
+a5<- Orange[Orange$Tree==5,c("age","circumference")]
+
+
+
+plot(x=a1$age,
+     y=a1$circumference,
+     xlab = "age",
+     ylab = "circumference",
+     main = "Orange Tree",
+     type = "o",
+     pch = 1,
+     axes = F,
+     xlim = c(110,1600),
+     ylim = c(30,250),
+     col = "black")
+
+lines(x=a2$age,
+      y=a2$circumference,
+      type = "o",
+      pch = 2,
+      col = "red")
+lines(x=a3$age,
+      y=a3$circumference,
+      type = "o",
+      pch = 6,
+      col = "green")
+lines(x=a4$age,
+      y=a4$circumference,
+      type = "o",
+      pch = 4,
+      col = "blue")
+lines(x=a5$age,
+      y=a5$circumference,
+      type = "o",
+      pch = 5,
+      col = "orange")
+axis(side = 2)
+axis(side = 1)
+box()
+
+help("legend")
+legend('topleft', legend = c("Tree1","Tree2","Tree3","Tree4","Tree5"), fill = c("black","red","green","blue","orange"), text.col = c("black","red","green","blue","orange"),
+       pch= c(1,2,6,4,5), lty=1)
+
+
+fomat(5.995)
+```
+
+Orange #나무번호, 나이, 둘레
+
+나이에 따른 나무의 둘레 
+plot(x=a1$age,
+     y=a1$circumference,
+     xlab = "age",
+     ylab = "circumference",
+     main = "Orange Tree",
+     type = "o",
+     pch = 1,
+     axes = F,
+     xlim = c(110,1600),
+     ylim = c(30,250))
+
+lines(x=a2$age,
+      y=a2$circumference,
+      type = "o",
+      pch = 2,
+      col = "red")
+lines(x=a3$age,
+      y=a3$circumference,
+      type = "o",
+      pch = 6,
+      col = "green")
+lines(x=a4$age,
+      y=a4$circumference,
+      type = "o",
+      pch = 4,
+      col = "blue")
+lines(x=a5$age,
+      y=a5$circumference,
+      type = "o",
+      pch = 5,
+      col = "orange")
+axis(side = 2) #y축
+axis(side = 1) #x축
+box()  #x,y축 연결
+
+

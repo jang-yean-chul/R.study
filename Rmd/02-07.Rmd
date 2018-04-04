@@ -1,0 +1,54 @@
+```{r}
+emp<- read.csv("emp.csv",stringsAsFactors=F)
+
+orderBy(~JOB_ID,emp)[emp$SALARY >= 10000]
+emp_up<-emp[emp$SALARY >= 10000,]
+emp_down<- emp[!emp$SALARY >= 10000,]
+emp_up[,c(JOB_ID,SALARY)]
+
+emp_up2<- emp_up[,c(7,8)]
+emp_down2<- emp_down[,c(7,8)]
+
+cut(emp$SALARY,
+    breaks=c(0,10000,max(emp$SALARY)))
+
+emp_up_t<- table(emp_up$JOB_ID)
+emp_down_t<- table(emp_down$JOB_ID)
+
+emp_up_t
+emp_down_t
+
+emp_up_t2<- table(emp$JOB_ID)
+emp_down_t2<- table(emp$JOB_ID)
+
+for(i in names(emp_up_t)){
+  ifelse(i == names(emp_up_t2), emp_up_t2[names(emp_up_t2)==i]<- emp_up_t[names(emp_up_t)==i],emp_up_t2[names(emp_up_t2)==i]<- 0)
+}
+for(i in names(emp_down_t)){
+  ifelse(i == names(emp_down_t2), emp_down_t2[names(emp_down_t2)==i]<- emp_down_t[names(emp_down_t)==i],emp_down_t2[names(emp_down_t2)==i]<- 0)
+}
+
+emp_up_t2
+emp_down_t2
+
+CrossTable(x = emp$JOB_ID, y = emp_down_t2, prop.chisq=FALSE)
+
+
+sal<- cut(emp$SALARY,
+          breaks=c(-1,10000,max(emp$SALARY)),
+          labels=c('un_10000', 'ov_10000'))
+
+
+#CrossTable은 두 변수의 상관관계를 알고 싶을 때 사용
+CrossTable(x = emp$JOB_ID, y= sal, prop.chisq=FALSE)
+
+
+```
+
+[문제218] JOB_ID 별로 월급의 차이가 존재하는지 crosstable로 분석하려고 합니다.
+월급 10000을 기준으로 JOB_ID 별로 각각 10000 이상인 사원과 이하인 사원들의 인원수가 출력하세요. 
+
+
+
+
+

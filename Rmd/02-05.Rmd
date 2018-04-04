@@ -1,0 +1,383 @@
+```{r}
+fr<- readLines("c:/r/fruits.txt")
+
+fr
+
+fr1<- strsplit(fr, " ")
+fr1<- unlist(fr1)
+
+fr2<- table(fr1)
+
+fr3<- data.frame(fr2)
+colnames(fr3)<- c('과일이름','도수')
+fr3
+
+data<- data.frame(상대비율 = fr3$도수/sum(fr3$도수),상대백분율 = (fr3$도수/sum(fr3$도수)) * 100)
+
+fr4<- cbind(fr3,data)
+fr4
+
+
+##선생님
+fr<- as.matrix(fr)
+dim(fr)<- c(50,1)
+
+table(fr)
+prop.table(table(fr))
+fr_t<- as.data.frame(table(fr))
+fr_t<- cbind(fr_t, prop.table(fr_t$Freq), prop.table(fr_t$Freq)*100)
+fr_t
+
+colnames(fr_t)<- c("과일이름","도수","상대비율","상대백분율")
+
+```
+
+[문제210] fruits.txt 데이터 집합을 아래와 같이 만드시고 그래프도 만들어 보세요.
+
+  과일이름 도수 상대비율 상대백분율
+1       귤    7     0.14         14
+2     딸기   15     0.30         30
+3   복숭아    6     0.12         12
+4     사과    7     0.14         14
+5     체리    4     0.08          8
+6     포도   11     0.22         22
+
+
+
+fr<- readLines("c:/r/fruits.txt")
+#질적데이터 <명목형>
+
+
+fr
+
+fr1<- strsplit(fr, " ")
+fr1<- unlist(fr1)
+
+fr2<- table(fr1)
+
+fr3<- data.frame(fr2)
+colnames(fr3)<- c('과일이름','도수')
+fr3
+
+data<- data.frame(상대비율 = fr3$도수/sum(fr3$도수),상대백분율 = (fr3$도수/sum(fr3$도수)) * 100)
+
+fr4<- cbind(fr3,data)
+fr4
+
+```{r}
+r<- read.csv("c:/r/r점수.csv",header = F,stringsAsFactors = F)
+
+colnames(r)<- c('X90')
+
+m<- round(mean(r$X90),2)
+sd<- round(sd(r$X90))
+
+data<- data.frame(grade = rep(NA,length(r$X90)), pass = rep(NA,length(r$X90)))
+r<- cbind(r,data)
+
+
+r$grade<-ifelse(r$X90 > m + 1.5 * sd, "A",
+                ifelse(r$X90 > m + 0.5 * sd & r$X90 <= m + 1.5 * sd, "B",
+                       ifelse(r$X90 > m - 0.5 * sd  & r$X90 <= m + 0.5 * sd, "C",
+                              ifelse(r$X90 > m - 1.5 * sd & r$X90 <= m - 0.5 * sd,"D","F"))))
+
+
+r$pass<-ifelse(r$X90 > m + 1.5 * sd, "pass",
+                ifelse(r$X90 > m + 0.5 * sd & r$X90 <= m + 1.5 * sd, "pass",
+                       ifelse(r$X90 > m - 0.5 * sd  & r$X90 <= m + 0.5 * sd, "pass",
+                              ifelse(r$X90 > m - 1.5 * sd & r$X90 <= m - 0.5 * sd,"nonpass","nonpass"))))
+
+ggplot(r,aes(x=r$grade, fill = r$pass))+
+  geom_bar()+
+  theme(axis.text.x = element_text(hjust = 1,vjust = 1, colour = 'black', size = 9))+
+  geom_abline(intercept=seq(5,20,5),slope=0, lty = 3)
+  
+
+#선생님 답안
+score<- read.csv("c:/r/r점수.csv",header =F)
+
+breaks<- c(0,m - 1.5 * sd, m - 0.5 * sd,m + 0.5 * sd, m + 1.5 * sd,100)
+
+lab <- c("F","D","C","B","A")
+
+r_grade<- ordered(cut(score[,1],breaks, labels= lab))
+
+pass_flag<- factor(ifelse(r_grade %in% c("F","D"),"과락","과락아님"))
+
+r_tab<- table(r_grade)
+
+r_grade
+r_tab
+
+
+barplot(r_tab, main = "R 성적 등급 현황",
+        ylab = "학생수",
+        xlab = "성적 등급",
+        ylim = c(0,20),
+        col = ifelse(names(r_tab) %in% c("F","D"), "red", "lightblue"))
+legend("topleft",c("과락", "과락아님"), bty = "n", fill= c("red","lightblue"))
+
+
+
+```
+[문제211] R의 점수입니다. 아래와 같은 성적 분류표를 이용해서 학생들의 학점에  과락, 과락아님 여부 현황 파악을 
+         막대그래프로 표현하세요.
+
+
+범주   분류 기준     						   과락여부
+---   --------------------------------------------------------    -----------   
+A     점수 > 평균 + 1.5 * 표준편차		  		    과락아님
+B     평균 + 0.5 * 표준편차 < 점수 <= 평균 + 1.5 * 표준편차	    과락아님
+C     평균 - 0.5 * 표준편차 < 점수 <= 평균 + 0.5 * 표준편차	    과락아님
+D     평균 - 1.5 * 표준편차 < 점수 <= 평균 - 0.5 * 표준편차	    과락
+F     점수 <= 평균 - 1.5 * 표준편차			            과락
+
+r<- read.csv("c:/r/r점수.csv",header = F,stringsAsFactors = F)
+
+colnames(r)<- c('X90')
+
+m<- round(mean(r$X90),2)
+sd<- round(sd(r$X90))
+
+data<- data.frame(grade = rep(NA,length(r$X90)), pass = rep(NA,length(r$X90)))
+r<- cbind(r,data)
+
+
+r$grade<-ifelse(r$X90 > m + 1.5 * sd, "A",
+                ifelse(r$X90 > m + 0.5 * sd & r$X90 <= m + 1.5 * sd, "B",
+                       ifelse(r$X90 > m - 0.5 * sd  & r$X90 <= m + 0.5 * sd, "C",
+                              ifelse(r$X90 > m - 1.5 * sd & r$X90 <= m - 0.5 * sd,"D","F"))))
+
+
+r$pass<-ifelse(r$X90 > m + 1.5 * sd, "pass",
+                ifelse(r$X90 > m + 0.5 * sd & r$X90 <= m + 1.5 * sd, "pass",
+                       ifelse(r$X90 > m - 0.5 * sd  & r$X90 <= m + 0.5 * sd, "pass",
+                              ifelse(r$X90 > m - 1.5 * sd & r$X90 <= m - 0.5 * sd,"nonpass","nonpass"))))
+
+ggplot(r,aes(x=r$grade, fill = r$pass))+
+  geom_bar()+
+  theme(axis.text.x = element_text(hjust = 1,vjust = 1, colour = 'black', size = 9))+
+  geom_abline(intercept=seq(0,20,5),slope=0, lty = 3)
+  
+```{r}
+#소개팅 데이터 실습
+like<- read.csv("c:/r/like.csv",stringsAsFactors=F)
+
+#컬럼명 변경
+colnames(like)<- c("talk","book","travel", "school", "tall","skin","muscle", 'label') 
+
+#테스트 데이터셋 생성
+test <- data.frame(talk = 70, book = 50, travel =30, school = 70, tall = 70, skin = 40, muscle = 50 )   #
+
+library(class)
+
+train<- like[,-8]
+group<- like[,8]
+
+#knn(학습 해야하는 데이터 셋,테스트 할 것, 학습 할 결과 셋, k는 3개중에 하나로 계산해줘! )
+knn1<- knn(train, test, group,k=sqrt(14),prob=T)
+group
+knn1
+
+
+
+dist(like[,-8])
+
+
+train1<- train[-c(cn),]
+group1<- group[-which(group == "3타입")]
+
+help(knn)
+```
+
+
+#머신러닝과 일반 프로그램의 차이
+
+개와 고양이에 대한 이미지를 사람이 일일이 프로그램을 짜서 알려주는게 일반 프로그램.
+머신러닝은 개와 고양이 데이터를 컴퓨터에 넣고 스스로 학습해서 패턴을 알아내게 해서 개와 고양이를 인식하게 하는 기술
+
+#머신러닝으로 할 수 있는 일?
+1> 일반메일과 스팸메일의 분류
+2> 음성인식
+3> 주식매매
+4> 의학, 헬스케어
+5> 광고
+6> 게임분석
+
+
+#학습
+지도학습(superivsed learning)
+      레이블이 달려 있는 정해져있는 데이터를 가지고 학습
+      트레이닝 set을 가지고 학습, 이미지, 스팸,시험성적.....
+      
+      회귀분석(regression): 예측, 시험점수 높으려면 공부시간을 많이
+                            ex> 선형회귀, 회귀트리, 모델트리
+      
+      분류 : 둘중에 하나를 고르는 것, 여러개를 고르는 ...
+             ex> kNN, 결정트리
+
+비지도학습(unsuperivsed learning)
+      레이블이 없는 데이터를 가지고 학습
+      유사한 뉴스 그룹, 비슷한 단어들을 모은다.
+      ex> 군집합, kmean
+
+
+##1. kNN (k Nearest Neighbors) 최근접 이웃
+      - 사회적인 관계를 관찰해보면 대략적으로 비슷한 사람끼리 모이는 성질, 비슷한 취향의 사람끼리 모여서 동호회를 만들고 비슷한 무류의 계층 사람끼리 친분을 맺기도 한다.
+      - 공간적인 관계를 관찰해 보면 피부과, 성형외과, 옷가게....
+            
+            
+      
+      A로부터 떨어진 B,C,D 가있다
+      
+      유클리드 거리 계산
+      (A-B)^2, (A-C)^2, (A-D)^2 중에 가장 짧은 거리를 구한다 <- 가장 가깝다
+
+
+#소개팅 데이터 실습
+
+like<- read.csv("c:/r/like.csv",stringsAsFactors=F)
+
+colnames(like)<- c("talk","book","travel", "school", "tall","skin","muscle", 'label')   #컬럼명 변경
+
+like
+
+
+
+```{r}
+df<- read.table("c:/r/training.txt",header=T,stringsAsFactors=F)
+knn(df[,(2:3)],c(6,4),df[,4],k=sqrt(NROW(df)),prob=T)
+
+df
+
+ggplot(df, aes(x=df$sweetness,y=df$crunchiness))+
+  geom_point(stat= "identity",aes(shape = df$class, colour = df$class,size = 2))+
+  geom_text(aes(x=df$sweetness,y=df$crunchiness,label = df$ingredient, colour = df$class),nudge_y= 0.5)+
+  
+  geom_point(aes(x=test$sweetness,y = test$crunchiness,size = 2))+
+  geom_text(aes(x=test$sweetness,y=test$crunchiness,label = test$ingredient,colour = knn(df[,(2:3)],c(6,4),df[,4],k=sqrt(NROW(df)),prob=T)),nudge_y= 0.5)
+  
+
+test<-data.frame(ingredient = "tomato", sweetness = 6, crunchiness = 4)
+
+help("geom_text")
+help("geom_point")
+
+```
+
+
+[문제212] kNN알고리즘을 통해서 분류한후 테스트 데이터에 class를 확인하세요.
+
+[training dataset]
+
+ ingredient  sweetness  crunchiness     class
+-----------  ---------  ----------- ---------
+       apple        10           9     Fruits
+       bacon         1           4   Proteins
+      banana        10           1     Fruits
+      carrot         7          10 Vegetables
+      celery         3          10 Vegetables
+      cheese         1           1   Proteins
+    cucumber         2           8 Vegetables
+        fish         3           1   Proteins
+       grape         8           5     Fruits
+   green bean         3          7 Vegetables
+      lettuce         1          9 Vegetables
+         nuts         3          6   Proteins
+       orange         7          3     Fruits
+         pear        10          7     Fruits
+      shrimp         2           3   Proteins
+
+
+[test dataset]
+
+ingredient = "tomato", sweetness = 6,  crunchiness = 4
+
+```{r}
+food <- read.table("c:/r/training.txt", stringsAsFactors = F, header=T)
+food
+
+tomato <- data.frame(ingredient = "tomato",sweetness = 6,crunchiness = 4) 
+tomato
+
+test<- tomato[,2:3]
+test
+
+train <- food[,2:3]
+train
+
+train_level <- food[,4]
+train_level
+
+knn_pre <- knn(train , test , train_level , k=3 , prob=TRUE) 
+
+knn_pre
+
+library(ggplot2)
+
+ggplot(data=food,aes(x=sweetness,y=crunchiness))+
+  labs(title="What is tomato class?")+ # 타이틀 명
+  geom_point(aes(color=class, shape=class),size=6)+
+  geom_text(aes(label=ingredient), # 라벨링 표시
+            vjust=-1, # 수직으로 움직일 거리 (위는 -, 아래는 +)
+            size = 5) + # 문자크기
+  geom_point(data = tomato, colour = "black", size=6)+
+  geom_text(data=tomato,aes(label=ingredient),vjust = -2,size=5,fontface = "bold")
+```
+[문제212] kNN알고리즘을 통해서 분류한후 테스트 데이터에 class를 확인하세요.
+
+[training dataset]
+
+ ingredient  sweetness  crunchiness     class
+-----------  ---------  ----------- ---------
+       apple        10           9     Fruits
+       bacon         1           4   Proteins
+      banana        10           1     Fruits
+      carrot         7          10 Vegetables
+      celery         3          10 Vegetables
+      cheese         1           1   Proteins
+    cucumber         2           8 Vegetables
+        fish         3           1   Proteins
+       grape         8           5     Fruits
+   green bean         3          7 Vegetables
+      lettuce         1          9 Vegetables
+         nuts         3          6   Proteins
+       orange         7          3     Fruits
+         pear        10          7     Fruits
+      shrimp         2           3   Proteins
+
+
+[test dataset]
+
+ingredient = "tomato", sweetness = 6,  crunchiness = 4
+
+food <- read.csv("c:/r/knn_data1.txt", stringsAsFactors = F, header=T)
+food
+
+tomato <- data.frame(ingredient = "tomato",sweetness = 6,crunchiness = 4) 
+tomato
+
+test<- tomato[,2:3]
+test
+
+train <- food[,2:3]
+train
+
+train_level <- food[,4]
+train_level
+
+knn_pre <- knn(train , test , train_level , k=3 , prob=TRUE) 
+
+knn_pre
+
+library(ggplot2)
+
+ggplot(data=food,aes(x=sweetness,y=crunchiness))+
+  labs(title="What is tomato class?")+ # 타이틀 명
+  geom_point(aes(color=class, shape=class),size=6)+
+  geom_text(aes(label=ingredient), # 라벨링 표시
+            vjust=-1, # 수직으로 움직일 거리 (위는 -, 아래는 +)
+            size = 5) + # 문자크기
+  geom_point(data = tomato, colour = "black", size=6)+
+  geom_text(data=tomato,aes(label=ingredient),vjust = -2,size=5,fontface = "bold")
+

@@ -1,0 +1,382 @@
+```{r}
+setwd("c:/r")
+getwd()
+
+disease <- read.csv ("1±ºÀü¿°º´¹ßº´ÇöÈ²_³âµµº°.csv", header = T , stringsAsFactors = F)  
+
+
+
+xxx<-colnames(disease)
+
+
+colnames(disease)<- c('year',2:length(colnames(disease))-1)
+
+
+x1<- disease[,c("year",1)]
+x2<- disease[,c("year",2)]
+x3<- disease[,c("year",3)]
+x4<- disease[,c("year",4)]
+x5<- disease[,c("year",5)]
+
+y1<-rep(c(xxx[2]),length(disease$year))
+y2<-rep(c(xxx[3]),length(disease$year))
+y3<-rep(c(xxx[4]),length(disease$year))
+y4<-rep(c(xxx[5]),length(disease$year))
+y5<-rep(c(xxx[6]),length(disease$year))
+
+x1<- cbind(x1,y1)
+x2<- cbind(x2,y2)
+x3<- cbind(x3,y3)
+x4<- cbind(x4,y4)
+x5<- cbind(x5,y5)
+
+colnames(x1)<- c("year","cnt","name")
+colnames(x2)<- c("year","cnt","name")
+colnames(x3)<- c("year","cnt","name")
+colnames(x4)<- c("year","cnt","name")
+colnames(x5)<- c("year","cnt","name")
+
+
+xx<-rbind(x1,x2,x3,x4,x5) 
+xx
+
+#name = year, grade = cnt subject = name
+
+ggplot(xx,aes(x=year,y=cnt))+
+  geom_col(aes(fill=name), position = "stack")+
+  geom_text(aes(label = cnt),position = position_stack(),size = 2)+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1,colour = "blue",size= 10))
+
+
+ggplot(xx,aes(x=year,y=cnt,group=name,color = name))+
+  geom_point()+
+  geom_line()
+
+```
+
+[¹®Á¦180] 1±ºÀü¿°º´¹ßº´ÇöÈ¯_³âµµº°.csv ¿¡ µ¥ÀÌÅÍ¸¦ °¡Áö°í ±×·¡ÇÁ¸¦ »ý¼ºÇÏ¼¼¿ä.
+
+#1
+setwd("c:/r")
+getwd()
+disease <- read.csv ("1±ºÀü¿°º´¹ßº´ÇöÈ²_³âµµº°.csv", header = T , stringsAsFactors = F) 
+
+disease
+
+xxx<-colnames(disease)
+
+
+colnames(disease)<- c('year',2:length(colnames(disease))-1)
+
+
+x1<- disease[,c("year",1)]
+x2<- disease[,c("year",2)]
+x3<- disease[,c("year",3)]
+x4<- disease[,c("year",4)]
+x5<- disease[,c("year",5)]
+
+y1<-rep(c(xxx[2]),length(disease$year))
+y2<-rep(c(xxx[3]),length(disease$year))
+y3<-rep(c(xxx[4]),length(disease$year))
+y4<-rep(c(xxx[5]),length(disease$year))
+y5<-rep(c(xxx[6]),length(disease$year))
+
+x1<- cbind(x1,y1)
+x2<- cbind(x2,y2)
+x3<- cbind(x3,y3)
+x4<- cbind(x4,y4)
+x5<- cbind(x5,y5)
+
+colnames(x1)<- c("year","cnt","name")
+colnames(x2)<- c("year","cnt","name")
+colnames(x3)<- c("year","cnt","name")
+colnames(x4)<- c("year","cnt","name")
+colnames(x5)<- c("year","cnt","name")
+
+
+xx<-rbind(x1,x2,x3,x4,x5) 
+xx
+
+#name = year, grade = cnt subject = name
+
+ggplot(xx,aes(x=year,y=cnt))+
+  geom_col(aes(fill=name), position = "stack")+
+  geom_text(aes(label = cnt),position = position_stack(),size = 2)+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1,colour = "blue",size= 10))
+
+
+ggplot(xx,aes(x=year,y=cnt,group=name,color = name))+
+  geom_point()+
+  geom_line()
+  
+  
+#2
+setwd("c:/r")
+getwd()
+disease <- read.csv ("1±ºÀü¿°º´¹ßº´ÇöÈ²_³âµµº°.csv", header = T , stringsAsFactors = F) 
+
+x<- melt(disease)
+x
+
+ggplot(x,aes(x=³âµµº°,y=value))+
+  geom_col(aes(fill=variable), position = "stack")+
+  geom_text(aes(label = value),position = position_stack(),size = 2)+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1,vjust = 1,colour = "blue",size= 10))
+
+
+ggplot(x,aes(x=³âµµº°,y=value,group=variable,color = variable))+
+  geom_point()+
+  geom_line()
+```{r}
+dis<- melt(disease,id = '³âµµº°')
+
+
+
+ggplot(dis,aes(x=³âµµº°,y=value,group=variable,colour = variable))+
+ geom_line()+
+ geom_point()+
+ ggtitle("1±ºÀü¿°º´¹ßº´ÇöÈ¯",subtitle="³âµµº°")+
+ theme(plot.title = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ theme(plot.subtitle = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ labs(colour="Á¾·ù")
+
+ggplot(dis,aes(x=³âµµº°,y=value,group = variable))+
+ geom_col(aes(fill=variable),position="dodge")+
+ geom_text(aes(label = value),position=position_dodge(0.9),vjust=0,size = 2)+
+ ggtitle("1±ºÀü¿°º´¹ßº´ÇöÈ¯",subtitle="³âµµº°")+
+ theme(plot.title = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ theme(plot.subtitle = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ labs(colour="Á¾·ù")
+
+ggplot(dis,aes(x=³âµµº°,y=value,group = variable))+
+ geom_col(aes(fill=variable),position="stack")+
+ geom_text(aes(label = value),position=position_stack(vjust=0.5),size = 2)+
+ ggtitle("1±ºÀü¿°º´¹ßº´ÇöÈ¯",subtitle="³âµµº°")+
+ theme(plot.title = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ theme(plot.subtitle = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ labs(colour="Á¾·ù")
+
+
+plot(disease$ÄÝ·¹¶ó,xlab="", ylab="",ylim=c(0,6000),axes=FALSE,col="violet", type="o",lwd=1,main="1±º Àü¿°º´ ¹ßº´ÇöÈ²-³âµµº°(´ÜÀ§:°Ç¼ö) ÃâÃ³:Åë°èÃ»")
+axis(1, at=1:11, label=disease$³âµµº°, las=2)
+axis(2,las=1)
+lines(disease$ÀåÆ¼Çª½º, col="blue", type="o", lwd=1)
+lines(disease$ÀÌÁú, col="red", type="o", lwd=1)
+lines(disease$´ëÀå±Õ, col="black", type="o", lwd=1)
+lines(disease$AÇü°£¿°, col="orange", type="o", lwd=1)
+abline(h=seq(0,6000,100),v=seq(1,11,1),lty=3,lwd=0.2)
+legend(x=1,y=6000,legend=names(disease[2:6]),cex=0.8,col=c("violet","blue","red","black","orange"),lty=1,lwd=2,bg="white")
+
+```
+#½ÂÇõÀÌÇü
+(epidemic<-read.csv("desktop/r/contaj_by_year.csv", header = T, stringsAsFactors = F, fileEncoding = 'euc-kr'))
+names(epidemic)<-c("Yearly Star", "Cholera", "Typhoid",
+                   "Dysentery", "Escherichia coli", "Hepatitis A")
+epidemic$`Yearly Star`<-gsub('³â','',epidemic$`Yearly Star`)
+library(reshape2)
+m<-melt(epidemic, id=c("Yearly Star"))
+library(ggplot2)
+ggplot(m, aes(x=`Yearly Star`, y=value, group = variable, colour= variable))+
+  geom_point()+
+  geom_line()+
+  scale_y_sqrt()
+
+plot(,xlab, ylab, ylim, axes, col, type, lwd, main)
+axis(1,at=1:11, label, las=2)
+axis(2, las=2)
+lines(,col, type, lwd)
+lines(,col, type, lwd)
+lines(,col, type, lwd)
+lines(,col, type, lwd)
+abline(h,v=seq(1,11,1), lty=3, lwd=.2)
+legend(x=1, y=6000, legend=names(disease[2:6]), cex=.8,
+	col=c(), lty=1, lwd=2, bg=¡±white¡±)
+
+
+
+#»ó¿íÀÌÇü
+dis<- melt(disease,id = '³âµµº°')
+
+ggplot(dis,aes(x=³âµµº°,y=value,group=variable,colour = variable))+
+ geom_line()+
+ geom_point()+
+ ggtitle("1±ºÀü¿°º´¹ßº´ÇöÈ¯",subtitle="³âµµº°")+
+ theme(plot.title = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ theme(plot.subtitle = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ labs(colour="Á¾·ù")
+
+ggplot(dis,aes(x=³âµµº°,y=value,group = variable))+
+ geom_col(aes(fill=variable),position="dodge")+
+ geom_text(aes(label = value),position=position_dodge(0.9),vjust=0,size = 2)+
+ ggtitle("1±ºÀü¿°º´¹ßº´ÇöÈ¯",subtitle="³âµµº°")+
+ theme(plot.title = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ theme(plot.subtitle = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ labs(colour="Á¾·ù")
+
+ggplot(dis,aes(x=³âµµº°,y=value,group = variable))+
+ geom_col(aes(fill=variable),position="stack")+
+ geom_text(aes(label = value),position=position_stack(vjust=0.5),size = 2)+
+ ggtitle("1±ºÀü¿°º´¹ßº´ÇöÈ¯",subtitle="³âµµº°")+
+ theme(plot.title = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ theme(plot.subtitle = element_text(lineheight=.8, face="bold",color="darkblue",hjust=0.5))+
+ labs(colour="Á¾·ù")
+ 
+#¼ºÈÆÀÌ 
+plot(disease$ÄÝ·¹¶ó,xlab="", ylab="",ylim=c(0,6000),axes=FALSE,col="violet", type="o",lwd=1,main="1±º Àü¿°º´ ¹ßº´ÇöÈ²-³âµµº°(´ÜÀ§:°Ç¼ö) ÃâÃ³:Åë°èÃ»")
+axis(1, at=1:11, label=disease$³âµµº°, las=2)
+axis(2,las=1)
+lines(disease$ÀåÆ¼Çª½º, col="blue", type="o", lwd=1)
+lines(disease$ÀÌÁú, col="red", type="o", lwd=1)
+lines(disease$´ëÀå±Õ, col="black", type="o", lwd=1)
+lines(disease$AÇü°£¿°, col="orange", type="o", lwd=1)
+abline(h=seq(0,6000,100),v=seq(1,11,1),lty=3,lwd=0.2)
+legend(x=1,y=6000,legend=names(disease[2:6]),cex=0.8,col=c("violet","blue","red","black","orange"),lty=1,lwd=2,bg="white")
+
+```{r}
+install.packages("KoNLP")
+library(KoNLP)
+
+useSejongDic()
+
+text1<- "RÀº ¿ÀÇÂ ¼Ò½º·Î Åë°è, ±â°èÇÐ½À, ±ÝÀ¶, »ý¹°Á¤º¸ÇÐ, ±×·¡ÇÈ½º¿¡ ÀÌ¸£´Â ´Ù¾çÇÑ Åë°è ÆÐÅ°Áö¸¦ °®Ãß°í ÀÖ´Â ÁÁÀº ÇÁ·Î±×·¥ÀÌ´Ù."
+strsplit(text1, " ")
+
+useSejongDic(text1)
+
+SimplePos09(text1)
+
+#grep("¿øÇÏ´Â ´Ü¾î", À§Ä¡)
+#gsub('¿øÇÏ´Â ´Ü¾î','´ëÃ¼ÇÒ ¹®ÀÚ', À§Ä¡)
+help(grep)
+
+text2<- SimplePos09(text1)
+
+text_noun <- str_match(text2,'([A-Z°¡-ÆR]+)/N')  
+text_noun
+
+text_noun[,2]
+na.omit(text_noun[,2])
+as.vector(na.omit(text_noun[,2]))
+
+extractNoun(text1)
+
+.libPaths()
+
+buildDictionary(ext_dic = "sejong",user_dic = data.frame(c("±â°èÇÐ½À","»ý¹°Á¤º¸ÇÐ","´Ù¾çÇÑ"),c("ncn")),replace_usr_dic = T)
+
+
+```
+
+
+
+install.packages("KoNLP")
+library(KoNLP)
+
+useSejongDic()
+
+text1<- "RÀº ¿ÀÇÂ ¼Ò½º·Î Åë°è, ±â°èÇÐ½À, ±ÝÀ¶, »ý¹°Á¤º¸ÇÐ, ±×·¡ÇÈ½º¿¡ ÀÌ¸£´Â ´Ù¾çÇÑ Åë°è ÆÐÅ°Áö¸¦ °®Ãß°í ÀÖ´Â ÁÁÀº ÇÁ·Î±×·¥ÀÌ´Ù."
+strsplit(text1, " ")
+
+useSejongDic(text1)
+
+SimplePos09(text1)
+
+#grep("¿øÇÏ´Â ´Ü¾î", À§Ä¡)
+#gsub('¿øÇÏ´Â ´Ü¾î','´ëÃ¼ÇÒ ¹®ÀÚ', À§Ä¡)
+help(grep)
+
+text2<- SimplePos09(text1)
+
+text_noun <- str_match(text2,'([A-Z°¡-ÆR]+)/N')  
+# /N ¾Õ¿¡ ¾î¶²¹®ÀÚ°¡ ÀÖ´øÁö ([A-Z °¡-ÆR]+) (+´Â ¿©·¯°³ ÀÏ¼öµµ ÀÖ´Ù´Â ¶æ) 
+text_noun
+
+
+text_noun[,2] # 2¿­¸¸ ²ø¾î³»°í
+na.omit(text_noun[,2]) # NA Áö¿ì°í
+as.vector(na.omit(text_noun[,2])) # ¾Æ·¡ Æ¯¼º Áö¿ì°í
+
+extractNoun(text1)# ¸í»ç »Ì¾Æ³»±â
+
+.libPaths()  #library±î´Â ÆÄÀÏ À§Ä¡(º¸ÆíÀûÀ¸·Î Ã¹¹øÂ° À§Ä¡¿¡ ±ñ´Ù.)
+
+#´Ü¾î Ãß°¡ 3°³ÀÇ ´Ü¾î¸¦ ncnÀÌ¶ó´Â Çü½ÄÀ¸·Î ÀúÀå
+buildDictionary(ext_dic = "sejong",user_dic = data.frame(c("±â°èÇÐ½À","»ý¹°Á¤º¸ÇÐ","´Ù¾çÇÑ"),c("ncn")),replace_usr_dic = T)
+
+```{r}
+install.packages("wordcloud")
+library(wordcloud)
+
+text<- readLines("c:/r/¹®ÀçÀÎ´ëÅë·ÉÃëÀÓ»ç.txt")
+text
+
+extractNoun(text)
+
+noun1<- unlist(extractNoun(text))
+noun2<- unlist(sapply(text, extractNoun,USE.NAMES = F))
+
+word_cn1<- table(noun1)
+word_cn2<- table(noun2)
+
+sort(word_cn1, decreasing = T)
+head(sort(word_cn1, decreasing = T),10)
+
+pal<- brewer.pal(8,"Dark2")
+
+wordcloud(names(word_cn1), freq = word_cn1,scale = c(5,0.5),random.order = F,rot.per = .1,colors = pal)
+
+
+```
+¿¢¼¿·Î ÀÛ¾÷À» ÇÏ°ÔµÇ¸é ÇÊµå¿Í ÇÊµå°¡ ,·Î ±¸ºÐÀÚ°¡ µÇ´Âµ¥ (csvÆÄÀÏ·Î ÀúÀå½Ã)
+
+read.table?
+
+
+
+install.packages("wordcloud")
+library(wordcloud)
+
+text<- readLines("c:/r/¹®ÀçÀÎ´ëÅë·ÉÃëÀÓ»ç.txt")
+text
+
+extractNoun(text)
+
+noun1<- unlist(extractNoun(text))
+noun2<- unlist(sapply(text, extractNoun,USE.NAMES = F))
+
+word_cn1<- table(noun1)
+word_cn2<- table(noun2)
+
+sort(word_cn1, decreasing = T)
+head(sort(word_cn1, decreasing = T),10)
+
+pal<- brewer.pal(8,"Dark2")
+
+wordcloud(names(word_cn1), freq = word_cn1,scale = c(5,0.5),random.order = F,rot.per = .1,colors = pal)
+
+names : Ãâ·ÂÇÒ ´Ü¾îµé
+freq : ºóµµ¼ö
+scale : ±ÛÀÚÀÇ Å©±â c(Å«°ª,ÀÛÀº°ª)
+min.freq :  ÃÖ¼Ò ºóµµ¼ö¸¦ ÁöÁ¤
+max.words : ÀÌ°ª ÀÌ»óÀÇ ºóµµ¼ö¸é »èÁ¦
+random.order : Ãâ·ÂµÇ´Â ¼ø¼­¸¦ ÀÓÀÇ·Î ÁöÁ¤
+random.color : ±ÛÀÚÀÇ »ö»óÀ» ÀÓÀÇ·Î ÁöÁ¤
+rot.per : ´Ü¾î¹èÄ¡¸¦ 90µµ °¢µµ·Î Ãâ·Â
+
+
+```{r}
+install.packages("wordcloud2")
+library(wordcloud2)
+
+wordcloud2(word_cn1)
+wordcloud2(word_cn1,shape = "star")
+
+wordcloud2(table(emp$JOB_ID),shape = "diamond")
+
+help("wordcloud2")
+
+```
+install.packages("wordcloud2")
+library(wordcloud2)
+
+wordcloud2(word_cn1)

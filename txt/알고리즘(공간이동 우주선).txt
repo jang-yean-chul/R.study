@@ -1,0 +1,100 @@
+```{r}
+
+
+move<- function(x,y){
+  z<- y-x+1
+  n<- 1
+  cnt<- NA
+  repeat{
+    if(z > sum(c(1:(n+1)))){
+      cnt<- append(cnt,n)
+      ifelse(n==0,break,NA)
+      z <- z-n
+      n <- n+1
+    }else if(z == sum(c(1:(n+1)))){
+      cnt<- append(cnt,n)
+      ifelse(n==0,break,NA)
+      z <- z-n
+    }else if(z< sum(c(1:(n+1)))){
+      cnt<- append(cnt,n)
+      ifelse(n==0,break,NA)
+      z <- z-n
+      n <- n-1
+    }
+  }
+  print(cnt)
+  print(length(cnt)-2)
+}
+
+move(0,3)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+func1 <- function(...){
+  d <- c(...)           #거리좌표
+  a <- 0                #시작좌표
+  b <- 0                #도착좌표
+  cn <- 0               #공간이동기 작동횟수
+  
+  if(NROW(d) == 1){
+    b <- d[1]
+    a <- 0
+  }else if(NROW(d) == 2){
+    a <- d[1]
+    b <- d[2]
+  }else{
+    warning("두개의 숫자만 입력하세요.")
+  }
+  
+  c <- abs(b - a)       #이동거리
+  
+  if(c == 1){
+    return(3)
+  }else{
+    func2 <- function(x){
+      (1 + x) * x / 2
+    }
+    repeat{
+      cn <- cn + 1
+      if(func2(cn) > c/2){
+        if(func2(cn-1)*2 + cn < c){
+          print(cn * 2)
+          break
+        }else if(func2(cn-1)*2 + cn == c){
+          print(cn * 2 - 1)
+          break
+        }else if(func2(cn-1)*2 + cn > c){
+          print((cn - 1) * 2 + 1)
+          break
+        }
+        
+      }else if(func2(cn) == c/2){
+        print(cn*2)
+        break
+      }
+    }
+    
+  }
+}
+func1(0,801)
+move(0,801)
+
+
+
+         
+
+
+```
+

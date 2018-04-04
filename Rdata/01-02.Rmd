@@ -1,0 +1,502 @@
+```{r}
+x<- c(2,10,6,4,3,NA,7,9,1)
+
+is.na(x)
+
+if (which(x %in% NA) < length(x) ) {print("NA가 존재합니다.")}
+else{"NA가 없습니다."}
+
+
+
+order(x)
+sort(x)
+x[order(x)]
+order(which(x %in% NA))
+which(x %in% NA)
+length(x)
+x[which(x %in% NA)]
+
+ifelse (which(x %in% NA) < length(x), x[which(x %in% NA)] <- 0 , print("NA가 존재하지 않습니다.")
+x
+
+
+which(emp$COMMISSION_PCT %in% NA)
+
+df<-data.frame(name = emp$LAST_NAME, sal = emp$SALARY, comm = emp$COMMISSION_PCT, ann_sal = ifelse(which(emp$COMMISSION_PCT %in% NA) < length(emp$COMMISSION_PCT), ann_sal <- emp$SALARY *12 , ann_sal<- (emp$SALARY * 12) + (emp$SALARY * 12 * emp$COMMISSION_PCT)))
+
+
+df<-data.frame(name = emp$LAST_NAME, sal = emp$SALARY, comm = emp$COMMISSION_PCT, ann_sal = ifelse(is.na(emp$COMMISSION_PCT),emp$SALARY *12, ((emp$SALARY*12)+(emp$SALARY*12*emp$COMMISSION_PCT))))
+df
+```
+
+[문제72]  x <- c(2,10,6,4,3,NA,7,9,1)  x변수에 NA가 있는지를 검사하세요.
+
+is.na(x)
+
+[문제73] x 변수에 NA가 있는 인덱스 번호를 찾아 주세요.
+
+which(is.na(x))
+
+[문제74] x 변수에 NA가 있으면 0으로 설정하세요
+
+ifelse(is.na(x), 0 , x) #NA를 탐색하려면 무조건 ifelse를 사용해야 한다.
+
+[문제75] last_name, salary, commission_pct, 
+       commission_pct NA 면 salary * 12,
+       아니면 (salary * 12) + (salary * 12 * commission_pct)을 수행하세요.
+
+
+df<- data.frame(emp$LAST_NAME,)
+
+> head(df)
+       name   sal comm ann_sal
+1  OConnell  2600   NA   31200
+2     Grant  2600   NA   31200
+3    Whalen  4400   NA   52800
+4 Hartstein 13000   NA  156000
+5       Fay  6000   NA   72000
+6    Mavris  6500   NA   78000
+> 
+
+
+df<-data.frame(name = emp$LAST_NAME, sal = emp$SALARY, comm = emp$COMMISSION_PCT, ann_sal = ifelse(is.na(emp$COMMISSION_PCT),emp$SALARY *12, ((emp$SALARY*12)+(emp$SALARY*12*emp$COMMISSION_PCT))))
+df
+```{r}
+round(45.925,2) #round(대상숫자, 자릿수)
+round(45.925,1)
+round(45.925,0)
+round(45.925,-1)
+round(45.925,-2)
+
+trunc(45.925,1) #인자값을 넣어봤자 무조건 소수점 절삭
+trunc(45.925,2)
+trunc(45.925) #trunc함수는 소수점을 버리겠다는 뜻.
+
+#sql mod = R %%  나머지 함수
+#sql power = R **, ^ 제곱근 함수
+
+
+
+
+
+
+```
+
+```{r}
+
+
+6^9
+
+
+10%%3
+
+
+df2<- data.frame(last_name = emp$LAST_NAME, 연봉 = emp$SALARY * 12 , stringsAsFactors = F)
+df2
+
+df2[order(df2$연봉, decreasing = TRUE),]
+
+df2[order(df2$연봉, decreasing = T),]
+
+
+orderBy(~연봉, c(df2$last_name, round(df2$연봉,-2))
+
+        
+orderBy(~-연봉, data.frame(emp$LAST_NAME, 연봉 = emp$SALARY*12))
+ 
+
+
+
+```
+
+[문제76] 6의 9승을 출력하세요 
+
+6^9
+
+[문제77] 10을 3으로 나눈 나머지값을 출력하세요 
+
+10%%3
+
+[문제78] last_name, salary에 12를  곱해서 출력하고 컬럼명이 한글로 연봉으로  데이터 프레임으로 출력하세요 
+
+df2 <- data.frame(last_name = emp$LAST_NAME, 연봉 = emp$SALARY * 12 , stringsAsFactors = F)
+
+[문제79] last_name과 연봉을 출력하는데 연봉이 높은것부터 출력하세요 
+
+df2[order(df2$연봉, decreasing = TRUE),]
+orderBy(~-연봉, data.frame(emp$LAST_NAME, 연봉 = emp$SALARY*12))
+
+[문제80] 위의 결과를 다시 출력하는데 round 함수를
+        이용해서 아래와 같이 백단위에서 반올림되게 하세요. 
+  
+ 4:  JONES 35700  ----->  36000
+
+orderBy(~-연봉, data.frame(emp$LAST_NAME, 연봉 = round(emp$SALARY*12, -3)))
+
+```{r}
+Sys.Date()
+Sys.time()
+date()
+
+as.Date("2018-01-02")
+as.Date("2018/01/02")
+as.Date("20180102", format = "%Y%m%d")
+
+as.Date("2018년 1월 2일", format = "%Y년%m월%d일")
+as.Date("2018년 1월 2일", format = "%Y년%B%d일")  #서식이 맞지 않아서 오류
+
+
+format(Sys.time(), "%y%m%d")
+format(Sys.time(), "%Y %B %d")
+format(Sys.time(), "%Y년%B%d")
+format(Sys.time(), "%Y %B %d %A %u %H")
+
+weekdays((Sys.Date()))
+weekdays((as.Date("2017-12-31", format = "%Y-%m-%d")))
+
+
+
+as.Date ("2018-01-02")+30
+as.Date ("2018-01-02")-30
+as.Date ("2018-01-02")- as.Date("2017-12-31")
+as.numeric(as.Date("2018-01-02") - as.Date("2017-12-31"))
+
+
+difftime("2018-01-02", "2017-12-31")
+difftime("2017-12-31", "2018-01-02")
+as.numeric(difftime("2018-01-02", "2017-12-31"))
+difftime("2018-01-02 14:00:00", "2017-12-31 23:55:55")
+
+
+as.POSIXct("2018-01-02 14:00:00") - as.POSIXct("2017-12-31 23:59:59")  
+as.numeric(as.POSIXct("2018-01-02 14:00:00") - as.POSIXct("2017-12-31 23:59:59"))   
+
+
+
+as.difftime("14:00:00") - as.difftime("09:30:00")   
+as.numeric(as.difftime("14:00:00") - as.difftime("09:30:00")
+           
+           
+           
+           
+install.packages("lubridate")
+library(lubridate)
+
+
+now()
+
+date <- now()
+
+year(date)
+format(Sys.time(),"%Y")
+
+month(date)
+format(Sys.time(), "%m")
+
+day(date)
+format(Sys.time(), "%d")
+
+wday(date)
+wday(now())
+wday(Sys.Date())
+wday(now(), week_start = 1)
+wday(now(), week_start = 7) 
+
+wday(now(), label = T)
+wday(now(), label = F)  #기본값은 F
+
+month(date,label = T)  #기본값은 F
+month(date,label = F)
+help(month)  #help 잘 사용하기!
+
+years(10)
+now() + years(10)
+
+# sql to_yminterval("10-00")
+
+months(4)
+now() + months(100)
+
+days(100)
+now() + days(1000)
+
+hours(3)
+now() + hours(3)
+
+minutes(100)
+now() + minutes(100)
+
+seconds(100000)
+now() + seconds(99999)
+
+now() +years(3) + months(5) + days(30) + hours(222) + minutes(9999) + seconds(99999)
+
+hm("9999:99")
+now() + hm("9999:9999")
+
+year(date) <- 2017
+month(date) <- 12
+day(date) <- 31
+hour(date) <- 00
+minute(date) <- 00
+second(date) <- 00
+
+date
+
+
+```
+
+★ 현재 날짜 시간
+
+Sys.Date()   #"2018-01-02"
+Sys.time()   #"2018-01-02 11:53:21 KST"
+date()       #"Tue Jan 02 11:53:29 2018"
+
+★ as.Date : 문자날짜를 날짜형으로 변환하는 함수 
+
+as.Date("2018-01-02")  #"2018-01-02"
+as.Date("2018/01/02")  #"2018-01-02"
+as.Date("20180102")    #오류 (표준서식을 따라야함.)
+as.Date("20180102", format = "%Y%m%d")  #아니면 날짜 포맷을 정해주면 됨.
+      #format   :  %Y = 세기를 표함한 년도(4자리)
+                   %y = 세기를 생략한 년도(2자리)
+                   %m = 숫자 달
+                   %B = 문자 달
+                   %d = 숫자 일
+                   %A = 요일
+                   %u = 숫자요일(1~7, 소트작업을 위해) 월요일 = 0
+                   %w = 숫자요일(0~6)일요일 = 0
+                   %H = 시
+                   %M = 분
+                   %S = 초
+
+★ format 함수
+format(Sys.time(), "%y%m%d") #날짜의 형식을 제한하는 방법
+
+★ weekdays 함수 : 요일을 출력
+weekdays((Sys.Date()))                                    #현재 날짜의 요일을 출력
+weekdays((as.Date("2017-12-31", format = "%Y-%m-%d")))    #날짜 함수로 변환한 후에 해당날짜의 요일 출력
+
+
+★ 날짜 계산
+
+as.Date ("2018-01-02")+30  #date + number = date
+as.Date ("2018-01-02")-30  #date - number = date
+as.Date ("2018-01-02")- as.Date("2017-12-31")  #date - date = number
+    #결과물 : Time difference of 2 days
+as.numeric(as.Date("2018-01-02") - as.Date("2017-12-31"))
+    #결과물 : 2
+
+
+★difftime 함수 : 두 날짜간의 함수
+difftime("2018-01-02", "2017-12-31")   #Time difference of 2 days
+difftime("2018-01-02", "2018-02-31")   #Time difference of -2 days
+as.numeric(difftime("2018-01-02", "2017-12-31"))   #2
+difftime("2018-01-02 14:00:00", "2017-12-31 23:55:55")   #Time difference of 1.586169 days
+
+
+★as.POSIXct : 년월일시분초까지 사용 함수
+as.POSIXct("2018-01-02 14:00:00") - as.POSIXct("2017-12-31 23:59:59")   #Time difference of 1.583345 days
+as.numeric(as.POSIXct("2018-01-02 14:00:00") - as.POSIXct("2017-12-31 23:59:59"))   #1.583345
+
+
+★as.difftime : 시간의 차이
+as.difftime("14:00:00") - as.difftime("09:30:00")   #Time difference of 4.5 hours
+as.numeric(as.difftime("14:00:00") - as.difftime("09:30:00"))   #4.5
+
+
+-------------R에 기본적으로 내장되어있는 날짜 관련 함수들-----------------------
+
+★lubridate
+
+install.packages("lubridate")
+library(lubridate)
+
+
+#현재시간
+date <- now()
+
+#년도
+year(date)
+# 기존에는 이렇게 사용했어야 한다. format(Sys.time(),"%Y")
+
+#달
+month(date)
+format(Sys.time(), "%m")
+
+#일
+day(date)
+format(Sys.time(), "%d")
+
+#요일
+wday(date)
+wday(now())
+wday(Sys.Date())
+wday(now(), week_start = 1) #월요일 기준
+wday(now(), week_start = 7) #일요일 기준
+
+#날짜계산
+years(10)
+now() + years(10)   #sql에서 사용 : to_yminterval("10-00")
+
+months(4)
+now() + months(100)
+
+days(100)
+now() + days(1000)
+
+hours(3)
+now() + hours(3)  #하루에 3시간은 인생을 위해 노력하
+
+minutes(100)
+now() + minutes(100)
+
+seconds(100000)
+now() + seconds(99999)
+
+now() +years(3) + months(5) + days(30) + hours(222) + minutes(9999) + seconds(99999)
+
+hm("9999:99")
+now() + hm("9999:9999")    #시분 함
+
+#년월일시분초 수정
+year(date) <- 2017
+month(date) <- 12
+day(date) <- 31
+hour(date) <- 00
+minute(date) <- 00
+second(date) <- 00
+
+date
+
+```{r}
+
+emp[as.Date("2002-06-07") == as.Date(emp$HIRE_DATE, format = "%Y/%m/%d"),c("LAST_NAME", "HIRE_DATE")]  
+#as.Date 사용시 내가 변환할 함수의 모양과 뒤에 따라오는 포멧을 일치시켜주면 자동적으로 데이트타입의 데이터가 만들어진다.
+
+
+data.frame(last_name = emp$LAST_NAME, Date = Sys.Date() - as.Date(emp$HIRE_DATE, format = "%Y/%m/%d"),stringsAsFactors = F)
+data.frame(last_name = emp$LAST_NAME, Date = as.numeric(difftime (Sys.Date(),as.Date(emp$HIRE_DATE, format = "%Y/%m/%d"))),stringsAsFactors = F)
+
+
+data.frame(last_name = emp$LAST_NAME, week = wday(emp$HIRE_DATE, label = T), stringsAsFactors = F)
+data.frame(last_name = emp$LAST_NAME, week = weekdays(as.Date(emp$HIRE_DATE)), stringsAsFactors = F)
+
+wday(Sys.Date() + months(100), label = T)
+format(Sys.Date() + months(100), '%A')
+
+
+#새로운 emp.csv파일 로딩
+emp<-read.csv("c:/r/emp.csv", header = T , stringsAsFactors = F)
+
+str(emp) #구조확인하고 접근
+
+
+
+```
+[문제81] 2002-06-07에 입사한 사원들의 last_name, hire_date를  출력하세요.
+
+emp[as.Date("2002-06-07") == as.Date(emp$HIRE_DATE, format = "%y/%m/%d"),c("LAST_NAME", "HIRE_DATE")] 
+
+[문제82] 사원의 last_name, 근무일수를 출력하세요.
+
+data.frame(last_name = emp$LAST_NAME, Date = Sys.Date() - as.Date(emp$HIRE_DATE, format = "%y/%m/%d"),stringsAsFactors = F)
+
+[문제83] 사원의 last_name, 입사한 요일을 출력하세요.
+
+data.frame(last_name = emp$LAST_NAME, week = wday(emp$HIRE_DATE, label = T), stringsAsFactors = F)
+
+[문제84] 오늘 날짜를 기준으로  100개월 되는 날짜의 요일을 출력하세요. 
+
+wday(Sys.Date() + months(100), label = T)
+
+
+
+
+디벨로퍼 > 도구> 환경설정> 데이터베이스> NLS> 날짜형식 > RR을 YYYY로 변환
+
+★익스포트 하는 방법
+
+1> 테이블 검색하고 거기에다가 오른쪽마우스 누르고 익스포트
+
+2> 도구> 데이터 익스포트 > DDL익스포트 해제, 데이터타입csv, 저장 이름 emp로 바꾸기> 다음 테이블만 체크 > 조회> 원하는테이블 체크후 저장
+
+emp<-read.csv("c:/r/emp.csv", header = T , stringsAsFactors = F)  #저장하는 공간 지정해주고 거기에 csv파일 옮겨두기
+
+```{r}
+
+format(Sys.Date() + months(100), '%A')
+
+
+x<- emp[order(format(as.Date(emp$HIRE_DATE), "%u")),c("LAST_NAME", "HIRE_DATE")]
+data.frame(name=x$LAST_NAME, day = format(as.Date(x$HIRE_DATE), "%A"))
+
+x<- orderBy(~d, data.frame(last_name = emp$LAST_NAME, week = format(as.Date(emp$HIRE_DATE,"%Y/%m/%d"), "%A"), d =format(as.Date(emp$HIRE_DATE,"%Y/%m/%d"), "%w"), stringsAsFactors = F))
+x[,c("last_name", "week")]
+
+
+data.frame(last_name = emp$LAST_NAME, salary = emp$SALARY, hire_date = emp$HIRE_DATE, level = ifelse(year(as.Date(emp$HIRE_DATE, "%Y/%m/%d")) == 2001, "A", ifelse(year(as.Date(emp$HIRE_DATE, "%Y/%m/%d")) == 2002, "B", ifelse(year(as.Date(emp$HIRE_DATE, "%Y/%m/%d")) == 2003 ,"C", ifelse(year(as.Date(emp$HIRE_DATE, "%Y/%m/%d")) == 2004, "D", "E")))))
+           
+           
+year(as.Date(emp$HIRE_DATE, "%Y/%m/%d"))
+```
+[문제85] 사원의 last_name, 입사한 요일을 출력하세요. 
+	단 요일별로 정렬을 수행해서 아래와 같이 출력하세요.
+
+
+           name    day
+1         Ernst 월요일
+2       Vollman 월요일
+3        Mallin 월요일
+4        Ladwig 월요일
+5     Cambrault 월요일
+6        Greene 월요일
+7          Ande 월요일
+8         Banda 월요일
+9         Kumar 월요일
+10        Walsh 월요일
+11    Hartstein 화요일
+12         King 화요일
+13       Hunold 화요일
+
+
+
+           name    day
+1         Grant 일요일
+2     Pataballa 일요일
+3          Khoo 일요일
+4        Tobias 일요일
+5         Weiss 일요일
+6         Fripp 일요일
+7        Landry 일요일
+8      Atkinson 일요일
+9           Seo 일요일
+10       Vargas 일요일
+11       Tucker 일요일
+12       McEwen 일요일
+13   Livingston 일요일
+14        Geoni 일요일
+15         Bull 일요일
+16        Ernst 월요일
+
+x<- orderBy(~d, data.frame(last_name = emp$LAST_NAME, week = format(as.Date(emp$HIRE_DATE,"%Y/%m/%d"), "%A"), d =format(as.Date(emp$HIRE_DATE,"%Y/%m/%d"), "%w"), stringsAsFactors = F))
+x[,c("last_name", "week")]
+
+[문제86] 새로운 변수에 last_name, salary,hire_date,
+	       	2001 년도에 입사했으면 level를 A 
+       		2002 년도에 입사했으면 level를 B  
+	        2003 년도에 입사했으면 level를 C 
+       		2004 년도에 입사했으면 level를 D 
+       		나머지 년도는 E 가 입력해주세요.
+
+data.frame(last_name = emp$LAST_NAME, salary = emp$SALARY, hire_date = emp$HIRE_DATE, level = ifelse(year(as.Date(emp$HIRE_DATE, "%Y/%m/%d")) == 2001, "A", ifelse(year(as.Date(emp$HIRE_DATE, "%Y/%m/%d")) == 2002, "B", ifelse(year(as.Date(emp$HIRE_DATE, "%Y/%m/%d")) == 2003 ,"C", ifelse(year(as.Date(emp$HIRE_DATE, "%Y/%m/%d")) == 2004, "D", "E")))))
+
+
+```{r}
+x<-c("가", "나","라","다")
+order(x)
+order(emp$HIRE_DATE)
+
+
+```
+

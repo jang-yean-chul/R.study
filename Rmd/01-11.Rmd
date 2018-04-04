@@ -1,0 +1,538 @@
+```{r}
+df<- data.frame(d1 = c('남자','여자'), d2 = c(226965,241319),stringsAsFactors= F)
+df
+
+label1 = round(df$d2/sum(df$d2)*100,1)
+label = paste(df$d1 ,label1, "%", sep="")
+label
+
+pie(df$d2,
+    labels=label,
+    main = "성별 인구 비율",
+    col = heat.colors(length(df$d1)))
+
+pie3D(label1,
+      labels = label,
+      start = 2,
+      explode = 0.1,
+      labelcex = 0.8,
+      main = "성별 인구 비율",
+      col = c("blue","red"))
+legend(x=0.1,y=1,legend = df$d1, cex = 0.6, fill=c("blue", "red"))
+
+
+bp <- barplot(height = df$d2,
+              space = 1.3,
+              width = 0.5,
+              names.arg = df$d1,
+              horiz = F,
+              col = rainbow(length(df$d1)),
+              main = "성별 인구 비율",
+              ylab = "조사수",
+              xlab = "비율",
+              xlim = c(0,3),
+              ylim = c(0,300000),
+              axes=F)
+text(x=bp,y=df$d2,labels= paste(df$d2,"명"),pos=3)
+
+
+
+
+```
+
+[문제150] 성별 현황을 조사 자료를 이용하여 성별 인구 비율을 원형 차트로 만드세요.
+
+성별 현황
+
+구분	조사수
+----	------
+남자	226965
+여자	241319	
+
+df<- data.frame(구분 = c('남자','여자'), 조사수 = c(226965,241319),stringsAsFactors= F)
+df
+
+label = paste(df$구분 ,round(df$조사수/sum(df$조사수)*100,1), "%")
+label
+
+pie(df$조사수,
+       lables=label, 
+       main = "성별 인구 비율",
+       col = rainbow(length(df$구분)))
+
+pie3D(label1,
+      labels = label,
+      start = 2,
+      explode = 0.1,
+      labelcex = 0.8,
+      main = "성별 인구 비율",
+      col = c("blue","red"))
+legend(x=0.1,y=1,legend = df$d1, cex = 0.6, fill=c("blue", "red"))
+
+
+
+[문제151] 성별 현황을 조사 자료를 이용하여 성별 인구수를 막대그래프로 만드세요.
+
+성별 현황
+
+구분	조사수
+----	------
+남자	226965
+여자	241319	
+
+bp <- barplot(height = df$d2,
+              space = 1.3,
+              width = 0.5,
+              names.arg = df$d1,
+              horiz = F,
+              col = rainbow(length(df$d1)),
+              main = "성별 인구 비율",
+              ylab = "조사수",
+              xlab = "비율",
+              xlim = c(0,3),
+              ylim = c(0,300000),
+              axes=F)       #axes = F 축 제거
+text(x=bp,y=df$d2,labels= paste(df$d2,"명"),pos=3)
+
+```{r}
+x1<- c(2,6,9,5)
+x2<- c(8,10,15,6)
+
+data<- rbind(x1,x2)
+name<- c("영업1팀","영업2팀","영업3팀","영업4팀")
+label<- c("2016년", "2017년")
+
+barplot(data,
+        names.arg = name,
+        main = "영업팀별 실적",
+        xlab = "영업팀",
+        ylab = "판매실적(억원)",
+        ylim = c(0,30),
+        legend.text = label,
+        col = c("darkblue","red"))
+
+barplot(data,
+        names.arg = name,
+        main = "영업팀별 실적",
+        beside = T,
+        xlab = "영업팀",
+        ylab = "판매실적(억원)",
+        ylim = c(0,20),
+        legend.text = label,  
+        args.legend = list(x="topright"),
+        col = c("darkblue","red"))
+
+
+
+```
+★stacked bar chart (스택형 바 차트)
+
+x1<- c(2,6,9,5)
+x2<- c(8,10,15,6)
+
+data<- rbind(x1,x2)
+name<- c("영업1팀","영업2팀","영업3팀","영업4팀")
+label<- c("2016년", "2017년")
+
+barplot(data,
+        names.arg = name,
+        main = "영업팀별 실적",
+        xlab = "영업팀",
+        ylab = "판매실적(억원)",
+        ylim = c(0,30),
+        legend.text = label,
+        col = c("darkblue","red"))
+
+★grouped bar chart(그룹형 바 차트)
+
+barplot(data,
+        names.arg = name,
+        main = "영업팀별 실적",
+        beside = T,
+        xlab = "영업팀",
+        ylab = "판매실적(억원)",
+        ylim = c(0,20),
+        legend.text = label,      #범례
+        args.legend = list(x="topright"),   #범례위치 (top,topleft,topright)
+        col = c("darkblue","red"))
+
+```{r}
+x2014<- aggregate(qty~name+year,fruits_sales,sum)[fruits_sales$year==2014,c("qty")]
+x2015<- aggregate(qty~name+year,fruits_sales,sum)[fruits_sales$year==2015,c("qty")]
+x2016<- aggregate(qty~name+year,fruits_sales,sum)[fruits_sales$year==2016,c("qty")]
+x2017<- aggregate(qty~name+year,fruits_sales,sum)[fruits_sales$year==2017,c("qty")]
+
+data<-rbind(x2014,x2015) 
+data<-rbind(data,x2016) 
+data<-rbind(data,x2017) 
+colnames(data)<- c("apple","banana","berry","orange")
+rownames(data)<- c(2014,2015,2016,2017)
+data
+
+name<- c("apple","banana","berry","orange")
+label<- c("2014년", "2015년","2016년","2017년")
+
+barplot(data,
+        names.arg = name,
+        main = "연도별 과일 판매량",
+        beside = T,
+        xlab = "과일",
+        ylab = "판매량",
+        ylim = c(0,20),
+        legend.text = label,  
+        args.legend = list(x="topright"),
+        col = c("red","darkblue","green","black"))
+
+```
+[문제152] fruits_sales.csv file 읽어 들인 년도, 과일이름별 판매량을  그룹형 막대 그래프로 만드세요.
+
+x2014<- aggregate(qty~name+year,fruits_sales,sum)[fruits_sales$year==2014,c("qty")]
+x2015<- aggregate(qty~name+year,fruits_sales,sum)[fruits_sales$year==2015,c("qty")]
+x2016<- aggregate(qty~name+year,fruits_sales,sum)[fruits_sales$year==2016,c("qty")]
+x2017<- aggregate(qty~name+year,fruits_sales,sum)[fruits_sales$year==2017,c("qty")]
+
+data<-rbind(x2014,x2015) 
+data<-rbind(data,x2016) 
+data<-rbind(data,x2017) 
+colnames(data)<- c("apple","banana","berry","orange")
+rownames(data)<- c(2014,2015,2016,2017)
+data
+
+name<- c("apple","banana","berry","orange")
+label<- c("2014년", "2015년","2016년","2017년")
+
+barplot(data,
+        names.arg = name,
+        main = "연도별 과일 판매량",
+        beside = T,
+        xlab = "과일",
+        ylab = "판매량",
+        ylim = c(0,20),
+        legend.text = label,  
+        args.legend = list(x="topright"),
+        col = c("red","darkblue","green","black"))
+
+
+#선생님
+[문제152] fruits_sales.csv file 읽어 들인 년도, 과일이름별 판매량을  그룹형 막대 그래프로 만드세요.
+
+setwd('c:/r')
+f_sale <- read.csv('fruits_sales.csv', stringsAsFactors=F)
+
+library(sqldf)
+
+x<-tapply(f_sale$qty,
+       list(f_sale$name, f_sale$year),
+       sum)
+x
+
+      2014 2015 2016 2017
+apple     6   10   13   15
+banana    2    7   10   12
+berry     9   15   11   17
+orange    7    3    5    6
+
+barplot(x,
+        xlab='년도', ylab='판매량',
+        col=c('red','yellow','green','orange'),
+        beside=TRUE,
+        ylim=c(0,20))
+legend('topright',
+       title='과일',
+       legend=rownames(x),
+       pch=15, col=c('red','yellow','green','orange'),
+       cex=0.7)
+title(main='년도별 과일판매량')
+
+
+sale_cnt <- t(tapply(f_sale$qty,
+                     list(f_sale$name, f_sale$year),
+                     sum))
+sale_cnt
+
+     apple banana berry orange
+2014     6      2     9      7
+2015    10      7    15      3
+2016    13     10    11      5
+2017    15     12    17      6
+
+
+barplot(sale_cnt,
+        xlab='과일', ylab='판매량',
+        col=c('red','blue','green'),
+        beside=TRUE,
+        ylim=c(0,20))
+legend('topright',
+       title='년도',
+       legend=c(2014,2015,2016,2017),
+       pch=15, col=c('red','blue','green'),
+       cex=0.7)
+title(main='년도별 과일판매량')
+```{r}
+x<-sqldf("select count(employee_id) c_emp, department_id from emp group by department_id")
+x
+x1<-x[,""]
+
+x$DEPARTMENT_ID<- sort(x$DEPARTMENT_ID, decreasing= F, na.last=TRUE)
+
+for(i in 1:length(x$DEPARTMENT_ID)) {ifelse(is.na(x$DEPARTMENT_ID[i]), x$DEPARTMENT_ID[i] <- "부서없음",print(x$DEPARTMENT_ID[i]))}
+
+bp<-barplot(x$c_emp,
+            names.arg = x$DEPARTMENT_ID,
+            main = "부서별 인원수",
+            beside = T,
+            xlab = "부서",
+            ylab = "인원수",
+            ylim = c(0,50),
+            legend.text = label,  
+            args.legend = list(x="topright"),
+            col = rainbow(length(x$DEPARTMENT_ID)),
+            space = 1,
+            cex.names = 0.7)
+
+text(x=bp,y=x$c_emp,labels= paste(x$c_emp,"명"),pos=3)
+
+
+x<- aggregate(EMPLOYEE_ID ~ DEPARTMENT_ID, emp, length)
+y<- c('부서없음', sum(is.na(emp$DEPARTMENT_ID)))
+z<- rbind(x,y)
+names(z) <- c('dept_id','cn')
+
+barplot(as.numeric(z$cn),
+            names.arg = z$dept_id,
+            main = "부서별 인원수",
+            beside = T,
+            xlab = "부서",
+            ylab = "인원수",
+            ylim = c(0,50),
+            legend.text = label,  
+            args.legend = list(x="topright"),
+            col = rainbow(length(z$dept_id)),
+            space = 1,
+            cex.names = 0.7,
+            las=3)
+
+
+
+
+
+
+```
+[문제153] 부서별 인원수 막대그래프를 생성하세요. 단 부서없는 사원들의 인원수도 포함하세요.
+
+#1
+x<-sqldf("select count(employee_id) c_emp, department_id from emp group by department_id")
+
+for(i in 1:length(x$DEPARTMENT_ID)) {ifelse(is.na(x$DEPARTMENT_ID[i]), x$DEPARTMENT_ID[i] <- "부서없음",print(x$DEPARTMENT_ID[i]))}
+
+bp<-barplot(x$c_emp,
+            names.arg = x$DEPARTMENT_ID,
+            main = "부서별 인원수",
+            beside = T,
+            xlab = "부서",
+            ylab = "인원수",
+            ylim = c(0,50),
+            legend.text = label,  
+            args.legend = list(x="topright"),
+            col = rainbow(length(x$DEPARTMENT_ID)),
+            space = 1,
+            cex.names = 0.7)
+
+text(x=bp,y=x$c_emp,labels= paste(x$c_emp,"명"),pos=3)
+
+#2
+x<- aggregate(EMPLOYEE_ID ~ DEPARTMENT_ID, emp, length)
+y<- c('부서없음', sum(is.na(emp$DEPARTMENT_ID)))
+z<- rbind(x,y)
+names(z) <- c('dept_id','cn')
+
+barplot(as.numeric(z$cn),
+            names.arg = z$dept_id,
+            main = "부서별 인원수",
+            beside = T,
+            xlab = "부서",
+            ylab = "인원수",
+            ylim = c(0,50),
+            legend.text = label,  
+            args.legend = list(x="topright"),
+            col = rainbow(length(z$dept_id)),
+            space = 1,
+            cex.names = 0.7,
+            las=0)       #las=2 로 두면  수직으로 바뀐다.<1,2,3,4> 디폴트 값이 0
+
+```{r}
+
+x<-aggregate(SALARY~DEPARTMENT_ID, emp,sum)
+x
+y<- aggregate(SALARY~is.na(DEPARTMENT_ID),emp,sum)[]
+y<- y[y$`is.na(DEPARTMENT_ID)` == TRUE,]
+y
+y[1] <- "부서없음"
+colnames(y)<- colnames(x)
+
+t<-rbind(x,y)
+t
+
+bp<- barplot(t$SALARY,
+            names.arg = t$DEPARTMENT_NAME,
+            main = "부서별 급여 총액",
+            beside = T,
+            xlab = "부서",
+            ylab = "총액",
+            ylim = c(0,350000), 
+            col = rainbow(length(t$DEPARTMENT_NAME)),
+            space = 1,
+            cex.names = 0.3,
+            cex.axis = 0.8,
+            las=1)
+
+text(x=bp,y=t$SALARY,labels= paste(t$SALARY),pos= 1,cex = 0.5)
+text(x=bp[t$DEPARTMENT_NAME == "부서없음"],y=t[t$DEPARTMENT_NAME=="부서없음",c("SALARY")],labels= "부서(x)",pos= 3,cex = 0.5)
+text(x=bp[t$SALARY == max(t$SALARY)],y=max(t$SALARY),labels= "최고 급여",pos= 3,cex = 0.5)
+
+
+t[t$DEPARTMENT_NAME=="부서없음",c("SALARY")]
+which(t[t$DEPARTMENT_NAME == "부서없음",c("DEPARTMENT_NAME")])
+t[t$DEPARTMENT_NAME == "부서없음",c("DEPARTMENT_NAME")]
+
+bp[t$DEPARTMENT_NAME == "부서없음"]
+bp[t$SALARY == max(t$SALARY)]
+text(x= t[max(t$SALARY) == t$SALARY)],y=t[max(t$SALARY) == t$SALARY ,c("SALARY")],labels= "최고급여",pos= 3)
+text(x= t[t$DEPARTMENT_NAME == "부서없음")],y=t[t$DEPARTMENT_NAME == "부서없음",c("SALARY")],labels= "부서(x)",pos= 3)
+
+text(x= 13,y=t[max(t$SALARY) == t$SALARY ,c("SALARY")],labels= "최고급여",pos= 3)
+text(x= 1,y=t[t$DEPARTMENT_NAME == "부서없음",c("SALARY")],labels= "부서(x)",pos= 3)
+str(bp)
+
+t[max(t$SALARY) == t$SALARY ,c("SALARY")]
+bp[2,1]
+
+bp
+
+t$SALARY
+
+help("barplot")
+help("text")
+help("which")
+
+
+
+dept_sal <- sqldf('SELECT department_name dept_name, sum(salary) sum_sal
+                  FROM emp e LEFT OUTER JOIN dept d 
+            		  ON e.department_id=d.department_id
+                  GROUP BY department_name')
+
+bp <- barplot(dept_sal$sum_sal,
+              names.arg=dept_sal$dept_name,
+              col=rainbow(length(dept_sal$dept_name)),
+              main='Salary Bar Chart',
+              xlab='Dept Name', ylab='Salary',
+              ylim=c(0,350000),
+              cex.names=0.3)
+
+text(x=bp, y=dept_sal$sum_sal,
+     labels=dept_sal$sum_sal, pos=1, cex=0.5)
+
+text(x=bp[is.na(dept_sal$dept_name)],
+     y=dept_sal$sum_sal[is.na(dept_sal$dept_name)],
+     labels='부서(x)',
+     pos=3,
+     col='red')
+
+text(x=bp[dept_sal$sum_sal==max(dept_sal$sum_sal)],
+     y=dept_sal$sum_sal[dept_sal$sum_sal==max(dept_sal$sum_sal)],
+     labels='최고급여',
+     pos=3, 
+     col='red')
+```
+[문제154] 부서 이름별 급여 총액에 대해서 막대그래프를 생성하세요.단 부서없는 사원들의 인원수도 포함하세요.
+
+#1
+x<-aggregate(SALARY~DEPARTMENT_ID, emp,sum)
+x
+y<- aggregate(SALARY~is.na(DEPARTMENT_ID),emp,sum)[]
+y<- y[y$`is.na(DEPARTMENT_ID)` == TRUE,]
+y
+y[1] <- "부서없음"
+colnames(y)<- colnames(x)
+
+t<-rbind(x,y)
+t
+
+bp<- barplot(t$SALARY,
+            names.arg = t$DEPARTMENT_NAME,
+            main = "부서별 급여 총액",
+            beside = T,
+            xlab = "부서",
+            ylab = "총액",
+            ylim = c(0,350000), 
+            col = rainbow(length(t$DEPARTMENT_NAME)),
+            space = 1,
+            cex.names = 0.3,
+            cex.axis = 0.8,
+            las=1)
+
+text(x=bp,y=t$SALARY,labels= paste(t$SALARY),pos= 1,cex = 0.5)
+text(x=bp[t$DEPARTMENT_NAME == "부서없음"],y=t[t$DEPARTMENT_NAME=="부서없음",c("SALARY")],labels= "부서(x)",pos= 3,cex = 0.5)
+text(x=bp[t$SALARY == max(t$SALARY)],y=max(t$SALARY),labels= "최고 급여",pos= 3,cex = 0.5)
+
+
+#2  <선생님>
+dept_sal <- sqldf('SELECT department_name dept_name, sum(salary) sum_sal
+                  FROM emp e LEFT OUTER JOIN dept d 
+            		  ON e.department_id=d.department_id
+                  GROUP BY department_name')
+
+bp <- barplot(dept_sal$sum_sal,
+              names.arg=dept_sal$dept_name,
+              col=rainbow(length(dept_sal$dept_name)),
+              main='Salary Bar Chart',
+              xlab='Dept Name', ylab='Salary',
+              ylim=c(0,350000),
+              cex.names=0.3)
+
+text(x=bp, y=dept_sal$sum_sal,
+     labels=dept_sal$sum_sal, pos=1, cex=0.5)
+
+text(x=bp[is.na(dept_sal$dept_name)],
+     y=dept_sal$sum_sal[is.na(dept_sal$dept_name)],
+     labels='부서(x)',
+     pos=3,
+     col='red')
+
+text(x=bp[dept_sal$sum_sal==max(dept_sal$sum_sal)],
+     y=dept_sal$sum_sal[dept_sal$sum_sal==max(dept_sal$sum_sal)],
+     labels='최고급여',
+     pos=3, 
+     col='red')
+
+```{r}
+f2<- NA
+fff <- function(x){for(i in x) {i <- x
+                                    ff<- i
+                                    repeat {i<- ifelse( i %% 2 != 1, i/2, i*3+1)
+                                    ff<- cbind(ff,i)
+                                    
+                                    if(i == 1)
+                                    {break}}
+                                    f2<- cbind(f,length(ff))     }
+}
+
+f1<- function(x,y) {for(i in x:y) { i <- x
+                                    f2<- i
+                                    repeat{i<- ifelse(i %%2 !=1, i/2, i*3+1)
+                                    f2<-cbind(f2,i)
+                                    if(i==1)
+                                    {break}
+                                    }}
+  }
+
+fff(3)
+ff
+f1(2,3)
+f2
+```
+
+
+
+
